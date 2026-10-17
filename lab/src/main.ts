@@ -20,12 +20,12 @@ import {
   randomSeed,
   zip,
 } from "../../engine/src/index";
-import { Player, PlayLane, SoundMode } from "./audio";
+import { PlayForm, Player, PlayLane, SoundMode } from "./audio";
 import { SOUND_LABELS } from "./sounds";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
-const LAB_VERSION = "0.2.0";
+const LAB_VERSION = "0.3.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",
@@ -81,6 +81,7 @@ const state = {
   idea: null as Idea | null,
   exploreIdea: null as Idea | null,
   muted: new Set<PlayLane>(),
+  form: "loop" as PlayForm,
   rating: null as number | null,
   issues: new Set<string>(),
   history: [] as HistoryEntry[],
@@ -149,6 +150,7 @@ function savePrefs(): void {
         variantId: state.explore.variantId,
         bars: state.explore.bars,
         blindSound: state.blind.soundMode,
+        form: state.form,
       }),
     );
   } catch {
@@ -168,6 +170,7 @@ function loadPrefs(): void {
     }
     if (p.bars === 4 || p.bars === 8) state.explore.bars = p.bars;
     if (p.blindSound === "style" || p.blindSound === "neutral") state.blind.soundMode = p.blindSound;
+    if (p.form === "loop" || p.form === "song") state.form = p.form;
   } catch {
     // ignore
   }
@@ -204,6 +207,7 @@ function regenerate(pushHistory = true): void {
 function show(idea: Idea | null): void {
   state.idea = idea;
   renderIdea();
+  renderSongBar();
   if (idea && player) player.load(idea, state.mode === "blind" ? state.blind.soundMode : "style");
 }
 
@@ -475,6 +479,48 @@ function generateIdeaCached(s: ExploreState): Idea {
   return idea;
 }
 
+/** The blind test always plays the plain loop. */
+function playForm(): PlayForm {
+  return state.mode === "blind" ? "loop" : state.form;
+}
+
+function renderForm(): void {
+  $("form-loop").setAttribute("aria-pressed", String(state.form === "loop"));
+  $("form-song").setAttribute("aria-pressed", String(state.form === "song"));
+  ($("form-loop") as HTMLButtonElement).disabled = state.mode === "blind";
+  ($("form-song") as HTMLButtonElement).disabled = state.mode === "blind";
+  renderSongBar();
+}
+
+function renderSongBar(): void {
+  const bar = $("song-bar");
+  const idea = state.idea;
+  const on = playForm() === "song" && !!idea && idea.arrangement.length > 0;
+  bar.hidden = !on;
+  bar.replaceChildren();
+  if (!on || !idea) return;
+  const total = idea.arrangement.reduce((a, s) => a + s.bars, 0);
+  bar.setAttribute("aria-label", `Song-Ablauf: ${idea.arrangement.map((s) => `${s.name} (${s.bars} Takte)`).join(", ")}`);
+  for (const sec of idea.arrangement) {
+    const full = sec.lanes.length === 5 && !sec.noKick;
+    const seg = h("div", { class: `song-seg${full ? " is-drop" : ""}` });
+    seg.style.flex = `${sec.bars} 1 0`;
+    seg.append(document.createTextNode(sec.name), h("small", {}, `${sec.bars} T.`));
+    bar.append(seg);
+  }
+  const marker = h("div", { class: "song-marker", "aria-hidden": "true" });
+  bar.append(marker);
+  bar.dataset.total = String(total);
+}
+
+function setForm(form: PlayForm): void {
+  if (state.form === form) return;
+  state.form = form;
+  renderForm();
+  player?.setForm(playForm());
+  savePrefs();
+}
+
 function renderLength(): void {
   $("len-4").setAttribute("aria-pressed", String(state.explore.bars === 4));
   $("len-8").setAttribute("aria-pressed", String(state.explore.bars === 8));
@@ -570,6 +616,7 @@ function buildDoc(idea: Idea, mode: RatingDoc["mode"], extra: Partial<RatingDoc>
     sounds,
     soundMode: mode === "blindtest" ? state.blind.soundMode : "style",
     muted: [...state.muted],
+    form: mode === "blindtest" ? "loop" : state.form,
     rating: null,
     issues: [],
     comment: "",
@@ -646,6 +693,36 @@ function tickPlayhead(): void {
     else {
       ph.style.opacity = "1";
       ph.style.left = `${p * 100}%`;
+    }
+  }
+  const bar = document.getElementById("song-bar");
+  if (bar && !bar.hidden) {
+    const sp = player?.songProgress() ?? -1;
+    const segs = bar.querySelectorAll<HTMLElement>(".song-seg");
+    const marker = bar.querySelector<HTMLElement>(".song-marker");
+    let at = -1;
+    if (sp >= 0 && state.idea) {
+      const total = Number(bar.dataset.total) || 1;
+      const pos = sp * total;
+      let start = 0;
+      state.idea.arrangement.forEach((s, i) => {
+        if (at < 0 && pos < start + s.bars) at = i;
+        start += s.bars;
+      });
+    }
+    segs.forEach((el, i) => el.classList.toggle("is-current", i === at));
+    if (marker) {
+      // The marker sits inside the segment, proportional to the position in it.
+      const seg = at >= 0 ? segs[at] : null;
+      if (!seg || !state.idea) marker.style.opacity = "0";
+      else {
+        const total = Number(bar.dataset.total) || 1;
+        let start = 0;
+        for (let i = 0; i < at; i++) start += state.idea.arrangement[i].bars;
+        const within = (sp * total - start) / state.idea.arrangement[at].bars;
+        marker.style.opacity = "1";
+        marker.style.left = `${seg.offsetLeft + within * seg.offsetWidth}px`;
+      }
     }
   }
   requestAnimationFrame(tickPlayhead);
@@ -754,6 +831,8 @@ function setMode(mode: "explore" | "blind"): void {
   $("new-idea").hidden = mode !== "explore";
   document.body.dataset.mode = mode;
   if (player?.playing) player.stop();
+  player?.setForm(playForm());
+  renderForm();
   renderPlay();
   if (mode === "explore") show(state.exploreIdea);
   else show(state.blind.idea);
@@ -789,6 +868,8 @@ function wire(): void {
     state.explore.bpm = Math.max(60, Math.min(180, state.idea.bpm + d));
     regenerate(false);
   };
+  $("form-loop").addEventListener("click", () => setForm("loop"));
+  $("form-song").addEventListener("click", () => setForm("song"));
   $("bpm-down").addEventListener("click", () => bump(-1));
   $("bpm-up").addEventListener("click", () => bump(1));
   $("tab-explore").addEventListener("click", () => setMode("explore"));
@@ -872,6 +953,8 @@ function boot(data: unknown): void {
   renderArtists();
   renderKeySelect();
   renderLength();
+  renderForm();
+  player?.setForm(playForm());
   wire();
   regenerate(state.history.length === 0);
   renderPlay();

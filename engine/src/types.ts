@@ -45,6 +45,19 @@ export interface PluckLaneProfile extends LaneProfileBase {
   orders?: ArpOrder[];
 }
 
+/** One part of the song preview: which lanes play and how the section sounds. */
+export interface ArrangementSection {
+  name: string;
+  bars: number;
+  lanes: (LaneId | "drums")[];
+  /** Low-pass filter on the music bus (Hz); omit for an open filter. */
+  filter?: number;
+  /** Drums play without the kick (builds, verses, breakdowns). */
+  noKick?: boolean;
+  /** Build-up into the next section: snare roll, noise riser, opening filter. */
+  build?: boolean;
+}
+
 export interface StyleVariant {
   id: string;
   name: string;
@@ -74,12 +87,16 @@ export interface StyleVariant {
     noise?: number;
   };
   soundHints: string[];
+  /** Song preview for this variant; falls back to the artist's arrangement. */
+  arrangement?: ArrangementSection[];
 }
 
 export interface StyleProfile {
   id: string;
   artist: string;
   blurb: string;
+  /** Typical song shape of the artist (intro, build, drop ...). */
+  arrangement: ArrangementSection[];
   variants: StyleVariant[];
 }
 
@@ -139,5 +156,6 @@ export interface Idea {
   drums: { patternId: string; kit: string; hits: DrumHit[] };
   mix: StyleVariant["mix"];
   soundHints: string[];
+  arrangement: ArrangementSection[];
   fixes: number;
 }

@@ -2,6 +2,51 @@
  "id": "avaion",
  "artist": "AVAION",
  "blurb": "Singt selbst, schreibt von der Gitarre aus; warme Akkord-Stapel, später 130+ BPM und Afro House",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "chords",
+    "pluck"
+   ],
+   "filter": 2500
+  },
+  {
+   "name": "Strophe",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "pluck",
+    "lead",
+    "bass",
+    "drums"
+   ],
+   "noKick": true
+  },
+  {
+   "name": "Aufbau",
+   "bars": 4,
+   "lanes": [
+    "chords",
+    "lead",
+    "drums"
+   ],
+   "noKick": true,
+   "build": true
+  },
+  {
+   "name": "Drop",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  }
+ ],
  "variants": [
   {
    "id": "pieces",
@@ -390,6 +435,67 @@
     "Melancholische Keys am Anfang, dann Live-Percussion: Congas in 3er-Gruppen gegen die 4/4, Shaker, Toms",
     "Leise „Bleep“-Blips in 16teln als Begleitschicht; Marimba oder Kalimba sind ein Klischee, kein AVAION-Sound",
     "Pink-Noise-Riser vor den Drops; 130 BPM, schneller als typischer Afro House"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "chords"
+     ],
+     "filter": 1800
+    },
+    {
+     "name": "Percussion",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "bass",
+      "drums"
+     ]
+    },
+    {
+     "name": "Aufbau",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "drums"
+     ],
+     "noKick": true,
+     "build": true
+    },
+    {
+     "name": "Drop",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Break",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "pluck",
+      "drums"
+     ],
+     "noKick": true
+    },
+    {
+     "name": "Drop",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    }
    ]
   },
   {

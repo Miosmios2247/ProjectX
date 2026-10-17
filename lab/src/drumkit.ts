@@ -73,6 +73,7 @@ export class DrumKit {
   private percHi: ToneNS.MembraneSynth;
   private percLo: ToneNS.MembraneSynth;
   private rim: ToneNS.MembraneSynth;
+  private crashSynth: ToneNS.NoiseSynth;
 
   constructor(T: T, kitId: string) {
     const k = KITS[kitId] ?? KITS.house;
@@ -118,6 +119,9 @@ export class DrumKit {
     to(this.percLo);
     this.rim = track(new T.MembraneSynth({ pitchDecay: 0.002, octaves: 1, envelope: { attack: 0.0005, decay: 0.035, sustain: 0 }, volume: -14 }));
     to(this.rim);
+    // Crash on the first beat of a drop (song form).
+    this.crashSynth = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.002, decay: 1.8, sustain: 0, release: 0.4 }, volume: k.hatVol + 2 }));
+    to(this.crashSynth, track(new T.Filter(5200, "highpass")));
 
     const wanted = Object.entries(k.samples) as [DrumInst, [KitSample, number]][];
     this.ready = !wanted.length
@@ -144,6 +148,14 @@ export class DrumKit {
       this.guards.set(key, g);
     }
     return g;
+  }
+
+  crash(time: number): void {
+    try {
+      this.crashSynth.triggerAttackRelease(1.4, this.guard("crash")(time), 0.9);
+    } catch {
+      // drop the hit, keep the loop running
+    }
   }
 
   hit(inst: DrumInst, time: number, velocity: number): void {

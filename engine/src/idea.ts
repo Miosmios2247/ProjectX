@@ -159,6 +159,7 @@ export function generateIdea(params: IdeaParams): Idea {
     drums: { patternId: drumId, kit: variant.mix.drumKit, hits: drumHits },
     mix: variant.mix,
     soundHints: variant.soundHints,
+    arrangement: variant.arrangement ?? style.arrangement,
     fixes,
   };
 }

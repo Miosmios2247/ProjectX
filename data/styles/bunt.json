@@ -2,6 +2,71 @@
  "id": "bunt",
  "artist": "BUNT.",
  "blurb": "Seit „Clouds“ Stutter House: gedehnte, gegatete Vocals, kurze Loops, „weniger klingt größer“",
+ "arrangement": [
+  {
+   "name": "Hook",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 1600
+  },
+  {
+   "name": "Aufbau",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords",
+    "drums"
+   ],
+   "noKick": true,
+   "build": true
+  },
+  {
+   "name": "Drop",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Break",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords",
+    "pluck"
+   ],
+   "filter": 2400
+  },
+  {
+   "name": "Aufbau",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords",
+    "drums"
+   ],
+   "noKick": true,
+   "build": true
+  },
+  {
+   "name": "Drop",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  }
+ ],
  "variants": [
   {
    "id": "stutter",
@@ -564,6 +629,48 @@
     "Dur-Tonarten, vi–IV–I, Four-on-the-floor um 125 BPM",
     "Banjo, Fiddle, Bläser oder Mundharmonika führen den Drop",
     "Akustikgitarre gestrummt"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "pluck"
+     ]
+    },
+    {
+     "name": "Strophe",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "pluck",
+      "bass",
+      "drums"
+     ],
+     "noKick": true
+    },
+    {
+     "name": "Aufbau",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "drums"
+     ],
+     "noKick": true,
+     "build": true
+    },
+    {
+     "name": "Drop",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    }
    ]
   }
  ]

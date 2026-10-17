@@ -2,6 +2,60 @@
  "id": "fred-again",
  "artist": "Fred again..",
  "blurb": "Loops auf maj7-Akkorden, gechoppte Sprach- und Gesangsaufnahmen als Hook, alles pumpt",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 1200
+  },
+  {
+   "name": "Aufbau",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords",
+    "pluck",
+    "drums"
+   ],
+   "noKick": true,
+   "build": true
+  },
+  {
+   "name": "Drop",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Breakdown",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 2000
+  },
+  {
+   "name": "Drop",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  }
+ ],
  "variants": [
   {
    "id": "emotional-house",

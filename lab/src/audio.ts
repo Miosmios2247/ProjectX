@@ -1,13 +1,22 @@
 // Plays an idea in the browser, looped and synced: sidechain pumping on
 // everything but the drums, an optional 1/16 stutter gate and a noise bed.
+// In song form the loop runs through the artist's arrangement (intro, build,
+// drop ...) with lanes switching on and off, a filter, a riser and a snare roll.
 
 import type * as ToneNS from "tone";
-import { Idea, LaneId, stepToBeat } from "../../engine/src/index";
+import { ArrangementSection, Idea, LaneId, stepToBeat } from "../../engine/src/index";
 import { Voice, createVoice } from "./sounds";
 import { DrumKit } from "./drumkit";
 
 export type PlayLane = LaneId | "drums";
 export type SoundMode = "style" | "neutral";
+export type PlayForm = "loop" | "song";
+
+export interface SongSection {
+  name: string;
+  startBar: number;
+  bars: number;
+}
 
 const NEUTRAL: Record<LaneId, string> = {
   chords: "neutral-keys",
@@ -23,6 +32,24 @@ const REVERB_SEND: Record<PlayLane, number> = { chords: 0.55, bass: 0, lead: 0.6
 const DUCKED: PlayLane[] = ["chords", "bass", "lead", "pluck"];
 
 const PLAY_LANES_ALL: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
+const OPEN = 20000;
+
+/** Snare roll for a build: quarters, 8ths, 16ths, then 32nds on the last two beats. */
+function buildRoll(bars: number): { beat: number; vel: number }[] {
+  const out: { beat: number; vel: number }[] = [];
+  const first = Math.max(0, bars - 4);
+  for (let bar = first; bar < bars; bar++) {
+    const k = bar - first;
+    const per = [1, 2, 4, 4][k] ?? 4;
+    for (let b = 0; b < 4; b++) {
+      const sub = k === 3 && b >= 2 ? 8 : per;
+      for (let i = 0; i < sub; i++) out.push({ beat: bar * 4 + b + i / sub, vel: 0 });
+    }
+  }
+  const span = bars * 4;
+  for (const e of out) e.vel = 0.3 + 0.65 * (e.beat - first * 4) / Math.max(1, span - first * 4);
+  return out;
+}
 
 export class Player {
   private readonly T: ToneLib;
@@ -36,6 +63,15 @@ export class Player {
   private gate = {} as Record<PlayLane, ToneNS.Gain>;
   private noise!: ToneNS.Noise;
   private noiseLevel!: ToneNS.Gain;
+  /** Song form: low-pass on the music bus, noise riser for builds. */
+  private songFilter!: ToneNS.Filter;
+  private riser!: ToneNS.Noise;
+  private riserFilter!: ToneNS.Filter;
+  private riserLevel!: ToneNS.Gain;
+  private songEvents: number[] = [];
+  private song: SongSection[] = [];
+  private loopTicks = 1;
+  private songTicks = 1;
   private voices: Partial<Record<LaneId, { id: string; voice: Voice }>> = {};
   private kit: { id: string; kit: DrumKit } | null = null;
   private parts: ToneNS.Part[] = [];
@@ -45,6 +81,7 @@ export class Player {
   private built = false;
   idea: Idea | null = null;
   soundMode: SoundMode = "style";
+  form: PlayForm = "loop";
 
   constructor(tone: ToneLib) {
     this.T = tone;
@@ -74,7 +111,8 @@ export class Player {
     this.master = new T.Gain(T.dbToGain(-5.5));
     this.master.chain(comp, limiter, T.getDestination());
     this.duck = new T.Gain(1);
-    this.duck.connect(this.master);
+    this.songFilter = new T.Filter({ type: "lowpass", frequency: OPEN, rolloff: -24, Q: 0.6 });
+    this.duck.chain(this.songFilter, this.master);
     this.reverb = new T.Reverb({ decay: 3.2, preDelay: 0.02, wet: 1 });
     this.reverbIn = new T.Gain(0.35);
     this.reverbIn.connect(this.reverb);
@@ -101,6 +139,14 @@ export class Player {
     const noiseTone = new T.Filter({ type: "bandpass", frequency: 2400, Q: 0.35 });
     this.noise = new T.Noise("pink");
     this.noise.chain(noiseTone, this.noiseLevel, this.duck);
+    // White-noise riser for builds, with a little reverb.
+    this.riserLevel = new T.Gain(0);
+    this.riserFilter = new T.Filter({ type: "bandpass", frequency: 500, Q: 1.4 });
+    this.riser = new T.Noise("white");
+    this.riser.chain(this.riserFilter, this.riserLevel, this.master);
+    const riserSend = new T.Gain(0.5);
+    this.riserLevel.connect(riserSend);
+    riserSend.connect(this.reverbIn);
     await this.reverb.ready;
     this.built = true;
     if (this.idea) this.load(this.idea, this.soundMode);
@@ -145,18 +191,47 @@ export class Player {
     if (this.duckEvent !== null) transport.clear(this.duckEvent);
     if (this.gateEvent !== null) transport.clear(this.gateEvent);
     this.gateEvent = null;
+    for (const id of this.songEvents) transport.clear(id);
+    this.songEvents = [];
 
     transport.bpm.value = idea.bpm;
     const ppq = transport.PPQ;
     const secPerBeat = 60 / idea.bpm;
     const ticks = (beats: number) => `${Math.round(beats * ppq)}i`;
-    const totalBeats = idea.bars * 4;
+    const neutral = soundMode === "neutral";
+
+    // Song form: the loop repeats inside the arrangement.
+    const arrangement = this.form === "song" && idea.arrangement.length ? idea.arrangement : null;
+    const loopBeats = idea.bars * 4;
+    const songBars = arrangement ? arrangement.reduce((a, s) => a + s.bars, 0) : idea.bars;
+    const byBar: ArrangementSection[] = [];
+    this.song = [];
+    if (arrangement) {
+      for (const sec of arrangement) {
+        this.song.push({ name: sec.name, startBar: byBar.length, bars: sec.bars });
+        for (let i = 0; i < sec.bars; i++) byBar.push(sec);
+      }
+    }
+    this.loopTicks = Math.round(loopBeats * ppq);
+    this.songTicks = Math.round(songBars * 4 * ppq);
+    const sectionAt = (time: number): ArrangementSection | null => {
+      if (!arrangement) return null;
+      const bar = Math.floor((transport.getTicksAtTime(time) + 2) / (4 * ppq));
+      return byBar[((bar % songBars) + songBars) % songBars] ?? null;
+    };
     transport.loop = true;
     transport.loopStart = 0;
-    transport.loopEnd = ticks(totalBeats);
-    if (transport.ticks >= Math.round(totalBeats * ppq)) transport.ticks = 0;
+    transport.loopEnd = ticks(songBars * 4);
+    if (transport.ticks >= this.songTicks) transport.ticks = 0;
+    const loopPart = (part: ToneNS.Part) => {
+      if (arrangement) {
+        part.loop = true;
+        part.loopEnd = ticks(loopBeats);
+      }
+      part.start(0);
+      this.parts.push(part);
+    };
 
-    const neutral = soundMode === "neutral";
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
       const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
@@ -166,10 +241,11 @@ export class Player {
         return { time: ticks(start), midi: n.pitch, dur: Math.max(0.03, (end - start) * secPerBeat * 0.98), vel: n.vel / 127 };
       });
       const part = new T.Part((time, ev: { midi: number; dur: number; vel: number }) => {
+        const sec = sectionAt(time);
+        if (sec && !sec.lanes.includes(lane)) return;
         voice.trigger(ev.midi, ev.dur, time, ev.vel);
       }, events);
-      part.start(0);
-      this.parts.push(part);
+      loopPart(part);
     }
     const kit = this.kitFor(neutral ? "neutral" : idea.drums.kit);
     // Kick stays straight; hats and percussion get the style's drum swing.
@@ -178,19 +254,30 @@ export class Player {
       inst: h.inst,
       vel: h.vel / 127,
     }));
-    const drumPart = new T.Part((time, ev: (typeof drumEvents)[number]) => kit.hit(ev.inst, time, ev.vel), drumEvents);
-    drumPart.start(0);
-    this.parts.push(drumPart);
+    const drumPart = new T.Part((time, ev: (typeof drumEvents)[number]) => {
+      const sec = sectionAt(time);
+      if (sec && (!sec.lanes.includes("drums") || (sec.noKick && ev.inst === "kick"))) return;
+      kit.hit(ev.inst, time, ev.vel);
+    }, drumEvents);
+    loopPart(drumPart);
 
-    // Sidechain: duck on every beat, recover quickly.
+    // Sidechain: duck on every beat, recover quickly. No kick, no pumping.
     const depth = neutral ? 0.3 : idea.mix.sidechain;
     const g = this.duck.gain;
     this.duckEvent = transport.scheduleRepeat((time) => {
+      const sec = sectionAt(time);
       g.cancelScheduledValues(time);
+      if (sec && (sec.noKick || !sec.lanes.includes("drums"))) {
+        g.setTargetAtTime(1, time, 0.02);
+        return;
+      }
       g.setValueAtTime(1 - depth, time);
       g.setTargetAtTime(1, time + 0.015, secPerBeat * 0.16);
     }, "4n", 0);
     if (depth <= 0.01) g.value = 1;
+
+    this.scheduleSong(arrangement, kit, ppq, secPerBeat);
+    if (this.wantPlaying && this.song.length && this.riser.state !== "started") this.riser.start();
 
     // Stutter gate: straight 1/16 steps, "off" steps drop by `depth`.
     this.openGates();
@@ -212,6 +299,92 @@ export class Player {
     this.noiseLevel.gain.rampTo(neutral ? 0 : (idea.mix.noise ?? 0) * (this.wantPlaying ? 1 : 0), 0.05);
     this.reverbIn.gain.value = neutral ? 0.25 : idea.mix.reverb;
     for (const lane of this.muted) this.setMuted(lane, true);
+  }
+
+  /** Filter, riser, snare roll and crash for each section of the song form. */
+  private scheduleSong(arrangement: ArrangementSection[] | null, kit: DrumKit, ppq: number, secPerBeat: number): void {
+    const T = this.T;
+    const transport = T.getTransport();
+    const f = this.songFilter.frequency;
+    const rl = this.riserLevel.gain;
+    const rf = this.riserFilter.frequency;
+    f.cancelScheduledValues(T.now());
+    f.value = OPEN;
+    rl.cancelScheduledValues(T.now());
+    rl.value = 0;
+    if (!arrangement) return;
+    const ticks = (beats: number) => `${Math.round(beats * ppq)}i`;
+    let bar = 0;
+    arrangement.forEach((sec, i) => {
+      const prev = arrangement[(i - 1 + arrangement.length) % arrangement.length];
+      const dur = sec.bars * 4 * secPerBeat;
+      this.songEvents.push(
+        transport.schedule((time) => {
+          f.cancelScheduledValues(time);
+          rl.cancelScheduledValues(time);
+          rf.cancelScheduledValues(time);
+          if (sec.build) {
+            // The filter opens and the riser swells into the next section.
+            f.setValueAtTime(sec.filter ?? 900, time);
+            f.exponentialRampToValueAtTime(16000, time + dur);
+            rl.setValueAtTime(0, time);
+            rl.linearRampToValueAtTime(0.2, time + dur);
+            rf.setValueAtTime(400, time);
+            rf.exponentialRampToValueAtTime(9000, time + dur);
+          } else {
+            f.setTargetAtTime(sec.filter ?? OPEN, time, 0.03);
+            rl.setTargetAtTime(0, time, 0.04);
+            // Crash when the full beat comes back (after a build or a breakdown).
+            const kickBack = sec.lanes.includes("drums") && !sec.noKick;
+            const kickWasOut = prev.build || prev.noKick || !prev.lanes.includes("drums");
+            if (kickBack && kickWasOut && arrangement.length > 1) kit.crash(time);
+          }
+        }, ticks(bar * 4)),
+      );
+      if (sec.build) {
+        const roll = buildRoll(sec.bars).map((e) => ({ time: ticks(bar * 4 + e.beat), vel: e.vel }));
+        const part = new T.Part((time, ev: { vel: number }) => kit.hit("snare", time, ev.vel), roll);
+        part.start(0);
+        this.parts.push(part);
+      }
+      bar += sec.bars;
+    });
+
+    // Reloading mid-song (new idea, re-rolled lane): set the current section's state now.
+    const now = T.now();
+    const pos = transport.state === "started" ? transport.getTicksAtTime(now) / (4 * ppq) : 0;
+    let start = 0;
+    for (const sec of arrangement) {
+      if (pos < start + sec.bars) {
+        const end = now + (start + sec.bars - pos) * 4 * secPerBeat;
+        if (sec.build) {
+          const k = (pos - start) / sec.bars;
+          const from = sec.filter ?? 900;
+          f.setValueAtTime(from * Math.pow(16000 / from, k), now);
+          f.exponentialRampToValueAtTime(16000, end);
+          rl.setValueAtTime(0.2 * k, now);
+          rl.linearRampToValueAtTime(0.2, end);
+          rf.setValueAtTime(400 * Math.pow(9000 / 400, k), now);
+          rf.exponentialRampToValueAtTime(9000, end);
+        } else {
+          f.setValueAtTime(sec.filter ?? OPEN, now);
+        }
+        break;
+      }
+      start += sec.bars;
+    }
+  }
+
+  /** Switch between the plain loop and the song form; keeps playing. */
+  setForm(form: PlayForm): void {
+    if (this.form === form) return;
+    this.form = form;
+    if (this.built && this.idea) this.load(this.idea, this.soundMode);
+  }
+
+  /** Sections of the current song form (empty in loop form). */
+  sections(): SongSection[] {
+    return this.song;
   }
 
   private openGates(): void {
@@ -238,6 +411,7 @@ export class Player {
     if (transport.state !== "started") transport.start("+0.05");
     this.wantPlaying = true;
     if (this.noise.state !== "started") this.noise.start();
+    if (this.song.length && this.riser.state !== "started") this.riser.start();
     const level = this.soundMode === "neutral" ? 0 : (this.idea?.mix.noise ?? 0);
     this.noiseLevel.gain.rampTo(level, 0.1);
   }
@@ -254,11 +428,20 @@ export class Player {
     this.noiseLevel.gain.cancelScheduledValues(this.T.now());
     this.noiseLevel.gain.value = 0;
     if (this.noise.state === "started") this.noise.stop();
+    this.riserLevel.gain.cancelScheduledValues(this.T.now());
+    this.riserLevel.gain.value = 0;
+    if (this.riser.state === "started") this.riser.stop();
   }
 
-  /** Loop position 0..1 for the playhead. */
+  /** Loop position 0..1 for the piano-roll playhead. */
   progress(): number {
     if (!this.playing || this.T.getTransport().state !== "started") return -1;
-    return this.T.getTransport().progress;
+    return (this.T.getTransport().ticks % this.loopTicks) / this.loopTicks;
+  }
+
+  /** Song position 0..1 (song form only). */
+  songProgress(): number {
+    if (!this.song.length || !this.playing || this.T.getTransport().state !== "started") return -1;
+    return (this.T.getTransport().ticks % this.songTicks) / this.songTicks;
   }
 }

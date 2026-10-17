@@ -96,4 +96,23 @@ describe("generateIdea", () => {
       }
     }
   });
+
+  it("gives every variant a song arrangement with a full drop", () => {
+    const lanes = new Set<string>([...LANES, "drums"]);
+    for (const { styleId, variantId } of variants) {
+      const idea = generateIdea({ styleId, variantId, key: null, bars: 4, seed: 7 });
+      const where = `${styleId}/${variantId}`;
+      const total = idea.arrangement.reduce((a, s) => a + s.bars, 0);
+      expect(total, where).toBeGreaterThanOrEqual(16);
+      expect(total, where).toBeLessThanOrEqual(40);
+      for (const s of idea.arrangement) {
+        expect(s.bars % 4, `${where} ${s.name}`).toBe(0);
+        for (const l of s.lanes) expect(lanes.has(l), `${where} ${s.name} ${l}`).toBe(true);
+      }
+      expect(idea.arrangement.some((s) => s.lanes.length === lanes.size && !s.noKick), where).toBe(true);
+      // A build always leads into another section.
+      const last = idea.arrangement[idea.arrangement.length - 1];
+      expect(last.build ?? false, where).toBe(false);
+    }
+  });
 });

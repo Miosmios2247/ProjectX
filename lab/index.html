@@ -45,6 +45,13 @@
         <button type="button" id="len-8" aria-pressed="false">8 Takte</button>
       </div>
     </div>
+    <div class="field">
+      <span class="label" id="form-label">Ablauf</span>
+      <div class="seg" role="group" aria-labelledby="form-label">
+        <button type="button" id="form-loop" aria-pressed="true" title="Der Loop läuft immer wieder">Loop</button>
+        <button type="button" id="form-song" aria-pressed="false" title="Intro, Aufbau und Drop wie in einem Track">Song</button>
+      </div>
+    </div>
     <div class="field tempo">
       <span class="label">Tempo</span>
       <button type="button" class="step-btn" id="bpm-down" aria-label="Langsamer">−</button>
@@ -63,6 +70,7 @@
         <span class="arr-meta" id="idea-meta"></span>
         <p class="arr-refs" id="idea-refs"></p>
       </div>
+      <div class="song-bar" id="song-bar" hidden role="img" aria-label="Song-Ablauf"></div>
       <div class="lanes" id="lanes">
         <div class="lane-row chord-row">
           <div class="lane-meta"><div class="lane-name">Akkordfolge</div></div>

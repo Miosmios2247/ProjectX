@@ -28,6 +28,10 @@ export interface RatingDoc {
   comment: string;
   guess: string | null;
   correct: boolean | null;
+  /** How it was heard: as a loop or in song form (from lab 0.3). */
+  form?: "loop" | "song";
+  /** Lead sung by the rater's own voice recording (from lab 0.3). */
+  ownVoice?: boolean;
 }
 
 export type StoredRating = RatingDoc & { id: string };
