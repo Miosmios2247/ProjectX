@@ -36,11 +36,12 @@ export type DrumInst =
   | "shaker"
   | "percHi"
   | "percLo"
+  | "tom"
   | "rim"
   | "tamb";
 
 export const DRUM_INSTS: DrumInst[] = [
-  "kick", "snare", "clap", "rim", "hatC", "hatO", "shaker", "tamb", "percHi", "percLo",
+  "kick", "snare", "clap", "rim", "hatC", "hatO", "shaker", "tamb", "percHi", "percLo", "tom",
 ];
 
 /** One drum track: steps, or [step, velocity] pairs. */

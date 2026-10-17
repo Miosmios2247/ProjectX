@@ -1,236 +1,714 @@
 [
-  {
-    "id": "hold",
-    "name": "Gehalten",
-    "lane": "chords",
-    "tags": ["pad", "sustain", "emotional"],
-    "bars": 1,
-    "perChord": true,
-    "hits": [{ "step": 0, "len": -1, "vel": 88 }]
-  },
-  {
-    "id": "piano-quarters",
-    "name": "Piano in Vierteln",
-    "lane": "chords",
-    "tags": ["piano", "pulse", "house"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 3, "vel": 100 },
-      { "step": 4, "len": 3, "vel": 80 },
-      { "step": 8, "len": 3, "vel": 92 },
-      { "step": 12, "len": 3, "vel": 80 }
-    ]
-  },
-  {
-    "id": "piano-pushed",
-    "name": "Piano 3-3-2",
-    "lane": "chords",
-    "tags": ["piano", "syncopated", "emotional"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 6, "vel": 100 },
-      { "step": 6, "len": 4, "vel": 84 },
-      { "step": 10, "len": 6, "vel": 92 }
-    ]
-  },
-  {
-    "id": "hold-restrike",
-    "name": "Gehalten mit Nachschlag",
-    "lane": "chords",
-    "tags": ["piano", "emotional"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 10, "vel": 96 },
-      { "step": 10, "len": 6, "vel": 74, "role": "top" }
-    ]
-  },
-  {
-    "id": "offbeat-8ths",
-    "name": "Offbeat-Stabs",
-    "lane": "chords",
-    "tags": ["house", "stab", "offbeat"],
-    "bars": 1,
-    "hits": [
-      { "step": 2, "len": 2, "vel": 96 },
-      { "step": 6, "len": 2, "vel": 90 },
-      { "step": 10, "len": 2, "vel": 96 },
-      { "step": 14, "len": 2, "vel": 90 }
-    ]
-  },
-  {
-    "id": "offbeat-long",
-    "name": "Offbeat lang",
-    "lane": "chords",
-    "tags": ["melodic", "house", "offbeat"],
-    "bars": 1,
-    "hits": [
-      { "step": 2, "len": 3, "vel": 86 },
-      { "step": 6, "len": 3, "vel": 82 },
-      { "step": 10, "len": 3, "vel": 86 },
-      { "step": 14, "len": 2, "vel": 80 }
-    ]
-  },
-  {
-    "id": "pulse-8ths",
-    "name": "Achtel-Puls",
-    "lane": "chords",
-    "tags": ["drive", "melodic"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 92 },
-      { "step": 2, "len": 1, "vel": 70 },
-      { "step": 4, "len": 1, "vel": 86 },
-      { "step": 6, "len": 1, "vel": 70 },
-      { "step": 8, "len": 1, "vel": 90 },
-      { "step": 10, "len": 1, "vel": 70 },
-      { "step": 12, "len": 1, "vel": 86 },
-      { "step": 14, "len": 1, "vel": 72 }
-    ]
-  },
-  {
-    "id": "ukg-stab-01",
-    "name": "2-Step Stabs",
-    "lane": "chords",
-    "tags": ["ukg", "2-step", "stab"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 100 },
-      { "step": 3, "len": 1, "vel": 72 },
-      { "step": 6, "len": 2, "vel": 94 },
-      { "step": 10, "len": 2, "vel": 96 },
-      { "step": 13, "len": 1, "vel": 74 }
-    ]
-  },
-  {
-    "id": "ukg-stab-02",
-    "name": "Garage-Shuffle",
-    "lane": "chords",
-    "tags": ["ukg", "2-step", "shuffle"],
-    "bars": 1,
-    "hits": [
-      { "step": 2, "len": 2, "vel": 94 },
-      { "step": 5, "len": 1, "vel": 70 },
-      { "step": 8, "len": 2, "vel": 92 },
-      { "step": 11, "len": 1, "vel": 72 },
-      { "step": 14, "len": 2, "vel": 90 }
-    ]
-  },
-  {
-    "id": "liquid-shuffle",
-    "name": "Liquid gehalten",
-    "lane": "chords",
-    "tags": ["ukg", "liquid", "lush"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 7, "vel": 90 },
-      { "step": 7, "len": 1, "vel": 60, "role": "top" },
-      { "step": 10, "len": 6, "vel": 80 }
-    ]
-  },
-  {
-    "id": "afro-stab-01",
-    "name": "Afro-Stabs",
-    "lane": "chords",
-    "tags": ["afro", "stab", "syncopated"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 96 },
-      { "step": 3, "len": 1, "vel": 76 },
-      { "step": 6, "len": 1, "vel": 90 },
-      { "step": 10, "len": 1, "vel": 82 },
-      { "step": 12, "len": 1, "vel": 72 }
-    ]
-  },
-  {
-    "id": "afro-stab-02",
-    "name": "Afro-Stabs (2 Takte)",
-    "lane": "chords",
-    "tags": ["afro", "stab", "call"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 96 },
-      { "step": 3, "len": 1, "vel": 78 },
-      { "step": 7, "len": 1, "vel": 84 },
-      { "step": 10, "len": 2, "vel": 88 },
-      { "step": 16, "len": 2, "vel": 94 },
-      { "step": 19, "len": 1, "vel": 76 },
-      { "step": 22, "len": 1, "vel": 82 },
-      { "step": 24, "len": 1, "vel": 70 },
-      { "step": 27, "len": 2, "vel": 86 }
-    ]
-  },
-  {
-    "id": "deep-stab-01",
-    "name": "Deep-House-Stabs",
-    "lane": "chords",
-    "tags": ["deep", "stab", "organ"],
-    "bars": 1,
-    "hits": [
-      { "step": 2, "len": 2, "vel": 96 },
-      { "step": 6, "len": 2, "vel": 88 },
-      { "step": 10, "len": 2, "vel": 94 },
-      { "step": 13, "len": 3, "vel": 86 }
-    ]
-  },
-  {
-    "id": "deep-stab-02",
-    "name": "Deep-Stabs synkopiert",
-    "lane": "chords",
-    "tags": ["deep", "stab", "syncopated"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 90 },
-      { "step": 3, "len": 2, "vel": 94 },
-      { "step": 7, "len": 1, "vel": 80 },
-      { "step": 10, "len": 2, "vel": 92 },
-      { "step": 14, "len": 1, "vel": 78 }
-    ]
-  },
-  {
-    "id": "strum-folk-01",
-    "name": "Gitarre D-D-U-U-D-U",
-    "lane": "chords",
-    "tags": ["folk", "guitar", "strum"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 4, "vel": 100, "role": "down" },
-      { "step": 4, "len": 2, "vel": 92, "role": "down" },
-      { "step": 6, "len": 2, "vel": 84, "role": "up" },
-      { "step": 10, "len": 2, "vel": 86, "role": "up" },
-      { "step": 12, "len": 2, "vel": 94, "role": "down" },
-      { "step": 14, "len": 2, "vel": 84, "role": "up" }
-    ]
-  },
-  {
-    "id": "strum-folk-02",
-    "name": "Gitarre Achtel",
-    "lane": "chords",
-    "tags": ["folk", "guitar", "strum", "drive"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 100, "role": "down" },
-      { "step": 2, "len": 2, "vel": 76, "role": "up" },
-      { "step": 4, "len": 2, "vel": 94, "role": "down" },
-      { "step": 6, "len": 2, "vel": 76, "role": "up" },
-      { "step": 8, "len": 2, "vel": 98, "role": "down" },
-      { "step": 10, "len": 2, "vel": 76, "role": "up" },
-      { "step": 12, "len": 2, "vel": 94, "role": "down" },
-      { "step": 14, "len": 2, "vel": 78, "role": "up" }
-    ]
-  },
-  {
-    "id": "strum-house",
-    "name": "Gitarre Offbeat",
-    "lane": "chords",
-    "tags": ["folk", "guitar", "house"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 90, "role": "down" },
-      { "step": 2, "len": 2, "vel": 96, "role": "up" },
-      { "step": 6, "len": 2, "vel": 92, "role": "up" },
-      { "step": 8, "len": 1, "vel": 84, "role": "down" },
-      { "step": 10, "len": 2, "vel": 96, "role": "up" },
-      { "step": 14, "len": 2, "vel": 90, "role": "up" }
-    ]
-  }
+ {
+  "id": "hold",
+  "name": "Gehalten",
+  "lane": "chords",
+  "tags": [
+   "pad",
+   "sustain",
+   "emotional"
+  ],
+  "bars": 1,
+  "perChord": true,
+  "hits": [
+   {
+    "step": 0,
+    "len": -1,
+    "vel": 88
+   }
+  ]
+ },
+ {
+  "id": "piano-quarters",
+  "name": "Piano in Vierteln",
+  "lane": "chords",
+  "tags": [
+   "piano",
+   "pulse",
+   "house"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 4,
+    "len": 3,
+    "vel": 80
+   },
+   {
+    "step": 8,
+    "len": 3,
+    "vel": 92
+   },
+   {
+    "step": 12,
+    "len": 3,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "piano-pushed",
+  "name": "Piano 3-3-2",
+  "lane": "chords",
+  "tags": [
+   "piano",
+   "syncopated",
+   "emotional"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 6,
+    "vel": 100
+   },
+   {
+    "step": 6,
+    "len": 4,
+    "vel": 84
+   },
+   {
+    "step": 10,
+    "len": 6,
+    "vel": 92
+   }
+  ]
+ },
+ {
+  "id": "hold-restrike",
+  "name": "Gehalten mit Nachschlag",
+  "lane": "chords",
+  "tags": [
+   "piano",
+   "emotional"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 10,
+    "vel": 96
+   },
+   {
+    "step": 10,
+    "len": 6,
+    "vel": 74,
+    "role": "top"
+   }
+  ]
+ },
+ {
+  "id": "offbeat-8ths",
+  "name": "Offbeat-Stabs",
+  "lane": "chords",
+  "tags": [
+   "house",
+   "stab",
+   "offbeat"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 90
+   }
+  ]
+ },
+ {
+  "id": "offbeat-long",
+  "name": "Offbeat lang",
+  "lane": "chords",
+  "tags": [
+   "melodic",
+   "house",
+   "offbeat"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 3,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 3,
+    "vel": 82
+   },
+   {
+    "step": 10,
+    "len": 3,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "pulse-8ths",
+  "name": "Achtel-Puls",
+  "lane": "chords",
+  "tags": [
+   "drive",
+   "melodic"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 72
+   }
+  ]
+ },
+ {
+  "id": "ukg-stab-01",
+  "name": "2-Step Stabs",
+  "lane": "chords",
+  "tags": [
+   "ukg",
+   "2-step",
+   "stab"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 72
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 74
+   }
+  ]
+ },
+ {
+  "id": "ukg-stab-02",
+  "name": "Garage-Shuffle",
+  "lane": "chords",
+  "tags": [
+   "ukg",
+   "2-step",
+   "shuffle"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 72
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 90
+   }
+  ]
+ },
+ {
+  "id": "liquid-shuffle",
+  "name": "Liquid gehalten",
+  "lane": "chords",
+  "tags": [
+   "ukg",
+   "liquid",
+   "lush"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 7,
+    "vel": 90
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 60,
+    "role": "top"
+   },
+   {
+    "step": 10,
+    "len": 6,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "afro-stab-01",
+  "name": "Afro-Stabs",
+  "lane": "chords",
+  "tags": [
+   "afro",
+   "stab",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 72
+   }
+  ]
+ },
+ {
+  "id": "afro-stab-02",
+  "name": "Afro-Stabs (2 Takte)",
+  "lane": "chords",
+  "tags": [
+   "afro",
+   "stab",
+   "call"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 88
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 22,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 24,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 27,
+    "len": 2,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "deep-stab-01",
+  "name": "Deep-House-Stabs",
+  "lane": "chords",
+  "tags": [
+   "deep",
+   "stab",
+   "organ"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 88
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 13,
+    "len": 3,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "deep-stab-02",
+  "name": "Deep-Stabs synkopiert",
+  "lane": "chords",
+  "tags": [
+   "deep",
+   "stab",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 3,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "strum-folk-01",
+  "name": "Gitarre D-D-U-U-D-U",
+  "lane": "chords",
+  "tags": [
+   "folk",
+   "guitar",
+   "strum"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 4,
+    "vel": 100,
+    "role": "down"
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 92,
+    "role": "down"
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84,
+    "role": "up"
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 86,
+    "role": "up"
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 94,
+    "role": "down"
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 84,
+    "role": "up"
+   }
+  ]
+ },
+ {
+  "id": "strum-folk-02",
+  "name": "Gitarre Achtel",
+  "lane": "chords",
+  "tags": [
+   "folk",
+   "guitar",
+   "strum",
+   "drive"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 100,
+    "role": "down"
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 76,
+    "role": "up"
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 94,
+    "role": "down"
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 76,
+    "role": "up"
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 98,
+    "role": "down"
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 76,
+    "role": "up"
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 94,
+    "role": "down"
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 78,
+    "role": "up"
+   }
+  ]
+ },
+ {
+  "id": "strum-house",
+  "name": "Gitarre Offbeat",
+  "lane": "chords",
+  "tags": [
+   "folk",
+   "guitar",
+   "house"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 90,
+    "role": "down"
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 96,
+    "role": "up"
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 92,
+    "role": "up"
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 84,
+    "role": "down"
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96,
+    "role": "up"
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 90,
+    "role": "up"
+   }
+  ]
+ },
+ {
+  "id": "hold-half",
+  "name": "Halbe Noten",
+  "lane": "chords",
+  "tags": [
+   "pad",
+   "pump"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 8,
+    "vel": 92
+   },
+   {
+    "step": 8,
+    "len": 8,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "garage-offbeat",
+  "name": "Garage-Offbeat-Stabs",
+  "lane": "chords",
+  "tags": [
+   "garage",
+   "stab"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 88
+   }
+  ]
+ }
 ]

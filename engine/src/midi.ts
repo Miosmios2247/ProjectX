@@ -22,7 +22,7 @@ export interface MidiTrack {
 
 // General MIDI drum notes
 export const GM_DRUMS: Record<DrumInst, number> = {
-  kick: 36, snare: 38, clap: 39, rim: 37, hatC: 42, hatO: 46, shaker: 82, tamb: 54, percHi: 62, percLo: 64,
+  kick: 36, snare: 38, clap: 39, rim: 37, hatC: 42, hatO: 46, shaker: 82, tamb: 54, percHi: 63, percLo: 64, tom: 45,
 };
 
 const LANE_NAMES: Record<LaneId, string> = { chords: "Chords", bass: "Bass", lead: "Lead", pluck: "Pluck" };
@@ -106,10 +106,15 @@ function laneToMidi(idea: Idea, lane: LaneId): MidiNote[] {
   });
 }
 
+/** Kick stays straight; hats and percussion get the drum swing. */
+export function drumBeat(idea: Idea, inst: DrumInst, step: number): number {
+  return stepToBeat(step, inst === "kick" ? 0.5 : idea.drumSwing);
+}
+
 function drumsToMidi(idea: Idea): MidiNote[] {
   return idea.drums.hits.map((h) => ({
     pitch: GM_DRUMS[h.inst],
-    startBeat: stepToBeat(h.step, idea.swing),
+    startBeat: drumBeat(idea, h.inst, h.step),
     durBeat: 0.125,
     vel: h.vel,
   }));

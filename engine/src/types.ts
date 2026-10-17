@@ -5,8 +5,15 @@ import { ChordSlot, HarmonyProfile } from "./progression";
 import { DrumInst, LaneId, WeightedRef } from "./rhythm";
 import { VoicingOptions } from "./voicing";
 
-export type LeadMode = "vocal-chop" | "deep-chop" | "topline" | "folk" | "afro";
-export type PluckMode = "arp" | "stab" | "marimba" | "pick";
+/**
+ * vocal-chop: re-sequenced vocal slices (Fred again..)
+ * gated-vowel: stretched, held vowels chopped by a 1/16 gate (stutter house, BUNT.)
+ * topline: sung melody (AVAION)
+ * brass-hook: short call-and-response lead hook (AVAION "WACUKA" drop)
+ * folk: pentatonic riff (early BUNT.)
+ */
+export type LeadMode = "vocal-chop" | "gated-vowel" | "topline" | "brass-hook" | "folk";
+export type PluckMode = "arp" | "stab" | "marimba" | "pick" | "counter";
 export type ArpOrder = "up" | "down" | "updown" | "skip" | "pendulum";
 
 export interface LaneProfileBase {
@@ -42,8 +49,13 @@ export interface StyleVariant {
   id: string;
   name: string;
   blurb: string;
+  /** Tracks this variant is modelled on (shown in the lab). */
+  references: string[];
   tempo: [number, number];
+  /** Swing of the melodic lanes (0.5 = straight). */
   swing: number;
+  /** Swing of hats and percussion; the kick always stays straight. */
+  drumSwing: number;
   drums: (WeightedRef | string)[];
   harmony: HarmonyProfile;
   lanes: {
@@ -56,6 +68,10 @@ export interface StyleVariant {
     sidechain: number;
     reverb: number;
     drumKit: string;
+    /** Stutter gate (audio effect in the lab): 16 steps of 0..1 per bar. */
+    gate?: { lanes: LaneId[]; pattern: number[]; depth: number };
+    /** Level of a quiet noise/tape bed under the loop (0..1). */
+    noise?: number;
   };
   soundHints: string[];
 }
@@ -111,6 +127,8 @@ export interface Idea {
   key: Key;
   bpm: number;
   swing: number;
+  drumSwing: number;
+  references: string[];
   bars: number;
   totalSteps: number;
   progression: ChordSlot[];

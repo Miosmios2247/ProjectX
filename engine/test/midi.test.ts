@@ -20,7 +20,7 @@ describe("midi", () => {
   });
 
   it("exports every lane of an idea with matching note counts", () => {
-    const idea = generateIdea({ styleId: "bunt", variantId: "folk-house", key: null, bars: 8, seed: 3 });
+    const idea = generateIdea({ styleId: "bunt", variantId: "folk", key: null, bars: 8, seed: 3 });
     const files = ideaToMidiFiles(idea);
     expect(files.map((f) => f.name.split("_").pop())).toEqual([
       "Chords.mid", "Bass.mid", "Lead.mid", "Pluck.mid", "Drums.mid", "Alle-Spuren.mid",

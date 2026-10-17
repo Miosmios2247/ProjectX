@@ -44,7 +44,7 @@ describe("generateIdea", () => {
   }, 60_000);
 
   it("is deterministic", () => {
-    const p = { styleId: "avaion", variantId: "afro-house", key: null, bars: 8 as const, seed: 77 };
+    const p = { styleId: "avaion", variantId: "wacuka", key: null, bars: 8 as const, seed: 77 };
     expect(JSON.stringify(generateIdea(p))).toBe(JSON.stringify(generateIdea(p)));
   });
 

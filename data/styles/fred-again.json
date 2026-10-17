@@ -1,128 +1,663 @@
 {
-  "id": "fred-again",
-  "artist": "Fred again..",
-  "blurb": "Emotionale Loops, Piano und Pads mit Sidechain, gechoppte Vocal-Phrasen",
-  "variants": [
+ "id": "fred-again",
+ "artist": "Fred again..",
+ "blurb": "Loops auf maj7-Akkorden, gechoppte Sprach- und Gesangsaufnahmen als Hook, alles pumpt",
+ "variants": [
+  {
+   "id": "emotional-house",
+   "name": "Emotional House",
+   "blurb": "VImaj7–VII–i: Piano und Pad gehalten und gepumpt, Vocal-Slices als Hook",
+   "references": [
+    "Marea (We've Lost Dancing)",
+    "adore u",
+    "ten",
+    "Kyle (i found you)",
+    "Danielle (smile on my face)"
+   ],
+   "tempo": [
+    123,
+    130
+   ],
+   "swing": 0.52,
+   "drumSwing": 0.56,
+   "drums": [
     {
-      "id": "emotional-house",
-      "name": "Emotional House",
-      "blurb": "Gehaltene, pumpende Akkorde, Vocal-Chops, Four-on-the-floor",
-      "tempo": [124, 130],
-      "swing": 0.53,
-      "drums": [{ "id": "house-soft-01", "weight": 2 }, { "id": "house-soft-02", "weight": 1 }],
-      "harmony": {
-        "modes": { "major": 0.55, "minor": 0.45 },
-        "progressions": [
-          { "mode": "major", "degrees": ["IV", "I", "V", "vi"], "weight": 3 },
-          { "mode": "major", "degrees": ["vi", "IV", "I", "V"], "weight": 3 },
-          { "mode": "major", "degrees": ["I", "V", "vi", "IV"], "weight": 2 },
-          { "mode": "major", "degrees": ["IV", "V", "vi", "vi"], "weight": 2 },
-          { "mode": "major", "degrees": ["I", "iii", "vi", "IV"], "weight": 1 },
-          { "mode": "major", "degrees": ["IV", "iv", "I", "I"], "weight": 1 },
-          { "mode": "major", "degrees": ["I", "IV"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["VI", "VII", "i", "i"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "VII", "VI", "VII"], "weight": 1 }
-        ],
-        "colors": { "triad": 0.15, "seventh": 0.25, "ninth": 0.25, "add9": 0.25, "sus2": 0.05, "six": 0.05 },
-        "colorConsistency": 0.4,
-        "inversions": 0.15,
-        "substitution": 0.1,
-        "lift": 0.45,
-        "stretch": 0.3,
-        "liftMap": { "vi": ["IV"], "V": ["IV"], "IV": ["iv"], "I": ["IV"], "VII": ["V"], "i": ["VI"] }
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["felt-piano"],
-          "rhythms": [{ "id": "hold", "weight": 3 }, { "id": "piano-quarters", "weight": 2 }, { "id": "piano-pushed", "weight": 1 }, { "id": "hold-restrike", "weight": 1 }],
-          "voicing": { "low": 48, "high": 76, "voices": [4, 5], "spread": "piano", "colorTop": 1.0, "rootBottom": 1.5, "topRange": [67, 76] }
-        },
-        "bass": {
-          "sound": ["sub"],
-          "rhythms": [{ "id": "sub-hold", "weight": 2 }, { "id": "sub-hold-push", "weight": 2 }, { "id": "house-offbeat", "weight": 1 }],
-          "range": [28, 43],
-          "pedal": 0.05
-        },
-        "lead": {
-          "sound": ["vox-chop"],
-          "mode": "vocal-chop",
-          "rhythms": [{ "id": "chop-01", "weight": 2 }, { "id": "chop-02", "weight": 2 }, { "id": "chop-03", "weight": 2 }, { "id": "chop-04", "weight": 1 }],
-          "range": [64, 79],
-          "tensions": true
-        },
-        "pluck": {
-          "sound": ["soft-bell"],
-          "mode": "arp",
-          "rhythms": [{ "id": "bell-sparse", "weight": 2 }, { "id": "arp-8ths-sparse", "weight": 2 }, { "id": "arp-16-gated", "weight": 1 }],
-          "range": [72, 91],
-          "orders": ["up", "updown", "pendulum"]
-        }
-      },
-      "mix": { "sidechain": 0.7, "reverb": 0.38, "drumKit": "house" },
-      "soundHints": [
-        "Weiches Piano + Pad darunter, Sidechain stark (Pumpen auf jedem Viertel)",
-        "Vocal-Chops: kurze Silben aus einer Gesangsaufnahme, leicht gepitcht, Hall",
-        "Sub-Bass fast pur (Sinus/Dreieck), nur unter dem Grundton"
-      ]
+     "id": "house-909",
+     "weight": 3
     },
     {
-      "id": "ukg-2step",
-      "name": "UKG / 2-Step",
-      "blurb": "Shuffle-Groove, gechoppte Stabs, synkopierter Bass",
-      "tempo": [132, 138],
-      "swing": 0.6,
-      "drums": [{ "id": "garage-2step-01", "weight": 2 }, { "id": "garage-2step-02", "weight": 1 }],
-      "harmony": {
-        "modes": { "minor": 0.7, "major": 0.3 },
-        "progressions": [
-          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "iv", "VII", "III"], "weight": 2 },
-          { "mode": "minor", "degrees": ["VI", "VII", "i", "v"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "v", "VI", "iv"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "VII"], "weight": 1 },
-          { "mode": "major", "degrees": ["IV", "V", "iii", "vi"], "weight": 2 },
-          { "mode": "major", "degrees": ["ii", "V", "I", "vi"], "weight": 1 }
-        ],
-        "colors": { "triad": 0.1, "seventh": 0.35, "ninth": 0.35, "add9": 0.1, "eleventh": 0.1 },
-        "colorConsistency": 0.6,
-        "inversions": 0.05,
-        "substitution": 0.12,
-        "lift": 0.4,
-        "stretch": 0.1
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["organ-stab"],
-          "rhythms": [{ "id": "ukg-stab-01", "weight": 3 }, { "id": "ukg-stab-02", "weight": 2 }, { "id": "liquid-shuffle", "weight": 1 }],
-          "voicing": { "low": 53, "high": 74, "voices": [3, 4], "spread": "close", "colorTop": 0.8, "rootBottom": 0.5 }
-        },
-        "bass": {
-          "sound": ["reese-sub"],
-          "rhythms": [{ "id": "ukg-bass-01", "weight": 2 }, { "id": "ukg-bass-02", "weight": 2 }],
-          "range": [30, 45]
-        },
-        "lead": {
-          "sound": ["vox-chop"],
-          "mode": "vocal-chop",
-          "rhythms": [{ "id": "chop-ukg-01", "weight": 2 }, { "id": "chop-ukg-02", "weight": 2 }, { "id": "chop-02", "weight": 1 }],
-          "range": [64, 79],
-          "tensions": true
-        },
-        "pluck": {
-          "sound": ["bell-pluck"],
-          "mode": "arp",
-          "rhythms": [{ "id": "arp-16-shuffle", "weight": 2 }, { "id": "pluck-syncopated", "weight": 1 }],
-          "range": [70, 89],
-          "orders": ["up", "skip"]
-        }
-      },
-      "mix": { "sidechain": 0.35, "reverb": 0.25, "drumKit": "garage" },
-      "soundHints": [
-        "Orgel- oder Rhodes-Stabs, kurz, mit Swing (ca. 60 %)",
-        "Reese-/Sub-Bass mit leichter Sättigung",
-        "Vocal-Chops schnell geschnitten, mit Delay"
-      ]
+     "id": "stutter-4x4",
+     "weight": 1
     }
-  ]
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.55,
+     "major": 0.45
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "VII",
+       "i",
+       "III"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "VII",
+       "i7",
+       "iv7"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i7",
+       "v7",
+       "IIImaj7"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "IIImaj7",
+       "VImaj7",
+       "i",
+       "III"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i7"
+      ],
+      "weight": 1,
+      "durations": [
+       2,
+       2
+      ]
+     }
+    ],
+    "colors": {
+     "seventh": 0.45,
+     "ninth": 0.2,
+     "triad": 0.25,
+     "add9": 0.1
+    },
+    "colorConsistency": 0.3,
+    "inversions": 0.05,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.3,
+    "liftMap": {
+     "III": [
+      "VII"
+     ],
+     "iv7": [
+      "VII"
+     ],
+     "IIImaj7": [
+      "VII"
+     ],
+     "i7": [
+      "VImaj7"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "felt-piano"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 3
+      },
+      {
+       "id": "piano-quarters",
+       "weight": 2
+      },
+      {
+       "id": "piano-pushed",
+       "weight": 1
+      },
+      {
+       "id": "hold-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 77,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "piano",
+      "colorTop": 1.0,
+      "rootBottom": 1.5,
+      "topRange": [
+       67,
+       77
+      ]
+     }
+    },
+    "bass": {
+     "sound": [
+      "sub"
+     ],
+     "rhythms": [
+      {
+       "id": "sub-hold",
+       "weight": 2
+      },
+      {
+       "id": "sub-kick",
+       "weight": 2
+      },
+      {
+       "id": "sub-hold-push",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-chop"
+     ],
+     "mode": "vocal-chop",
+     "rhythms": [
+      {
+       "id": "chop-hook-01",
+       "weight": 3
+      },
+      {
+       "id": "chop-hook-02",
+       "weight": 2
+      },
+      {
+       "id": "chop-03",
+       "weight": 2
+      },
+      {
+       "id": "chop-01",
+       "weight": 1
+      },
+      {
+       "id": "chop-02",
+       "weight": 1
+      }
+     ],
+     "range": [
+      62,
+      79
+     ],
+     "tensions": true
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-sparse",
+       "weight": 2
+      },
+      {
+       "id": "bell-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      91
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.75,
+    "reverb": 0.42,
+    "drumKit": "house",
+    "noise": 0.03
+   },
+   "soundHints": [
+    "Loop beginnt auf dem maj7-Akkord der VI. Stufe; keine V→I-Auflösung, lieber Moll-v",
+    "Piano + Pad lang halten und stark pumpen lassen (Sidechain auf alles, auch auf Hall und Rauschen)",
+    "Lead = echte Sprach-/Gesangsaufnahme (Voice-Memo, Handy-Mikro), in 1/16-Slices neu angeordnet, einzelne Slices hochgepitcht",
+    "Leises Rausch-/Tape-Bett und langer, modulierter Hall, dessen Rücklauf auch geduckt wird"
+   ]
+  },
+  {
+   "id": "garage",
+   "name": "Garage / Speed Garage",
+   "blurb": "130–135 BPM, 909-Kick mit Doppel-16teln, Moll-7er-Loops, Reese-Bass",
+   "references": [
+    "Delilah (pull me out of this)",
+    "Jungle",
+    "Turn On The Lights again..",
+    "Kammy (like i do)"
+   ],
+   "tempo": [
+    130,
+    135
+   ],
+   "swing": 0.55,
+   "drumSwing": 0.6,
+   "drums": [
+    {
+     "id": "garage-house-909",
+     "weight": 3
+    },
+    {
+     "id": "ukg-2step",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.8,
+     "major": 0.2
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i7",
+       "v7"
+      ],
+      "weight": 3,
+      "durations": [
+       1,
+       1,
+       2
+      ]
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "iv",
+       "i",
+       "VI"
+      ],
+      "weight": 3,
+      "durations": [
+       1,
+       1,
+       2
+      ]
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i7"
+      ],
+      "weight": 2,
+      "durations": [
+       4
+      ]
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i7",
+       "VImaj7"
+      ],
+      "weight": 1,
+      "durations": [
+       2,
+       2
+      ]
+     }
+    ],
+    "colors": {
+     "seventh": 0.6,
+     "triad": 0.2,
+     "ninth": 0.2
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.2,
+    "liftMap": {
+     "VI": [
+      "VII"
+     ],
+     "v7": [
+      "VII"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "garage-piano",
+       "weight": 2
+      },
+      {
+       "id": "rhodes",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "ukg-stab-01",
+       "weight": 2
+      },
+      {
+       "id": "garage-offbeat",
+       "weight": 2
+      },
+      {
+       "id": "hold",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 76,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.8,
+      "rootBottom": 0.6
+     }
+    },
+    "bass": {
+     "sound": [
+      {
+       "id": "reese",
+       "weight": 2
+      },
+      {
+       "id": "sub",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "reese-two-note",
+       "weight": 3
+      },
+      {
+       "id": "ukg-kick-bass",
+       "weight": 1
+      },
+      {
+       "id": "sub-hold-push",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-chop"
+     ],
+     "mode": "vocal-chop",
+     "rhythms": [
+      {
+       "id": "chop-ukg-01",
+       "weight": 2
+      },
+      {
+       "id": "chop-ukg-02",
+       "weight": 2
+      },
+      {
+       "id": "chop-hook-01",
+       "weight": 1
+      },
+      {
+       "id": "chop-02",
+       "weight": 1
+      }
+     ],
+     "range": [
+      62,
+      79
+     ],
+     "tensions": true
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-sparse",
+       "weight": 2
+      },
+      {
+       "id": "keys-8ths-high",
+       "weight": 1
+      }
+     ],
+     "range": [
+      70,
+      89
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.5,
+    "reverb": 0.3,
+    "drumKit": "garage",
+    "noise": 0.02
+   },
+   "soundHints": [
+    "909-Kick, ab und zu zwei 16tel hintereinander (die erste leiser); Hats mit Swing, Kick gerade",
+    "Reese-Bass: zwei Töne pro Takt, viel Unisono und Verzerrung, Sinus-Sub darunter",
+    "Vocal-Slices schnell geschnitten und neu angeordnet, mit Delay"
+   ]
+  },
+  {
+   "id": "dnb",
+   "name": "Drum & Bass",
+   "blurb": "174 BPM, iv–i–VI, Breakbeat und Reese, Vocal-Hook darüber",
+   "references": [
+    "leavemealone",
+    "places to be"
+   ],
+   "tempo": [
+    172,
+    176
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.52,
+   "drums": [
+    {
+     "id": "dnb-break",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.85,
+     "major": 0.15
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "iv",
+       "i",
+       "VI"
+      ],
+      "weight": 3,
+      "durations": [
+       1,
+       1,
+       2
+      ]
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "iv",
+       "iv"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i7",
+       "v7",
+       "v7"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.5,
+     "seventh": 0.3,
+     "ninth": 0.2
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.4,
+    "liftMap": {
+     "VI": [
+      "VII"
+     ],
+     "iv": [
+      "VII"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "keys-pad"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 2
+      },
+      {
+       "id": "hold-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 76,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "piano",
+      "colorTop": 0.8,
+      "rootBottom": 1.2
+     }
+    },
+    "bass": {
+     "sound": [
+      "reese"
+     ],
+     "rhythms": [
+      {
+       "id": "dnb-reese",
+       "weight": 3
+      },
+      {
+       "id": "sub-hold",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-chop"
+     ],
+     "mode": "vocal-chop",
+     "rhythms": [
+      {
+       "id": "chop-hook-02",
+       "weight": 2
+      },
+      {
+       "id": "chop-04",
+       "weight": 2
+      },
+      {
+       "id": "chop-03",
+       "weight": 1
+      }
+     ],
+     "range": [
+      62,
+      79
+     ],
+     "tensions": true
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      91
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.3,
+    "reverb": 0.3,
+    "drumKit": "dnb",
+    "noise": 0.02
+   },
+   "soundHints": [
+    "Breakbeat mit Kick auf 1 und auf der 3+, Snare auf 2 und 4",
+    "Reese-Bass mit langen Tönen, die zum nächsten Akkord gleiten",
+    "Vocal-Hook in halbem Gefühl über dem schnellen Beat"
+   ]
+  }
+ ]
 }

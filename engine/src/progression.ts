@@ -40,6 +40,8 @@ export interface HarmonyProfile {
   stretch?: number;
   /** Replacement options for the last chord in a lifted 8-bar loop. */
   liftMap?: Record<string, string[]>;
+  /** Keep major chords free of dominant 7ths (maj7/m7 colors only). */
+  noDominant7?: boolean;
 }
 
 export interface ChordSlot {
@@ -151,7 +153,7 @@ export function buildProgression(
     if (!colorByDegree.has(deg)) {
       colorByDegree.set(deg, consistent ? sharedColor : pickColor(harmony, colorRng));
     }
-    return buildChord(deg, key, colorByDegree.get(deg)!);
+    return buildChord(deg, key, colorByDegree.get(deg)!, { noDominant7: harmony.noDominant7 });
   });
 
   // Inversions that make the bass line move by step.

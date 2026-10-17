@@ -58,6 +58,7 @@ export function pluckLane(
   const notes: Note[] = [];
   let counter = 0;
   let lastSlot = -1;
+  let prevCounter: number | null = null;
   for (const h of hits) {
     const idx = slotIndexAt(slots, h.step);
     if (idx !== lastSlot) {
@@ -77,6 +78,18 @@ export function pluckLane(
       const tones = arpTones(voicing, lo, hi);
       const i = TRAVIS[counter % TRAVIS.length] % tones.length;
       notes.push({ pitch: tones[i], start: h.step, len, vel });
+    } else if (mode === "counter") {
+      // A quiet high line: stays near the previous note, moves when the chord changes.
+      const tones = arpTones(voicing, lo, hi);
+      const target = prevCounter ?? tones[tones.length - 1];
+      let best = tones[0];
+      for (const t of tones) if (Math.abs(t - target) < Math.abs(best - target)) best = t;
+      if (best === prevCounter && counter % 2 === 1) {
+        const i = tones.indexOf(best);
+        best = tones[Math.max(0, Math.min(tones.length - 1, i + (rng.chance(0.5) ? 1 : -1)))];
+      }
+      prevCounter = best;
+      notes.push({ pitch: best, start: h.step, len, vel: clampVel(vel - 6) });
     } else if (mode === "marimba") {
       const tones = arpTones(voicing, lo, hi).slice(-3);
       const pattern = [2, 1, 2, 0, 2, 1, 1, 0];

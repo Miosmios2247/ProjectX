@@ -14,7 +14,7 @@ import { checkLanes } from "./check";
 import { Key } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
-export const ENGINE_VERSION = "0.1.0";
+export const ENGINE_VERSION = "0.2.0";
 
 export type SeedLane = LaneId | "drums";
 export const SEED_LANES: SeedLane[] = ["chords", "bass", "lead", "pluck", "drums"];
@@ -127,6 +127,8 @@ export function generateIdea(params: IdeaParams): Idea {
     key,
     bpm,
     swing: variant.swing,
+    drumSwing: variant.drumSwing,
+    references: variant.references,
     bars,
     totalSteps,
     progression: slots,

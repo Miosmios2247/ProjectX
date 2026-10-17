@@ -1,213 +1,1476 @@
 [
-  {
-    "id": "chop-01",
-    "name": "Vocal-Chop silbig",
-    "lane": "lead",
-    "tags": ["chop", "emotional"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 2, "len": 1 }, { "step": 3, "len": 1 },
-      { "step": 6, "len": 2 }, { "step": 8, "len": 2 }, { "step": 11, "len": 1 },
-      { "step": 12, "len": 2 }, { "step": 14, "len": 2 }
-    ]
-  },
-  {
-    "id": "chop-02",
-    "name": "Vocal-Chop Stotter-Start",
-    "lane": "lead",
-    "tags": ["chop", "stutter"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1 }, { "step": 1, "len": 1, "vel": 80 }, { "step": 2, "len": 1, "vel": 84 },
-      { "step": 3, "len": 1, "vel": 80 }, { "step": 6, "len": 2 }, { "step": 10, "len": 2 },
-      { "step": 13, "len": 1 }, { "step": 14, "len": 2 }
-    ]
-  },
-  {
-    "id": "chop-03",
-    "name": "Vocal-Phrase (2 Takte)",
-    "lane": "lead",
-    "tags": ["chop", "phrase"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 3 }, { "step": 3, "len": 1 }, { "step": 4, "len": 2 },
-      { "step": 7, "len": 1 }, { "step": 8, "len": 4 }, { "step": 18, "len": 2 },
-      { "step": 20, "len": 2 }, { "step": 22, "len": 1 }, { "step": 23, "len": 1 },
-      { "step": 24, "len": 2 }, { "step": 28, "len": 4 }
-    ]
-  },
-  {
-    "id": "chop-04",
-    "name": "Vocal-Chop luftig (2 Takte)",
-    "lane": "lead",
-    "tags": ["chop", "sparse"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 4 }, { "step": 6, "len": 2 }, { "step": 8, "len": 2 },
-      { "step": 10, "len": 4 }, { "step": 16, "len": 1 }, { "step": 17, "len": 1, "vel": 82 },
-      { "step": 18, "len": 1, "vel": 86 }, { "step": 19, "len": 1, "vel": 80 },
-      { "step": 20, "len": 4 }, { "step": 26, "len": 2 }, { "step": 28, "len": 4 }
-    ]
-  },
-  {
-    "id": "chop-ukg-01",
-    "name": "Garage-Chop",
-    "lane": "lead",
-    "tags": ["chop", "ukg", "shuffle"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1 }, { "step": 3, "len": 1 }, { "step": 4, "len": 2 },
-      { "step": 7, "len": 1 }, { "step": 10, "len": 1 }, { "step": 11, "len": 2 },
-      { "step": 14, "len": 1 }, { "step": 15, "len": 1, "vel": 80 }
-    ]
-  },
-  {
-    "id": "chop-ukg-02",
-    "name": "Garage-Phrase (2 Takte)",
-    "lane": "lead",
-    "tags": ["chop", "ukg", "phrase"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 3, "len": 1 }, { "step": 6, "len": 2 },
-      { "step": 9, "len": 1 }, { "step": 10, "len": 2 }, { "step": 16, "len": 1 },
-      { "step": 17, "len": 1, "vel": 82 }, { "step": 19, "len": 1 }, { "step": 22, "len": 2 },
-      { "step": 26, "len": 1 }, { "step": 27, "len": 1 }, { "step": 28, "len": 3 }
-    ]
-  },
-  {
-    "id": "deep-chop-01",
-    "name": "Stutter lang (2 Takte)",
-    "lane": "lead",
-    "tags": ["chop", "deep", "stutter"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 6 }, { "step": 8, "len": 2 }, { "step": 10, "len": 6 },
-      { "step": 24, "len": 1 }, { "step": 25, "len": 1, "vel": 82 }, { "step": 26, "len": 1, "vel": 86 },
-      { "step": 27, "len": 1, "vel": 80 }, { "step": 28, "len": 4 }
-    ]
-  },
-  {
-    "id": "deep-chop-02",
-    "name": "Stutter luftig (2 Takte)",
-    "lane": "lead",
-    "tags": ["chop", "deep", "sparse"],
-    "bars": 2,
-    "hits": [
-      { "step": 2, "len": 4 }, { "step": 8, "len": 6 }, { "step": 18, "len": 2 },
-      { "step": 20, "len": 1 }, { "step": 21, "len": 1, "vel": 82 }, { "step": 22, "len": 6 }
-    ]
-  },
-  {
-    "id": "topline-01",
-    "name": "Topline gesungen",
-    "lane": "lead",
-    "tags": ["topline", "melodic"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 4 }, { "step": 4, "len": 2 }, { "step": 6, "len": 2 },
-      { "step": 8, "len": 6 }, { "step": 14, "len": 2 }, { "step": 16, "len": 4 },
-      { "step": 20, "len": 4 }, { "step": 24, "len": 8 }
-    ]
-  },
-  {
-    "id": "topline-02",
-    "name": "Topline Auftakt",
-    "lane": "lead",
-    "tags": ["topline", "melodic", "syncopated"],
-    "bars": 2,
-    "hits": [
-      { "step": 2, "len": 2 }, { "step": 4, "len": 2 }, { "step": 6, "len": 4 },
-      { "step": 10, "len": 2 }, { "step": 12, "len": 4 }, { "step": 18, "len": 2 },
-      { "step": 20, "len": 2 }, { "step": 22, "len": 2 }, { "step": 24, "len": 6 },
-      { "step": 30, "len": 2 }
-    ]
-  },
-  {
-    "id": "topline-03",
-    "name": "Topline punktiert",
-    "lane": "lead",
-    "tags": ["topline", "melodic"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 3 }, { "step": 3, "len": 3 }, { "step": 6, "len": 2 },
-      { "step": 8, "len": 4 }, { "step": 12, "len": 4 }, { "step": 16, "len": 2 },
-      { "step": 18, "len": 2 }, { "step": 20, "len": 4 }, { "step": 24, "len": 8 }
-    ]
-  },
-  {
-    "id": "topline-ukg-01",
-    "name": "Topline Garage",
-    "lane": "lead",
-    "tags": ["topline", "ukg", "syncopated"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 3, "len": 1 }, { "step": 4, "len": 3 },
-      { "step": 7, "len": 1 }, { "step": 8, "len": 4 }, { "step": 14, "len": 2 },
-      { "step": 16, "len": 1 }, { "step": 19, "len": 1 }, { "step": 20, "len": 3 },
-      { "step": 24, "len": 6 }
-    ]
-  },
-  {
-    "id": "folk-riff-01",
-    "name": "Folk-Riff",
-    "lane": "lead",
-    "tags": ["folk", "riff"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 2, "len": 2 }, { "step": 4, "len": 2 },
-      { "step": 6, "len": 1 }, { "step": 7, "len": 1 }, { "step": 8, "len": 2 },
-      { "step": 10, "len": 2 }, { "step": 12, "len": 4 }
-    ]
-  },
-  {
-    "id": "folk-riff-02",
-    "name": "Folk-Riff synkopiert",
-    "lane": "lead",
-    "tags": ["folk", "riff", "syncopated"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 3 }, { "step": 3, "len": 1 }, { "step": 4, "len": 2 },
-      { "step": 6, "len": 2 }, { "step": 8, "len": 3 }, { "step": 11, "len": 1 },
-      { "step": 12, "len": 2 }, { "step": 14, "len": 2 }
-    ]
-  },
-  {
-    "id": "folk-riff-03",
-    "name": "Folk-Hymne (2 Takte)",
-    "lane": "lead",
-    "tags": ["folk", "anthem"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 2, "len": 2 }, { "step": 4, "len": 4 },
-      { "step": 8, "len": 2 }, { "step": 10, "len": 2 }, { "step": 12, "len": 4 },
-      { "step": 16, "len": 2 }, { "step": 18, "len": 2 }, { "step": 20, "len": 2 },
-      { "step": 22, "len": 2 }, { "step": 24, "len": 8 }
-    ]
-  },
-  {
-    "id": "afro-call-01",
-    "name": "Ruf und Antwort",
-    "lane": "lead",
-    "tags": ["afro", "call"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 1 }, { "step": 2, "len": 1 }, { "step": 3, "len": 2 },
-      { "step": 6, "len": 1 }, { "step": 8, "len": 2 }, { "step": 11, "len": 1 },
-      { "step": 12, "len": 2 }, { "step": 18, "len": 1 }, { "step": 19, "len": 1 },
-      { "step": 20, "len": 2 }, { "step": 23, "len": 1 }, { "step": 24, "len": 4 }
-    ]
-  },
-  {
-    "id": "afro-call-02",
-    "name": "Ruf und Antwort luftig",
-    "lane": "lead",
-    "tags": ["afro", "call", "sparse"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2 }, { "step": 3, "len": 1 }, { "step": 6, "len": 2 },
-      { "step": 10, "len": 1 }, { "step": 11, "len": 1 }, { "step": 12, "len": 2 },
-      { "step": 16, "len": 2 }, { "step": 19, "len": 1 }, { "step": 22, "len": 2 },
-      { "step": 26, "len": 4 }
-    ]
-  }
+ {
+  "id": "chop-01",
+  "name": "Vocal-Chop silbig",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "emotional"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 2,
+    "len": 1
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 8,
+    "len": 2
+   },
+   {
+    "step": 11,
+    "len": 1
+   },
+   {
+    "step": 12,
+    "len": 2
+   },
+   {
+    "step": 14,
+    "len": 2
+   }
+  ]
+ },
+ {
+  "id": "chop-02",
+  "name": "Vocal-Chop Stotter-Start",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "stutter"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 10,
+    "len": 2
+   },
+   {
+    "step": 13,
+    "len": 1
+   },
+   {
+    "step": 14,
+    "len": 2
+   }
+  ]
+ },
+ {
+  "id": "chop-03",
+  "name": "Vocal-Phrase (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "phrase"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 7,
+    "len": 1
+   },
+   {
+    "step": 8,
+    "len": 4
+   },
+   {
+    "step": 18,
+    "len": 2
+   },
+   {
+    "step": 20,
+    "len": 2
+   },
+   {
+    "step": 22,
+    "len": 1
+   },
+   {
+    "step": 23,
+    "len": 1
+   },
+   {
+    "step": 24,
+    "len": 2
+   },
+   {
+    "step": 28,
+    "len": 4
+   }
+  ]
+ },
+ {
+  "id": "chop-04",
+  "name": "Vocal-Chop luftig (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "sparse"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 4
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 8,
+    "len": 2
+   },
+   {
+    "step": 10,
+    "len": 4
+   },
+   {
+    "step": 16,
+    "len": 1
+   },
+   {
+    "step": 17,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 18,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 20,
+    "len": 4
+   },
+   {
+    "step": 26,
+    "len": 2
+   },
+   {
+    "step": 28,
+    "len": 4
+   }
+  ]
+ },
+ {
+  "id": "chop-ukg-01",
+  "name": "Garage-Chop",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "ukg",
+   "shuffle"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 7,
+    "len": 1
+   },
+   {
+    "step": 10,
+    "len": 1
+   },
+   {
+    "step": 11,
+    "len": 2
+   },
+   {
+    "step": 14,
+    "len": 1
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "chop-ukg-02",
+  "name": "Garage-Phrase (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "ukg",
+   "phrase"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 9,
+    "len": 1
+   },
+   {
+    "step": 10,
+    "len": 2
+   },
+   {
+    "step": 16,
+    "len": 1
+   },
+   {
+    "step": 17,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 19,
+    "len": 1
+   },
+   {
+    "step": 22,
+    "len": 2
+   },
+   {
+    "step": 26,
+    "len": 1
+   },
+   {
+    "step": 27,
+    "len": 1
+   },
+   {
+    "step": 28,
+    "len": 3
+   }
+  ]
+ },
+ {
+  "id": "topline-01",
+  "name": "Topline gesungen",
+  "lane": "lead",
+  "tags": [
+   "topline",
+   "melodic"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 4
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 8,
+    "len": 6
+   },
+   {
+    "step": 14,
+    "len": 2
+   },
+   {
+    "step": 16,
+    "len": 4
+   },
+   {
+    "step": 20,
+    "len": 4
+   },
+   {
+    "step": 24,
+    "len": 8
+   }
+  ]
+ },
+ {
+  "id": "topline-02",
+  "name": "Topline Auftakt",
+  "lane": "lead",
+  "tags": [
+   "topline",
+   "melodic",
+   "syncopated"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 6,
+    "len": 4
+   },
+   {
+    "step": 10,
+    "len": 2
+   },
+   {
+    "step": 12,
+    "len": 4
+   },
+   {
+    "step": 18,
+    "len": 2
+   },
+   {
+    "step": 20,
+    "len": 2
+   },
+   {
+    "step": 22,
+    "len": 2
+   },
+   {
+    "step": 24,
+    "len": 6
+   },
+   {
+    "step": 30,
+    "len": 2
+   }
+  ]
+ },
+ {
+  "id": "topline-03",
+  "name": "Topline punktiert",
+  "lane": "lead",
+  "tags": [
+   "topline",
+   "melodic"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3
+   },
+   {
+    "step": 3,
+    "len": 3
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 8,
+    "len": 4
+   },
+   {
+    "step": 12,
+    "len": 4
+   },
+   {
+    "step": 16,
+    "len": 2
+   },
+   {
+    "step": 18,
+    "len": 2
+   },
+   {
+    "step": 20,
+    "len": 4
+   },
+   {
+    "step": 24,
+    "len": 8
+   }
+  ]
+ },
+ {
+  "id": "topline-ukg-01",
+  "name": "Topline Garage",
+  "lane": "lead",
+  "tags": [
+   "topline",
+   "ukg",
+   "syncopated"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 4,
+    "len": 3
+   },
+   {
+    "step": 7,
+    "len": 1
+   },
+   {
+    "step": 8,
+    "len": 4
+   },
+   {
+    "step": 14,
+    "len": 2
+   },
+   {
+    "step": 16,
+    "len": 1
+   },
+   {
+    "step": 19,
+    "len": 1
+   },
+   {
+    "step": 20,
+    "len": 3
+   },
+   {
+    "step": 24,
+    "len": 6
+   }
+  ]
+ },
+ {
+  "id": "folk-riff-01",
+  "name": "Folk-Riff",
+  "lane": "lead",
+  "tags": [
+   "folk",
+   "riff"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 2,
+    "len": 2
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 6,
+    "len": 1
+   },
+   {
+    "step": 7,
+    "len": 1
+   },
+   {
+    "step": 8,
+    "len": 2
+   },
+   {
+    "step": 10,
+    "len": 2
+   },
+   {
+    "step": 12,
+    "len": 4
+   }
+  ]
+ },
+ {
+  "id": "folk-riff-02",
+  "name": "Folk-Riff synkopiert",
+  "lane": "lead",
+  "tags": [
+   "folk",
+   "riff",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 4,
+    "len": 2
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 8,
+    "len": 3
+   },
+   {
+    "step": 11,
+    "len": 1
+   },
+   {
+    "step": 12,
+    "len": 2
+   },
+   {
+    "step": 14,
+    "len": 2
+   }
+  ]
+ },
+ {
+  "id": "folk-riff-03",
+  "name": "Folk-Hymne (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "folk",
+   "anthem"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 2,
+    "len": 2
+   },
+   {
+    "step": 4,
+    "len": 4
+   },
+   {
+    "step": 8,
+    "len": 2
+   },
+   {
+    "step": 10,
+    "len": 2
+   },
+   {
+    "step": 12,
+    "len": 4
+   },
+   {
+    "step": 16,
+    "len": 2
+   },
+   {
+    "step": 18,
+    "len": 2
+   },
+   {
+    "step": 20,
+    "len": 2
+   },
+   {
+    "step": 22,
+    "len": 2
+   },
+   {
+    "step": 24,
+    "len": 8
+   }
+  ]
+ },
+ {
+  "id": "afro-call-01",
+  "name": "Ruf und Antwort",
+  "lane": "lead",
+  "tags": [
+   "afro",
+   "call"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1
+   },
+   {
+    "step": 2,
+    "len": 1
+   },
+   {
+    "step": 3,
+    "len": 2
+   },
+   {
+    "step": 6,
+    "len": 1
+   },
+   {
+    "step": 8,
+    "len": 2
+   },
+   {
+    "step": 11,
+    "len": 1
+   },
+   {
+    "step": 12,
+    "len": 2
+   },
+   {
+    "step": 18,
+    "len": 1
+   },
+   {
+    "step": 19,
+    "len": 1
+   },
+   {
+    "step": 20,
+    "len": 2
+   },
+   {
+    "step": 23,
+    "len": 1
+   },
+   {
+    "step": 24,
+    "len": 4
+   }
+  ]
+ },
+ {
+  "id": "afro-call-02",
+  "name": "Ruf und Antwort luftig",
+  "lane": "lead",
+  "tags": [
+   "afro",
+   "call",
+   "sparse"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2
+   },
+   {
+    "step": 3,
+    "len": 1
+   },
+   {
+    "step": 6,
+    "len": 2
+   },
+   {
+    "step": 10,
+    "len": 1
+   },
+   {
+    "step": 11,
+    "len": 1
+   },
+   {
+    "step": 12,
+    "len": 2
+   },
+   {
+    "step": 16,
+    "len": 2
+   },
+   {
+    "step": 19,
+    "len": 1
+   },
+   {
+    "step": 22,
+    "len": 2
+   },
+   {
+    "step": 26,
+    "len": 4
+   }
+  ]
+ },
+ {
+  "id": "gate-16-full",
+  "name": "Gate 1/16 durchgehend",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "gate-8ths",
+  "name": "Gate 1/8",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 2,
+    "len": 1.5,
+    "vel": 86
+   },
+   {
+    "step": 4,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 6,
+    "len": 1.5,
+    "vel": 86
+   },
+   {
+    "step": 8,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 10,
+    "len": 1.5,
+    "vel": 86
+   },
+   {
+    "step": 12,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 14,
+    "len": 1.5,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "gate-synco",
+  "name": "Gate synkopiert",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 98
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 98
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 90
+   }
+  ]
+ },
+ {
+  "id": "gate-held-stutter",
+  "name": "Gehalten, dann Stotter",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter",
+   "stretched"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 8,
+    "vel": 100
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 16,
+    "len": 6,
+    "vel": 100
+   },
+   {
+    "step": 22,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 23,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 24,
+    "len": 4,
+    "vel": 96
+   },
+   {
+    "step": 28,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 29,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 30,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 31,
+    "len": 1,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "gate-phrase",
+  "name": "Stotter-Phrase",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter",
+   "phrase"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 4,
+    "len": 4,
+    "vel": 98
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 12,
+    "len": 4,
+    "vel": 96
+   },
+   {
+    "step": 16,
+    "len": 8,
+    "vel": 100
+   },
+   {
+    "step": 24,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 25,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 26,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 27,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 28,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 29,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 30,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 31,
+    "len": 1,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "brass-hook-01",
+  "name": "Bläser-Hook Ruf/Antwort",
+  "lane": "lead",
+  "tags": [
+   "brass",
+   "hook",
+   "afro"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 104
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 98
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 8,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 104
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 20,
+    "len": 2,
+    "vel": 98
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 24,
+    "len": 4,
+    "vel": 100
+   },
+   {
+    "step": 30,
+    "len": 2,
+    "vel": 90
+   }
+  ]
+ },
+ {
+  "id": "brass-hook-02",
+  "name": "Bläser-Hook synkopiert",
+  "lane": "lead",
+  "tags": [
+   "brass",
+   "hook",
+   "afro"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 98
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 12,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 18,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 20,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 22,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 23,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 24,
+    "len": 6,
+    "vel": 100
+   }
+  ]
+ },
+ {
+  "id": "chop-hook-01",
+  "name": "Vocal-Hook mit Wiederholung",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "hook"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 16,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 17,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 18,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 24,
+    "len": 6,
+    "vel": 98
+   }
+  ]
+ },
+ {
+  "id": "chop-hook-02",
+  "name": "Vocal-Hook luftig",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "hook",
+   "sparse"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 10,
+    "len": 4,
+    "vel": 98
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 18,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 20,
+    "len": 4,
+    "vel": 96
+   },
+   {
+    "step": 26,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 27,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 28,
+    "len": 4,
+    "vel": 96
+   }
+  ]
+ }
 ]

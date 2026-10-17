@@ -1,121 +1,559 @@
 {
-  "id": "bunt",
-  "artist": "BUNT.",
-  "blurb": "Früher Folk-House mit Gitarre und Mundharmonika, heute Deep- und Stutter-House",
-  "variants": [
+ "id": "bunt",
+ "artist": "BUNT.",
+ "blurb": "Seit „Clouds“ Stutter House: gedehnte, gegatete Vocals, kurze Loops, „weniger klingt größer“",
+ "variants": [
+  {
+   "id": "stutter",
+   "name": "Stutter House",
+   "blurb": "127–133 BPM, VI–i oder VI–VII–i–VII, gedehnter Vokal mit 1/16-Gate, helles Piano",
+   "references": [
+    "Clouds",
+    "Spaces",
+    "Moment",
+    "Lost My Mind (Wake Up)"
+   ],
+   "tempo": [
+    127,
+    133
+   ],
+   "swing": 0.52,
+   "drumSwing": 0.58,
+   "drums": [
     {
-      "id": "folk-house",
-      "name": "Folk-House",
-      "blurb": "Dur-Hymnen, gestrummte Gitarre, Pentatonik-Riffs",
-      "tempo": [122, 126],
-      "swing": 0.5,
-      "drums": [{ "id": "folk-house-01", "weight": 3 }, { "id": "house-soft-01", "weight": 1 }],
-      "harmony": {
-        "modes": { "major": 0.75, "minor": 0.25 },
-        "progressions": [
-          { "mode": "major", "degrees": ["I", "V", "vi", "IV"], "weight": 3 },
-          { "mode": "major", "degrees": ["vi", "IV", "I", "V"], "weight": 2 },
-          { "mode": "major", "degrees": ["I", "IV", "vi", "V"], "weight": 2 },
-          { "mode": "major", "degrees": ["IV", "I", "V", "vi"], "weight": 1 },
-          { "mode": "major", "degrees": ["I", "V", "IV", "IV"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 }
-        ],
-        "colors": { "triad": 0.6, "sus2": 0.15, "sus4": 0.1, "add9": 0.15 },
-        "colorConsistency": 0.3,
-        "inversions": 0.2,
-        "substitution": 0.08,
-        "lift": 0.3,
-        "stretch": 0.15
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["guitar"],
-          "rhythms": [{ "id": "strum-folk-01", "weight": 3 }, { "id": "strum-folk-02", "weight": 2 }, { "id": "strum-house", "weight": 2 }],
-          "voicing": { "low": 40, "high": 69, "voices": [5, 6], "spread": "open", "colorTop": 0.2, "rootBottom": 2.5 }
-        },
-        "bass": {
-          "sound": ["house-bass"],
-          "rhythms": [{ "id": "root-octave-8ths", "weight": 2 }, { "id": "house-offbeat", "weight": 2 }],
-          "range": [30, 45]
-        },
-        "lead": {
-          "sound": ["harmonica", "whistle"],
-          "mode": "folk",
-          "rhythms": [{ "id": "folk-riff-01", "weight": 2 }, { "id": "folk-riff-02", "weight": 2 }, { "id": "folk-riff-03", "weight": 2 }],
-          "range": [67, 86],
-          "tensions": false
-        },
-        "pluck": {
-          "sound": ["guitar-pick"],
-          "mode": "pick",
-          "rhythms": [{ "id": "guitar-pick-01", "weight": 1 }],
-          "range": [52, 76]
-        }
-      },
-      "mix": { "sidechain": 0.35, "reverb": 0.3, "drumKit": "house" },
-      "soundHints": [
-        "Akustikgitarre gestrummt, Tamburin auf den Achteln",
-        "Mundharmonika, Pfeifen oder Banjo für das Riff (Dur-Pentatonik)",
-        "Akkorde eher pur (Dreiklänge, sus), keine Jazz-Farben"
-      ]
+     "id": "stutter-4x4",
+     "weight": 3
     },
     {
-      "id": "deep-stutter",
-      "name": "Deep / Stutter House",
-      "blurb": "Moll-7er-Akkorde, Orgel-Stabs, gestotterte Vocal-Chops",
-      "tempo": [120, 124],
-      "swing": 0.55,
-      "drums": [{ "id": "deep-01", "weight": 3 }, { "id": "house-soft-02", "weight": 1 }],
-      "harmony": {
-        "modes": { "minor": 0.8, "major": 0.2 },
-        "progressions": [
-          { "mode": "minor", "degrees": ["i", "IV", "VII", "III"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "IV"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "VI", "VII", "i"], "weight": 1 },
-          { "mode": "minor", "degrees": ["VI", "VII", "i", "i"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "iv", "VII", "III"], "weight": 1 },
-          { "mode": "major", "degrees": ["ii", "V", "I", "vi"], "weight": 1 }
-        ],
-        "colors": { "seventh": 0.35, "ninth": 0.3, "eleventh": 0.15, "add9": 0.1, "triad": 0.1 },
-        "colorConsistency": 0.6,
-        "inversions": 0.05,
-        "substitution": 0.1,
-        "lift": 0.35,
-        "stretch": 0.35
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["deep-stab"],
-          "rhythms": [{ "id": "deep-stab-01", "weight": 3 }, { "id": "deep-stab-02", "weight": 2 }, { "id": "hold", "weight": 1 }],
-          "voicing": { "low": 52, "high": 72, "voices": [3, 4], "spread": "close", "colorTop": 0.8, "rootBottom": 0.5 }
-        },
-        "bass": {
-          "sound": ["deep-bass"],
-          "rhythms": [{ "id": "deep-bass-01", "weight": 2 }, { "id": "deep-bass-02", "weight": 2 }, { "id": "sub-hold", "weight": 1 }],
-          "range": [30, 45],
-          "pedal": 0.1
-        },
-        "lead": {
-          "sound": ["vox-chop"],
-          "mode": "deep-chop",
-          "rhythms": [{ "id": "deep-chop-01", "weight": 2 }, { "id": "deep-chop-02", "weight": 2 }],
-          "range": [62, 77],
-          "tensions": true
-        },
-        "pluck": {
-          "sound": ["soft-bell"],
-          "mode": "arp",
-          "rhythms": [{ "id": "arp-8ths-sparse", "weight": 2 }, { "id": "bell-sparse", "weight": 1 }],
-          "range": [70, 89],
-          "orders": ["up", "pendulum"]
-        }
-      },
-      "mix": { "sidechain": 0.45, "reverb": 0.35, "drumKit": "deep" },
-      "soundHints": [
-        "Orgel- oder Chord-Stab mit Filter-Hüllkurve und Chorus",
-        "Vocal-Chops gestottert (16tel-Wiederholungen vor dem Taktwechsel)",
-        "Deep-Bass mit leichtem Filter-Pluck"
-      ]
+     "id": "stutter-garage",
+     "weight": 2
     }
-  ]
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.85,
+     "major": 0.15
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "i"
+      ],
+      "weight": 3,
+      "durations": [
+       2,
+       2
+      ]
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "i"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "VII",
+       "i",
+       "VII"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "VII",
+       "i",
+       "VII"
+      ],
+      "weight": 2
+     }
+    ],
+    "colors": {
+     "triad": 0.6,
+     "seventh": 0.2,
+     "add9": 0.2
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.3,
+    "liftMap": {
+     "VII": [
+      "VI"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "bright-piano"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 3
+      },
+      {
+       "id": "piano-quarters",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 52,
+      "high": 79,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "piano",
+      "colorTop": 0.5,
+      "rootBottom": 1.0,
+      "topRange": [
+       69,
+       79
+      ]
+     }
+    },
+    "bass": {
+     "sound": [
+      "sub"
+     ],
+     "rhythms": [
+      {
+       "id": "sub-kick",
+       "weight": 3
+      },
+      {
+       "id": "sub-hold",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-stretch"
+     ],
+     "mode": "gated-vowel",
+     "rhythms": [
+      {
+       "id": "gate-held-stutter",
+       "weight": 3
+      },
+      {
+       "id": "gate-phrase",
+       "weight": 2
+      },
+      {
+       "id": "gate-synco",
+       "weight": 1
+      },
+      {
+       "id": "gate-16-full",
+       "weight": 1
+      }
+     ],
+     "range": [
+      64,
+      79
+     ],
+     "tensions": false
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "arp",
+     "rhythms": [
+      {
+       "id": "keys-8ths-high",
+       "weight": 2
+      },
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      91
+     ],
+     "orders": [
+      "up",
+      "pendulum"
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.6,
+    "reverb": 0.36,
+    "drumKit": "stutter",
+    "noise": 0.015,
+    "gate": {
+     "lanes": [
+      "chords"
+     ],
+     "pattern": [
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+     ],
+     "depth": 0.7
+    }
+   },
+   "soundHints": [
+    "Vocal-Hook aus einem bestehenden Song: Vokale lang gedehnt, verzerrt und mit 1/16-Gate „gestottert“",
+    "Kurze Loops (2–4 Akkorde) durch den ganzen Track; „It sounds bigger when there's less“",
+    "Helles Flügel-Piano unter der Stimme, Kick-Sidechain (z. B. Kickstart), Pads ebenfalls gegatet",
+    "Zum Drop hin beschleunigte Wirbel: 8tel → 16tel → 32tel"
+   ]
+  },
+  {
+   "id": "dnb",
+   "name": "Drum & Bass",
+   "blurb": "~175 BPM, ii–IV–I in Dur, Breakbeat, gegateter Vocal",
+   "references": [
+    "TRIPPIN (mit Mapei)"
+   ],
+   "tempo": [
+    172,
+    176
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.52,
+   "drums": [
+    {
+     "id": "dnb-break",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "major": 0.7,
+     "minor": 0.3
+    },
+    "progressions": [
+     {
+      "mode": "major",
+      "degrees": [
+       "ii",
+       "IV",
+       "I",
+       "I"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "VII",
+       "i",
+       "VII"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.5,
+     "add9": 0.3,
+     "seventh": 0.2
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.3,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "bright-piano"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 2
+      },
+      {
+       "id": "hold-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 52,
+      "high": 79,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "piano",
+      "colorTop": 0.5,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "reese"
+     ],
+     "rhythms": [
+      {
+       "id": "dnb-reese",
+       "weight": 3
+      }
+     ],
+     "range": [
+      28,
+      43
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-stretch"
+     ],
+     "mode": "gated-vowel",
+     "rhythms": [
+      {
+       "id": "gate-phrase",
+       "weight": 2
+      },
+      {
+       "id": "gate-held-stutter",
+       "weight": 2
+      }
+     ],
+     "range": [
+      64,
+      79
+     ]
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "arp",
+     "rhythms": [
+      {
+       "id": "keys-8ths-high",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      91
+     ],
+     "orders": [
+      "up"
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.3,
+    "reverb": 0.3,
+    "drumKit": "dnb",
+    "noise": 0.01
+   },
+   "soundHints": [
+    "Drum-&-Bass-Break (Kick 1 und 3+, Snare 2 und 4) unter einer ruhigen Dur-Folge",
+    "Reese-Bass, gegateter Vocal wie im Stutter House"
+   ]
+  },
+  {
+   "id": "folk",
+   "name": "Folk-House (früh)",
+   "blurb": "2014–2022: Dur, 124–127 BPM, vi–IV–I, Gitarre, Mundharmonika/Bläser im Drop",
+   "references": [
+    "Old Guitar",
+    "Unbreakable",
+    "Coming Home",
+    "Harmonica"
+   ],
+   "tempo": [
+    124,
+    127
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.52,
+   "drums": [
+    {
+     "id": "folk-house-01",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "major": 1
+    },
+    "progressions": [
+     {
+      "mode": "major",
+      "degrees": [
+       "vi",
+       "IV",
+       "I",
+       "I"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "vi",
+       "IV",
+       "I",
+       "V"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.7,
+     "sus2": 0.15,
+     "add9": 0.15
+    },
+    "colorConsistency": 0.3,
+    "inversions": 0.15,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.15
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "guitar-strum"
+     ],
+     "rhythms": [
+      {
+       "id": "strum-folk-01",
+       "weight": 3
+      },
+      {
+       "id": "strum-folk-02",
+       "weight": 2
+      },
+      {
+       "id": "strum-house",
+       "weight": 2
+      }
+     ],
+     "voicing": {
+      "low": 40,
+      "high": 69,
+      "voices": [
+       5,
+       6
+      ],
+      "spread": "open",
+      "colorTop": 0.2,
+      "rootBottom": 2.5
+     }
+    },
+    "bass": {
+     "sound": [
+      "house-bass"
+     ],
+     "rhythms": [
+      {
+       "id": "root-octave-8ths",
+       "weight": 2
+      },
+      {
+       "id": "house-offbeat",
+       "weight": 2
+      }
+     ],
+     "range": [
+      30,
+      45
+     ]
+    },
+    "lead": {
+     "sound": [
+      {
+       "id": "harmonica",
+       "weight": 2
+      },
+      {
+       "id": "brass-lead",
+       "weight": 1
+      }
+     ],
+     "mode": "folk",
+     "rhythms": [
+      {
+       "id": "folk-riff-01",
+       "weight": 2
+      },
+      {
+       "id": "folk-riff-02",
+       "weight": 2
+      },
+      {
+       "id": "folk-riff-03",
+       "weight": 2
+      }
+     ],
+     "range": [
+      64,
+      84
+     ],
+     "tensions": false
+    },
+    "pluck": {
+     "sound": [
+      "guitar-pick"
+     ],
+     "mode": "pick",
+     "rhythms": [
+      {
+       "id": "guitar-pick-01",
+       "weight": 1
+      }
+     ],
+     "range": [
+      52,
+      76
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.35,
+    "reverb": 0.3,
+    "drumKit": "house",
+    "noise": 0
+   },
+   "soundHints": [
+    "Dur-Tonarten, vi–IV–I, Four-on-the-floor um 125 BPM",
+    "Banjo, Fiddle, Bläser oder Mundharmonika führen den Drop",
+    "Akustikgitarre gestrummt"
+   ]
+  }
+ ]
 }

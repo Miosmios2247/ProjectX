@@ -7,10 +7,12 @@ import { Rng } from "../rng";
 import { DrumHit } from "../types";
 
 const DEFAULT_VEL: Record<DrumInst, number> = {
-  kick: 112, snare: 100, clap: 100, hatC: 72, hatO: 80, shaker: 60, percHi: 82, percLo: 86, rim: 78, tamb: 64,
+  kick: 112, snare: 100, clap: 100, hatC: 72, hatO: 80, shaker: 60, percHi: 82, percLo: 86, tom: 84, rim: 78, tamb: 64,
 };
 
-const LOOSE: Partial<Record<DrumInst, number>> = { hatC: 10, hatO: 8, shaker: 12, tamb: 10, percHi: 8, percLo: 8, rim: 6 };
+const LOOSE: Partial<Record<DrumInst, number>> = {
+  hatC: 10, hatO: 8, shaker: 12, tamb: 10, percHi: 8, percLo: 8, tom: 8, rim: 6,
+};
 
 function entries(track: DrumTrack | undefined, inst: DrumInst, pattern: DrumPattern): [number, number][] {
   if (!track) return [];

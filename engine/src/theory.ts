@@ -186,6 +186,7 @@ function tryColor(
   root: PitchClass,
   color: ColorToken,
   ok: (pc: PitchClass) => boolean,
+  noDominant7 = false,
 ): { quality: TriadQuality; intervals: number[] } | null {
   const base = [...TRIADS[quality]];
   const has = (i: number) => ok(root + i);
@@ -193,7 +194,8 @@ function tryColor(
     if (quality === "min" || quality === "dim") return has(10) ? 10 : null;
     if (quality === "aug") return null;
     if (has(11)) return 11;
-    if (has(10)) return 10;
+    // A major triad with a minor 7th is a dominant 7th; some styles never use it.
+    if (has(10) && !(noDominant7 && quality === "maj")) return 10;
     return null;
   };
   switch (color) {
@@ -237,19 +239,31 @@ function tryColor(
   }
 }
 
-export function buildChord(degree: string, key: Key, color: ColorToken = "triad"): Chord {
+export interface ChordOptions {
+  /** Never turn a major chord into a dominant 7th (maj7 and m7 stay allowed). */
+  noDominant7?: boolean;
+}
+
+export function buildChord(
+  degree: string,
+  key: Key,
+  color: ColorToken = "triad",
+  options: ChordOptions = {},
+): Chord {
   const spec = parseRoman(degree);
   const root = romanRoot(spec, key);
   const triadPcs = TRIADS[spec.quality].map((i) => mod12(root + i));
   // Extensions must stay inside the key (or the chord's own triad).
   const ok = (pc: PitchClass) => inScale(pc, key) || triadPcs.includes(mod12(pc));
   const wanted = spec.forced ?? color;
+  // A seventh written into the template ("V7") is always honoured.
+  const noDom = !!options.noDominant7 && !spec.forced;
   let applied: ColorToken = "triad";
-  let result = tryColor(spec.quality, root, wanted, ok);
+  let result = tryColor(spec.quality, root, wanted, ok, noDom);
   if (result) applied = wanted;
   else {
     for (const alt of FALLBACK[wanted]) {
-      result = tryColor(spec.quality, root, alt, ok);
+      result = tryColor(spec.quality, root, alt, ok, noDom);
       if (result) {
         applied = alt;
         break;

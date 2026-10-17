@@ -1,149 +1,838 @@
 [
-  {
-    "id": "arp-16",
-    "name": "Arp 16tel",
-    "lane": "pluck",
-    "tags": ["arp", "drive"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 96 }, { "step": 1, "len": 1, "vel": 68 },
-      { "step": 2, "len": 1, "vel": 82 }, { "step": 3, "len": 1, "vel": 68 },
-      { "step": 4, "len": 1, "vel": 90 }, { "step": 5, "len": 1, "vel": 68 },
-      { "step": 6, "len": 1, "vel": 82 }, { "step": 7, "len": 1, "vel": 68 },
-      { "step": 8, "len": 1, "vel": 94 }, { "step": 9, "len": 1, "vel": 68 },
-      { "step": 10, "len": 1, "vel": 82 }, { "step": 11, "len": 1, "vel": 68 },
-      { "step": 12, "len": 1, "vel": 90 }, { "step": 13, "len": 1, "vel": 68 },
-      { "step": 14, "len": 1, "vel": 82 }, { "step": 15, "len": 1, "vel": 70 }
-    ]
-  },
-  {
-    "id": "arp-16-gated",
-    "name": "Arp 16tel mit Lücken",
-    "lane": "pluck",
-    "tags": ["arp", "melodic"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 96 }, { "step": 1, "len": 1, "vel": 70 },
-      { "step": 3, "len": 1, "vel": 80 }, { "step": 4, "len": 1, "vel": 88 },
-      { "step": 6, "len": 1, "vel": 82 }, { "step": 8, "len": 1, "vel": 94 },
-      { "step": 9, "len": 1, "vel": 70 }, { "step": 11, "len": 1, "vel": 80 },
-      { "step": 12, "len": 1, "vel": 88 }, { "step": 14, "len": 1, "vel": 82 }
-    ]
-  },
-  {
-    "id": "arp-8ths",
-    "name": "Arp Achtel",
-    "lane": "pluck",
-    "tags": ["arp", "calm"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 92 }, { "step": 2, "len": 2, "vel": 76 },
-      { "step": 4, "len": 2, "vel": 86 }, { "step": 6, "len": 2, "vel": 76 },
-      { "step": 8, "len": 2, "vel": 90 }, { "step": 10, "len": 2, "vel": 76 },
-      { "step": 12, "len": 2, "vel": 86 }, { "step": 14, "len": 2, "vel": 78 }
-    ]
-  },
-  {
-    "id": "arp-8ths-sparse",
-    "name": "Arp Achtel sparsam",
-    "lane": "pluck",
-    "tags": ["arp", "sparse"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 90 }, { "step": 4, "len": 2, "vel": 80 },
-      { "step": 6, "len": 2, "vel": 76 }, { "step": 10, "len": 2, "vel": 82 },
-      { "step": 12, "len": 2, "vel": 78 }
-    ]
-  },
-  {
-    "id": "arp-16-shuffle",
-    "name": "Arp Shuffle",
-    "lane": "pluck",
-    "tags": ["arp", "ukg", "shuffle"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 92 }, { "step": 2, "len": 1, "vel": 80 },
-      { "step": 3, "len": 1, "vel": 72 }, { "step": 6, "len": 1, "vel": 84 },
-      { "step": 8, "len": 1, "vel": 90 }, { "step": 10, "len": 1, "vel": 80 },
-      { "step": 11, "len": 1, "vel": 72 }, { "step": 14, "len": 1, "vel": 84 }
-    ]
-  },
-  {
-    "id": "house-pluck-offbeat",
-    "name": "Pluck-Stabs Offbeat",
-    "lane": "pluck",
-    "tags": ["stab", "house", "offbeat"],
-    "bars": 1,
-    "hits": [
-      { "step": 2, "len": 1, "vel": 92 }, { "step": 6, "len": 1, "vel": 86 },
-      { "step": 10, "len": 1, "vel": 92 }, { "step": 14, "len": 1, "vel": 86 }
-    ]
-  },
-  {
-    "id": "pluck-syncopated",
-    "name": "Pluck synkopiert",
-    "lane": "pluck",
-    "tags": ["arp", "syncopated"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 92 }, { "step": 3, "len": 1, "vel": 84 },
-      { "step": 6, "len": 1, "vel": 88 }, { "step": 8, "len": 1, "vel": 80 },
-      { "step": 11, "len": 1, "vel": 86 }, { "step": 14, "len": 1, "vel": 82 }
-    ]
-  },
-  {
-    "id": "marimba-01",
-    "name": "Marimba-Muster",
-    "lane": "pluck",
-    "tags": ["afro", "marimba"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 94 }, { "step": 2, "len": 1, "vel": 78 },
-      { "step": 3, "len": 1, "vel": 86 }, { "step": 6, "len": 1, "vel": 90 },
-      { "step": 7, "len": 1, "vel": 76 }, { "step": 10, "len": 1, "vel": 88 },
-      { "step": 12, "len": 1, "vel": 80 }, { "step": 14, "len": 1, "vel": 84 }
-    ]
-  },
-  {
-    "id": "marimba-02",
-    "name": "Marimba-Ruf (2 Takte)",
-    "lane": "pluck",
-    "tags": ["afro", "marimba", "call"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 1, "vel": 94 }, { "step": 3, "len": 1, "vel": 84 },
-      { "step": 4, "len": 1, "vel": 78 }, { "step": 6, "len": 1, "vel": 88 },
-      { "step": 8, "len": 1, "vel": 82 }, { "step": 11, "len": 1, "vel": 86 },
-      { "step": 12, "len": 1, "vel": 80 }, { "step": 14, "len": 1, "vel": 84 },
-      { "step": 16, "len": 1, "vel": 92 }, { "step": 18, "len": 1, "vel": 80 },
-      { "step": 19, "len": 1, "vel": 84 }, { "step": 22, "len": 1, "vel": 88 },
-      { "step": 24, "len": 1, "vel": 82 }, { "step": 27, "len": 1, "vel": 84 },
-      { "step": 28, "len": 1, "vel": 78 }, { "step": 30, "len": 1, "vel": 82 }
-    ]
-  },
-  {
-    "id": "guitar-pick-01",
-    "name": "Gitarre gezupft",
-    "lane": "pluck",
-    "tags": ["folk", "guitar", "pick"],
-    "bars": 1,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 92 }, { "step": 2, "len": 2, "vel": 78 },
-      { "step": 4, "len": 2, "vel": 84 }, { "step": 6, "len": 2, "vel": 78 },
-      { "step": 8, "len": 2, "vel": 90 }, { "step": 10, "len": 2, "vel": 78 },
-      { "step": 12, "len": 2, "vel": 84 }, { "step": 14, "len": 2, "vel": 80 }
-    ]
-  },
-  {
-    "id": "bell-sparse",
-    "name": "Glocken sparsam (2 Takte)",
-    "lane": "pluck",
-    "tags": ["arp", "sparse", "emotional"],
-    "bars": 2,
-    "hits": [
-      { "step": 0, "len": 2, "vel": 86 }, { "step": 6, "len": 2, "vel": 78 },
-      { "step": 12, "len": 2, "vel": 80 }, { "step": 16, "len": 2, "vel": 84 },
-      { "step": 22, "len": 2, "vel": 76 }, { "step": 28, "len": 2, "vel": 78 }
-    ]
-  }
+ {
+  "id": "arp-16",
+  "name": "Arp 16tel",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "drive"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 94
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 68
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 70
+   }
+  ]
+ },
+ {
+  "id": "arp-16-gated",
+  "name": "Arp 16tel mit Lücken",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "melodic"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 94
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 82
+   }
+  ]
+ },
+ {
+  "id": "arp-8ths",
+  "name": "Arp Achtel",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "calm"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 76
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 76
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 76
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "arp-8ths-sparse",
+  "name": "Arp Achtel sparsam",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "sparse"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 80
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 76
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 82
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "arp-16-shuffle",
+  "name": "Arp Shuffle",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "ukg",
+   "shuffle"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 72
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 72
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "house-pluck-offbeat",
+  "name": "Pluck-Stabs Offbeat",
+  "lane": "pluck",
+  "tags": [
+   "stab",
+   "house",
+   "offbeat"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "pluck-syncopated",
+  "name": "Pluck synkopiert",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 82
+   }
+  ]
+ },
+ {
+  "id": "marimba-01",
+  "name": "Marimba-Muster",
+  "lane": "pluck",
+  "tags": [
+   "afro",
+   "marimba"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 94
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 90
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "marimba-02",
+  "name": "Marimba-Ruf (2 Takte)",
+  "lane": "pluck",
+  "tags": [
+   "afro",
+   "marimba",
+   "call"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 94
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 86
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 16,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 18,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 22,
+    "len": 1,
+    "vel": 88
+   },
+   {
+    "step": 24,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 27,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 28,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 30,
+    "len": 1,
+    "vel": 82
+   }
+  ]
+ },
+ {
+  "id": "guitar-pick-01",
+  "name": "Gitarre gezupft",
+  "lane": "pluck",
+  "tags": [
+   "folk",
+   "guitar",
+   "pick"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "bell-sparse",
+  "name": "Glocken sparsam (2 Takte)",
+  "lane": "pluck",
+  "tags": [
+   "arp",
+   "sparse",
+   "emotional"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 80
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 76
+   },
+   {
+    "step": 28,
+    "len": 2,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "keys-8ths-high",
+  "name": "Helle Keys Achtel",
+  "lane": "pluck",
+  "tags": [
+   "keys",
+   "stutter"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1.5,
+    "vel": 90
+   },
+   {
+    "step": 2,
+    "len": 1.5,
+    "vel": 76
+   },
+   {
+    "step": 4,
+    "len": 1.5,
+    "vel": 90
+   },
+   {
+    "step": 6,
+    "len": 1.5,
+    "vel": 76
+   },
+   {
+    "step": 8,
+    "len": 1.5,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 1.5,
+    "vel": 76
+   },
+   {
+    "step": 12,
+    "len": 1.5,
+    "vel": 90
+   },
+   {
+    "step": 14,
+    "len": 1.5,
+    "vel": 76
+   }
+  ]
+ },
+ {
+  "id": "glass-cross",
+  "name": "Glas-Glocken 3 gegen 4",
+  "lane": "pluck",
+  "tags": [
+   "afro",
+   "bells",
+   "cross"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 18,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 21,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 24,
+    "len": 1,
+    "vel": 92
+   },
+   {
+    "step": 27,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 30,
+    "len": 1,
+    "vel": 92
+   }
+  ]
+ },
+ {
+  "id": "counter-sparse",
+  "name": "Hohe Gegenlinie",
+  "lane": "pluck",
+  "tags": [
+   "counter",
+   "emotional"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 4,
+    "vel": 84
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 74
+   },
+   {
+    "step": 8,
+    "len": 6,
+    "vel": 80
+   },
+   {
+    "step": 16,
+    "len": 4,
+    "vel": 82
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 72
+   },
+   {
+    "step": 24,
+    "len": 6,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "guitar-arp-pop",
+  "name": "Gitarre Pop-Picking",
+  "lane": "pluck",
+  "tags": [
+   "guitar",
+   "pop"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 78
+   }
+  ]
+ }
 ]

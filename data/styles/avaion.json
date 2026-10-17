@@ -1,177 +1,600 @@
 {
-  "id": "avaion",
-  "artist": "AVAION",
-  "blurb": "Melodisch-emotionaler House mit Pop-Einschlag, warme Plucks, singbare Toplines",
-  "variants": [
+ "id": "avaion",
+ "artist": "AVAION",
+ "blurb": "Singt selbst, schreibt von der Gitarre aus; warme Akkord-Stapel, später 130+ BPM und Afro House",
+ "variants": [
+  {
+   "id": "pieces",
+   "name": "Pieces-Ära",
+   "blurb": "120–124 BPM, I–V–ii–IV oder VImaj7–i–VII–iv, gesungene Topline, Gitarre",
+   "references": [
+    "Pieces",
+    "When You Go",
+    "Sleepless"
+   ],
+   "tempo": [
+    120,
+    124
+   ],
+   "swing": 0.52,
+   "drumSwing": 0.56,
+   "drums": [
     {
-      "id": "melodic-house",
-      "name": "Melodic House",
-      "blurb": "Melancholisch-euphorisch, Plucks und Pads, singbare Topline",
-      "tempo": [120, 124],
-      "swing": 0.52,
-      "drums": [{ "id": "house-soft-02", "weight": 2 }, { "id": "house-soft-01", "weight": 1 }],
-      "harmony": {
-        "modes": { "minor": 0.75, "major": 0.25 },
-        "progressions": [
-          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 3 },
-          { "mode": "minor", "degrees": ["VI", "VII", "i", "i"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "VII", "VI", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["VI", "III", "VII", "i"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "iv", "VI", "V"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "III", "VII", "VI"], "weight": 1 },
-          { "mode": "major", "degrees": ["I", "V", "vi", "IV"], "weight": 1 }
-        ],
-        "colors": { "triad": 0.25, "add9": 0.3, "seventh": 0.2, "ninth": 0.15, "sus2": 0.1 },
-        "colorConsistency": 0.5,
-        "inversions": 0.1,
-        "substitution": 0.1,
-        "lift": 0.4,
-        "stretch": 0.25
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["warm-pad"],
-          "rhythms": [{ "id": "hold", "weight": 2 }, { "id": "offbeat-long", "weight": 2 }, { "id": "pulse-8ths", "weight": 1 }],
-          "voicing": { "low": 50, "high": 74, "voices": [4, 5], "spread": "open", "colorTop": 0.6, "rootBottom": 1.2 }
-        },
-        "bass": {
-          "sound": ["deep-bass"],
-          "rhythms": [{ "id": "house-offbeat", "weight": 2 }, { "id": "rolling-16ths", "weight": 2 }, { "id": "sub-hold-push", "weight": 1 }],
-          "range": [30, 45]
-        },
-        "lead": {
-          "sound": ["soft-lead"],
-          "mode": "topline",
-          "rhythms": [{ "id": "topline-01", "weight": 2 }, { "id": "topline-02", "weight": 2 }, { "id": "topline-03", "weight": 2 }],
-          "range": [62, 81],
-          "tensions": true
-        },
-        "pluck": {
-          "sound": ["house-pluck"],
-          "mode": "arp",
-          "rhythms": [{ "id": "arp-16-gated", "weight": 2 }, { "id": "arp-16", "weight": 1 }, { "id": "pluck-syncopated", "weight": 1 }],
-          "range": [64, 86],
-          "orders": ["updown", "up", "skip"]
-        }
-      },
-      "mix": { "sidechain": 0.5, "reverb": 0.4, "drumKit": "house" },
-      "soundHints": [
-        "Warme Pads mit langsamer Attack, darüber ein klarer Pluck mit Delay",
-        "Topline wie gesungen: wenige Sprünge, Phrasen mit Pausen",
-        "Bass rund und tief, im Offbeat"
-      ]
+     "id": "house-909",
+     "weight": 2
     },
     {
-      "id": "afro-house",
-      "name": "Afro House",
-      "blurb": "Moll-Vamps, Percussion, Marimba-Muster, Ruf und Antwort",
-      "tempo": [118, 122],
-      "swing": 0.56,
-      "drums": [{ "id": "afro-01", "weight": 2 }, { "id": "afro-02", "weight": 2 }],
-      "harmony": {
-        "modes": { "minor": 0.85, "major": 0.15 },
-        "progressions": [
-          { "mode": "minor", "degrees": ["i", "VII"], "durations": [2, 2], "weight": 3 },
-          { "mode": "minor", "degrees": ["i", "VII", "VI", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "iv", "i", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "VI", "VII", "i"], "weight": 1 },
-          { "mode": "minor", "degrees": ["i", "iv"], "weight": 1 }
-        ],
-        "colors": { "triad": 0.4, "seventh": 0.3, "add9": 0.15, "sus2": 0.15 },
-        "colorConsistency": 0.6,
-        "inversions": 0.0,
-        "substitution": 0.08,
-        "lift": 0.3,
-        "stretch": 0.2
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["warm-pad", "ep-keys"],
-          "rhythms": [{ "id": "afro-stab-01", "weight": 2 }, { "id": "afro-stab-02", "weight": 2 }, { "id": "hold", "weight": 1 }],
-          "voicing": { "low": 52, "high": 74, "voices": [3, 4], "spread": "close", "colorTop": 0.4, "rootBottom": 1.0 }
-        },
-        "bass": {
-          "sound": ["deep-bass"],
-          "rhythms": [{ "id": "afro-bass-01", "weight": 2 }, { "id": "afro-bass-02", "weight": 2 }],
-          "range": [30, 45],
-          "pedal": 0.15
-        },
-        "lead": {
-          "sound": ["vox-chant"],
-          "mode": "afro",
-          "rhythms": [{ "id": "afro-call-01", "weight": 2 }, { "id": "afro-call-02", "weight": 2 }],
-          "range": [62, 79],
-          "tensions": false
-        },
-        "pluck": {
-          "sound": ["marimba", "kalimba"],
-          "mode": "marimba",
-          "rhythms": [{ "id": "marimba-01", "weight": 2 }, { "id": "marimba-02", "weight": 2 }],
-          "range": [64, 86]
-        }
-      },
-      "mix": { "sidechain": 0.35, "reverb": 0.3, "drumKit": "afro" },
-      "soundHints": [
-        "Shaker, Congas und Rim tragen den Groove; Kick rund, nicht zu hart",
-        "Marimba oder Kalimba für das Muster, Vocal-Chant als Lead",
-        "Akkorde kurz und synkopiert, viel Platz lassen"
-      ]
-    },
-    {
-      "id": "liquid-ukg",
-      "name": "Liquid UKG",
-      "blurb": "Weiche 2-Step-Grooves, satte 7er- und 9er-Akkorde",
-      "tempo": [130, 134],
-      "swing": 0.6,
-      "drums": [{ "id": "garage-2step-02", "weight": 1 }, { "id": "garage-2step-01", "weight": 1 }],
-      "harmony": {
-        "modes": { "minor": 0.6, "major": 0.4 },
-        "progressions": [
-          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 },
-          { "mode": "minor", "degrees": ["i", "iv", "VII", "III"], "weight": 2 },
-          { "mode": "major", "degrees": ["IV", "V", "iii", "vi"], "weight": 2 },
-          { "mode": "major", "degrees": ["IV", "iii", "ii", "I"], "weight": 1 },
-          { "mode": "major", "degrees": ["vi", "IV", "I", "V"], "weight": 1 }
-        ],
-        "colors": { "seventh": 0.35, "ninth": 0.35, "add9": 0.15, "triad": 0.05, "eleventh": 0.1 },
-        "colorConsistency": 0.7,
-        "inversions": 0.1,
-        "substitution": 0.1,
-        "lift": 0.35,
-        "stretch": 0.2
-      },
-      "lanes": {
-        "chords": {
-          "sound": ["ep-keys"],
-          "rhythms": [{ "id": "liquid-shuffle", "weight": 3 }, { "id": "ukg-stab-02", "weight": 1 }, { "id": "hold", "weight": 1 }],
-          "voicing": { "low": 50, "high": 76, "voices": [4, 5], "spread": "piano", "colorTop": 1.0, "rootBottom": 1.0 }
-        },
-        "bass": {
-          "sound": ["sub"],
-          "rhythms": [{ "id": "ukg-bass-01", "weight": 2 }, { "id": "sub-hold-push", "weight": 1 }],
-          "range": [30, 45]
-        },
-        "lead": {
-          "sound": ["airy-lead"],
-          "mode": "topline",
-          "rhythms": [{ "id": "topline-ukg-01", "weight": 3 }, { "id": "topline-02", "weight": 1 }],
-          "range": [64, 81],
-          "tensions": true
-        },
-        "pluck": {
-          "sound": ["bell-pluck"],
-          "mode": "arp",
-          "rhythms": [{ "id": "arp-16-shuffle", "weight": 2 }, { "id": "bell-sparse", "weight": 1 }],
-          "range": [70, 89],
-          "orders": ["up", "pendulum"]
-        }
-      },
-      "mix": { "sidechain": 0.3, "reverb": 0.36, "drumKit": "garage" },
-      "soundHints": [
-        "Rhodes mit Chorus, Akkorde lang klingen lassen",
-        "Hats leicht und geswingt, Bass weich",
-        "Luftige Lead-Stimme oder Flöte, viel Hall"
-      ]
+     "id": "stutter-4x4",
+     "weight": 1
     }
-  ]
+   ],
+   "harmony": {
+    "modes": {
+     "major": 0.5,
+     "minor": 0.5
+    },
+    "progressions": [
+     {
+      "mode": "major",
+      "degrees": [
+       "I",
+       "V",
+       "ii",
+       "IV"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "IV",
+       "I",
+       "V",
+       "ii"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i",
+       "VII",
+       "iv"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VII",
+       "iv",
+       "VImaj7"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.35,
+     "add9": 0.3,
+     "seventh": 0.25,
+     "sus2": 0.1
+    },
+    "colorConsistency": 0.4,
+    "inversions": 0.1,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.25,
+    "liftMap": {
+     "IV": [
+      "ii"
+     ],
+     "iv": [
+      "VII"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "lush-keys"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 2
+      },
+      {
+       "id": "offbeat-long",
+       "weight": 2
+      },
+      {
+       "id": "pulse-8ths",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 76,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "open",
+      "colorTop": 0.7,
+      "rootBottom": 1.2
+     }
+    },
+    "bass": {
+     "sound": [
+      "deep-bass"
+     ],
+     "rhythms": [
+      {
+       "id": "house-offbeat",
+       "weight": 2
+      },
+      {
+       "id": "rolling-16ths",
+       "weight": 1
+      },
+      {
+       "id": "sub-hold-push",
+       "weight": 1
+      }
+     ],
+     "range": [
+      30,
+      45
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-sing"
+     ],
+     "mode": "topline",
+     "rhythms": [
+      {
+       "id": "topline-01",
+       "weight": 2
+      },
+      {
+       "id": "topline-02",
+       "weight": 2
+      },
+      {
+       "id": "topline-03",
+       "weight": 2
+      }
+     ],
+     "range": [
+      60,
+      76
+     ],
+     "tensions": true
+    },
+    "pluck": {
+     "sound": [
+      "guitar-pick"
+     ],
+     "mode": "pick",
+     "rhythms": [
+      {
+       "id": "guitar-arp-pop",
+       "weight": 2
+      },
+      {
+       "id": "guitar-pick-01",
+       "weight": 1
+      }
+     ],
+     "range": [
+      52,
+      76
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.45,
+    "reverb": 0.35,
+    "drumKit": "house",
+    "noise": 0
+   },
+   "soundHints": [
+    "Er singt selbst, eher hoch und unbearbeitet-direkt; die Topline ist der Hook",
+    "Songs entstehen von der Gitarre aus: Akustik-/Nylon-Gitarre unter den Akkorden",
+    "Warme, breite Akkord-Stapel (add9, maj7), Deep-House-Groove"
+   ]
+  },
+  {
+   "id": "wacuka",
+   "name": "Afro House (WACUKA)",
+   "blurb": "~130 BPM, VI–VII–iv–i, Bläser-Synth-Hook im Drop, Live-Percussion",
+   "references": [
+    "WACUKA (mit Sofiya Nzau)"
+   ],
+   "tempo": [
+    128,
+    131
+   ],
+   "swing": 0.53,
+   "drumSwing": 0.6,
+   "drums": [
+    {
+     "id": "afro-130",
+     "weight": 2
+    },
+    {
+     "id": "afro-130-b",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.9,
+     "major": 0.1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "VII",
+       "iv",
+       "i"
+      ],
+      "weight": 4
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VII",
+       "VI",
+       "iv"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i"
+      ],
+      "weight": 1,
+      "durations": [
+       4
+      ]
+     }
+    ],
+    "colors": {
+     "triad": 0.45,
+     "seventh": 0.3,
+     "sus2": 0.15,
+     "add9": 0.1
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.2,
+    "liftMap": {
+     "i": [
+      "VI"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "rhodes"
+     ],
+     "rhythms": [
+      {
+       "id": "hold",
+       "weight": 2
+      },
+      {
+       "id": "afro-stab-01",
+       "weight": 1
+      },
+      {
+       "id": "afro-stab-02",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 52,
+      "high": 74,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.4,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "deep-bass"
+     ],
+     "rhythms": [
+      {
+       "id": "afro-bass-01",
+       "weight": 2
+      },
+      {
+       "id": "afro-bass-02",
+       "weight": 2
+      }
+     ],
+     "range": [
+      30,
+      45
+     ]
+    },
+    "lead": {
+     "sound": [
+      "brass-lead"
+     ],
+     "mode": "brass-hook",
+     "rhythms": [
+      {
+       "id": "brass-hook-01",
+       "weight": 2
+      },
+      {
+       "id": "brass-hook-02",
+       "weight": 2
+      },
+      {
+       "id": "afro-call-01",
+       "weight": 1
+      }
+     ],
+     "range": [
+      57,
+      74
+     ],
+     "tensions": false
+    },
+    "pluck": {
+     "sound": [
+      {
+       "id": "glass-bells",
+       "weight": 2
+      },
+      {
+       "id": "marimba",
+       "weight": 1
+      }
+     ],
+     "mode": "marimba",
+     "rhythms": [
+      {
+       "id": "glass-cross",
+       "weight": 2
+      },
+      {
+       "id": "marimba-01",
+       "weight": 1
+      },
+      {
+       "id": "marimba-02",
+       "weight": 1
+      }
+     ],
+     "range": [
+      64,
+      86
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.35,
+    "reverb": 0.3,
+    "drumKit": "afro",
+    "noise": 0
+   },
+   "soundHints": [
+    "Der Hook ist ein Synth-Lead aus einem Trompeten-Sound + Rauschfilter mit LFO (Serum), nicht die Stimme",
+    "Melancholische Keys am Anfang, dann Live-Percussion (Congas, Shaker, Toms im 3-gegen-4)",
+    "Pink-Noise-Riser vor den Drops; 130 BPM, schneller als typischer Afro House"
+   ]
+  },
+  {
+   "id": "liquid",
+   "name": "Liquid / UKG 2024–26",
+   "blurb": "130–133 BPM, 2-Step, satte Akkord-Stapel, gesungene Topline",
+   "references": [
+    "NEED ME",
+    "Other Side (mit BUNT.)",
+    "ifidiewouldyoucry (mit BUNT.)"
+   ],
+   "tempo": [
+    130,
+    133
+   ],
+   "swing": 0.55,
+   "drumSwing": 0.6,
+   "drums": [
+    {
+     "id": "ukg-2step",
+     "weight": 3
+    },
+    {
+     "id": "stutter-garage",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.55,
+     "major": 0.45
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "i7",
+       "VII",
+       "iv7"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "iv7",
+       "VImaj7",
+       "i7",
+       "VII"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "I",
+       "V",
+       "ii",
+       "IV"
+      ],
+      "weight": 2
+     }
+    ],
+    "colors": {
+     "seventh": 0.35,
+     "ninth": 0.25,
+     "add9": 0.2,
+     "triad": 0.2
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0.05,
+    "substitution": 0,
+    "lift": 0.2,
+    "stretch": 0.2,
+    "liftMap": {
+     "iv7": [
+      "VII"
+     ],
+     "IV": [
+      "ii"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "lush-keys"
+     ],
+     "rhythms": [
+      {
+       "id": "liquid-shuffle",
+       "weight": 2
+      },
+      {
+       "id": "hold",
+       "weight": 2
+      },
+      {
+       "id": "ukg-stab-02",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 77,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "piano",
+      "colorTop": 1.0,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "deep-bass"
+     ],
+     "rhythms": [
+      {
+       "id": "ukg-kick-bass",
+       "weight": 2
+      },
+      {
+       "id": "ukg-bass-01",
+       "weight": 1
+      },
+      {
+       "id": "sub-hold-push",
+       "weight": 1
+      }
+     ],
+     "range": [
+      30,
+      45
+     ]
+    },
+    "lead": {
+     "sound": [
+      "vox-sing"
+     ],
+     "mode": "topline",
+     "rhythms": [
+      {
+       "id": "topline-ukg-01",
+       "weight": 3
+      },
+      {
+       "id": "topline-02",
+       "weight": 1
+      }
+     ],
+     "range": [
+      60,
+      77
+     ],
+     "tensions": true
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      },
+      {
+       "id": "keys-8ths-high",
+       "weight": 1
+      }
+     ],
+     "range": [
+      70,
+      89
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0.4,
+    "reverb": 0.34,
+    "drumKit": "garage",
+    "noise": 0.01
+   },
+   "soundHints": [
+    "2-Step: Kick auf 1 und 11, Snare 5 und 13, offene Hats auf den Offbeats; Swing nur auf Hats/Percussion",
+    "Schwere Bass-Akkorde und satte Akkord-Stapel, analoge Wärme",
+    "Gesangs-Topline oder Voice-Note (z. B. auf der Straße aufgenommen) als Intro"
+   ]
+  }
+ ]
 }
