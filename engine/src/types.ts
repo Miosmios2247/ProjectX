@@ -65,6 +65,12 @@ export interface ArrangementSection {
   leadRaw?: boolean;
   /** The hook goes up an octave here, like a pitched-up vocal at the climax. */
   leadUp?: boolean;
+  /** The gated vowel is held instead (one stretched vowel per chord, no gate), as BUNT. starts a track. */
+  leadHold?: boolean;
+  /** Only the kick plays from the drums (BUNT.'s "subdued stutter break" with a pulsing kick). */
+  kickOnly?: boolean;
+  /** The sung lead gets a stacked harmony (a 3rd and a 5th below), AVAION's vocal stack before the drop. */
+  leadHarmony?: boolean;
 }
 
 export interface StyleVariant {

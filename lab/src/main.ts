@@ -26,7 +26,7 @@ import { OwnVoice, clearVoiceBytes, describeVoice, loadOwnVoice, loadVoiceBytes,
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
-const LAB_VERSION = "0.3.0";
+const LAB_VERSION = "0.4.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",

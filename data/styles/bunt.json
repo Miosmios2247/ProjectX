@@ -11,7 +11,8 @@
     "lead",
     "chords"
    ],
-   "filter": 1600
+   "filter": 1600,
+   "leadHold": true
   },
   {
    "name": "Aufbau",
@@ -41,9 +42,11 @@
    "lanes": [
     "lead",
     "chords",
-    "pluck"
+    "pluck",
+    "drums"
    ],
-   "filter": 2400
+   "filter": 2400,
+   "kickOnly": true
   },
   {
    "name": "Aufbau",

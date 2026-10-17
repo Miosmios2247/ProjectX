@@ -34,7 +34,8 @@
     "drums"
    ],
    "noKick": true,
-   "build": true
+   "build": true,
+   "leadHarmony": true
   },
   {
    "name": "Drop",

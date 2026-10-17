@@ -8,6 +8,7 @@ import { ArrangementSection, Idea, LaneId, stepToBeat } from "../../engine/src/i
 import { Voice, createVoice } from "./sounds";
 import { OWN_VOICE_KIND, OwnVoice, ownVoice } from "./voice";
 import { DrumKit } from "./drumkit";
+import { harmonyFor, legatoEnds } from "./phrasing";
 
 export type PlayLane = LaneId | "drums";
 export type SoundMode = "style" | "neutral";
@@ -250,37 +251,47 @@ export class Player {
       this.parts.push(part);
     };
 
+    // A harmony stack needs a polyphonic voice; a recorded voice sings alone.
+    const harmonize = !this.usesOwnVoice(idea);
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
       const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
       const sorted = [...data.notes].sort((a, b) => a.start - b.start);
       const top = Math.max(...sorted.map((n) => n.pitch), 0);
+      // Raw vocal: repeated syllables merge into held notes; stretched vowel: one per chord.
+      const rawEnds = lane === "lead" ? legatoEnds(sorted, idea.progression, idea.totalSteps, false) : [];
+      const holdEnds = lane === "lead" ? legatoEnds(sorted, idea.progression, idea.totalSteps, true) : [];
+      const harmony = lane === "lead" && harmonize ? harmonyFor(sorted, idea.progression, idea.key) : [];
+      const held = (start: number, end: number | null | undefined) =>
+        end === null || end === undefined ? 0 : Math.max(0.03, (stepToBeat(end, idea.swing) - start) * secPerBeat * 0.98);
       const events = sorted.map((n, i) => {
         const start = stepToBeat(n.start, idea.swing);
         const end = stepToBeat(n.start + n.len, idea.swing);
-        // Raw vocal: a held note lasts until the next one starts (or the loop ends).
-        const next = sorted.slice(i + 1).find((m) => m.pitch !== n.pitch || m.start - n.start >= 4);
-        const until = stepToBeat(next ? next.start : idea.totalSteps, idea.swing);
         return {
           time: ticks(start),
           midi: n.pitch,
           dur: Math.max(0.03, (end - start) * secPerBeat * 0.98),
-          raw: Math.max(0.03, (until - start) * secPerBeat * 0.98),
-          // Repeated syllables of a chop are skipped when the vocal sings raw.
-          repeat: i > 0 && sorted[i - 1].pitch === n.pitch && n.start - sorted[i - 1].start < 4,
+          // 0 = this note merges into the held one before it.
+          raw: held(start, rawEnds[i]),
+          hold: held(start, holdEnds[i]),
+          harm: harmony[i] ?? [],
           vel: n.vel / 127,
           i,
         };
       });
-      const part = new T.Part((time, ev: { midi: number; dur: number; raw: number; repeat: boolean; vel: number; i: number }) => {
+      const part = new T.Part((time, ev: (typeof events)[number]) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
-        if (lane === "lead" && sec?.leadRaw) {
-          if (!ev.repeat) voice.trigger(ev.midi, ev.raw, time, ev.vel * 0.9, ev.i);
+        if (lane === "lead" && (sec?.leadRaw || sec?.leadHold)) {
+          const dur = sec.leadHold ? ev.hold : ev.raw;
+          if (dur > 0) voice.trigger(ev.midi, dur, time, ev.vel * (sec.leadHold ? 0.72 : 0.9), ev.i);
           return;
         }
         const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
         voice.trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
+        if (lane === "lead" && sec?.leadHarmony) {
+          ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), ev.i));
+        }
       }, events);
       loopPart(part);
     }
@@ -293,7 +304,7 @@ export class Player {
     }));
     const drumPart = new T.Part((time, ev: (typeof drumEvents)[number]) => {
       const sec = sectionAt(time);
-      if (sec && (!sec.lanes.includes("drums") || (sec.noKick && ev.inst === "kick"))) return;
+      if (sec && (!sec.lanes.includes("drums") || (sec.noKick && ev.inst === "kick") || (sec.kickOnly && ev.inst !== "kick"))) return;
       kit.hit(ev.inst, time, ev.vel);
     }, drumEvents);
     loopPart(drumPart);
