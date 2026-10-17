@@ -36,6 +36,8 @@ Akkord-Griffen und Handwerksregeln aus Tutorials
 - **„Warum klingt das so?“:** Ein neuer Kasten erklärt in einfachen Worten, was eine Idee nach
   dem Künstler klingen lässt, zum Beispiel welcher Song dieselbe Akkordfolge hat.
 
+Wie es weitergeht, bis jeder Künstler mindestens 4 von 5 erreicht: [PLAN-4-VON-5.md](PLAN-4-VON-5.md).
+
 ## Seit Runde 3 dabei
 
 - **Song-Modus:** Umschalter „Ablauf: Loop | Song“. Im Song-Modus läuft die Idee durch den
