@@ -124,6 +124,7 @@ function drumsToMidi(idea: Idea): MidiNote[] {
 export function fileStem(idea: Idea): string {
   const clean = (s: string) =>
     s
+      .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/Ä/g, "Ae").replace(/Ö/g, "Oe").replace(/Ü/g, "Ue").replace(/ß/g, "ss")
       .replace(/[^A-Za-z0-9 ]+/g, " ")
       .split(/\s+/)
       .filter(Boolean)

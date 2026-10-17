@@ -2,7 +2,7 @@
 // synthesized basses and a neutral set for the blind test.
 
 import type * as ToneNS from "tone";
-import { loadSet } from "./samples";
+import { SAMPLE_SETS, loadSet } from "./samples";
 
 type T = ToneLib;
 
@@ -75,6 +75,24 @@ interface SampledOptions {
   layer?: { set: string; minDuration: number; gain: number; attack?: number; release?: number };
 }
 
+// Seconds after which a sustained sample is played again (crossfaded), because the
+// recordings are short: strings and organ last ~3 s, the voice samples ~1.3 s.
+const RETRIGGER: Record<string, number> = { strings: 2, oohs: 0.9, aahs: 0.9, synthvox: 0.9 };
+
+/** Plays a note; long notes on sustained sets are rebuilt from overlapping segments. */
+function playNote(T: T, smp: ToneNS.Sampler, set: string, midi: number, duration: number, time: number, velocity: number): void {
+  const every = RETRIGGER[set];
+  const f = freq(T, midi);
+  if (!every || duration <= every + 0.3) {
+    safely(() => smp.triggerAttackRelease(f, duration, time, velocity));
+    return;
+  }
+  for (let t = 0; t < duration - 0.05; t += every) {
+    const seg = Math.min(duration - t, every + 0.3);
+    safely(() => smp.triggerAttackRelease(f, seg, time + t, velocity));
+  }
+}
+
 /** Sampled instrument. Notes that arrive before the samples are loaded are skipped. */
 function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Gain): Voice {
   const input = new T.Gain(1);
@@ -92,7 +110,12 @@ function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Ga
   const loads = sets.map((id, i) =>
     loadSet(T, id).then((buffers) => {
       if (disposed || !Object.keys(buffers).length) return;
-      const smp = new T.Sampler({ urls: buffers, attack: opts.attack ?? 0, release: opts.release ?? 0.8 });
+      const smp = new T.Sampler({
+        urls: buffers,
+        attack: opts.attack ?? 0,
+        release: opts.release ?? 0.8,
+        volume: SAMPLE_SETS[id]?.gain ?? 0,
+      });
       smp.connect(input);
       samplers[i] = smp;
     }),
@@ -103,7 +126,12 @@ function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Ga
       loadSet(T, l.set).then((buffers) => {
         if (disposed || !Object.keys(buffers).length) return;
         layerGain = new T.Gain(l.gain);
-        layer = new T.Sampler({ urls: buffers, attack: l.attack ?? 0.3, release: l.release ?? 1 });
+        layer = new T.Sampler({
+          urls: buffers,
+          attack: l.attack ?? 0.3,
+          release: l.release ?? 1,
+          volume: SAMPLE_SETS[l.set]?.gain ?? 0,
+        });
         layer.connect(layerGain);
         layerGain.connect(input);
       }),
@@ -114,12 +142,12 @@ function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Ga
     output: out,
     ready: Promise.all(loads).then(() => undefined),
     trigger(midi, duration, time, velocity) {
-      const i = opts.pick ? opts.pick(midi, count++) : 0;
-      const smp = samplers[i] ?? samplers.find((x) => x);
-      if (smp) safely(() => smp.triggerAttackRelease(freq(T, midi), duration, time, velocity));
+      const want = opts.pick ? opts.pick(midi, count++) : 0;
+      const i = samplers[want] ? want : samplers.findIndex((x) => x);
+      if (i >= 0) playNote(T, samplers[i]!, sets[i], midi, duration, time, velocity);
       const l = layer;
       if (l && opts.layer && duration >= opts.layer.minDuration) {
-        safely(() => l.triggerAttackRelease(freq(T, midi), duration, time, velocity * 0.8));
+        playNote(T, l, opts.layer.set, midi, duration, time, velocity * 0.8);
       }
     },
     dispose() {
@@ -224,10 +252,11 @@ export function createVoice(T: T, id: string): Voice {
         layer: { set: "strings", minDuration: 0.3, gain: 0.45, attack: 0.25, release: 1.3 },
       }, out);
     case "bright-piano":
+      // Bright grand with a held string layer, so a stutter gate has something to chop.
       return sampledVoice(T, ["piano"], {
         release: 0.8,
         chain: [new T.Filter({ type: "highshelf", frequency: 2500, gain: 4 })],
-        layer: { set: "strings", minDuration: 0.9, gain: 0.22, attack: 0.4, release: 1.2 },
+        layer: { set: "strings", minDuration: 0.9, gain: 0.4, attack: 0.25, release: 1.2 },
       }, out);
     case "guitar-strum":
       return sampledVoice(T, ["guitar"], { release: 0.4, chain: [new T.Filter(110, "highpass")] }, out);
@@ -272,7 +301,7 @@ export function createVoice(T: T, id: string): Voice {
       // A stretched, distorted vowel; the gate comes from the repeated MIDI notes.
       return sampledVoice(T, ["aahs"], {
         attack: 0.002,
-        release: 0.04,
+        release: 0.02,
         chain: [
           new T.Filter(220, "highpass"),
           new T.Filter({ type: "peaking", frequency: 3000, Q: 0.8, gain: 3 }),

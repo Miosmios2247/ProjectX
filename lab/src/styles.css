@@ -310,6 +310,9 @@ select {
 }
 .arr-title { font-family: var(--font-display); font-weight: 500; font-size: var(--step-3); }
 .arr-meta { font-family: var(--font-mono); font-size: var(--step-1); color: var(--muted); }
+.arr-refs { flex-basis: 100%; margin: 0; font-size: var(--step-1); color: var(--muted); }
+.arr-refs:empty { display: none; }
+.arr-refs strong { color: var(--text); font-weight: 600; }
 .lanes { display: grid; }
 .lane-row {
   display: grid;

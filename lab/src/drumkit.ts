@@ -1,32 +1,65 @@
-// Synthesized drum kits for the listening context.
+// Drum kits for the listening context: synthesized 909-style kick, snare,
+// clap and hats, sampled percussion per style (congas, shaker, toms ...).
 
 import type * as ToneNS from "tone";
 import type { DrumInst } from "../../engine/src/index";
 import { timeGuard } from "./sounds";
+import { KitSample, loadKit } from "./samples";
 
 type T = ToneLib;
 
 interface KitShape {
   kickDecay: number;
   kickVol: number;
+  /** Kick start pitch in octaves above 50 Hz (more = harder click). */
+  kickPunch: number;
   hatHp: number;
   hatVol: number;
-  percVol: number;
   clapVol: number;
+  snareVol: number;
+  /** Instruments played from samples: sample and level in dB. */
+  samples: Partial<Record<DrumInst, [KitSample, number]>>;
 }
 
 const KITS: Record<string, KitShape> = {
-  house: { kickDecay: 0.38, kickVol: -3, hatHp: 7500, hatVol: -17, percVol: -12, clapVol: -9 },
-  garage: { kickDecay: 0.32, kickVol: -3, hatHp: 8200, hatVol: -16, percVol: -13, clapVol: -10 },
-  afro: { kickDecay: 0.3, kickVol: -4, hatHp: 7800, hatVol: -19, percVol: -9, clapVol: -11 },
-  deep: { kickDecay: 0.45, kickVol: -3, hatHp: 7000, hatVol: -19, percVol: -13, clapVol: -10 },
-  neutral: { kickDecay: 0.36, kickVol: -4, hatHp: 7500, hatVol: -18, percVol: -12, clapVol: -10 },
+  // Fred again.. / AVAION Pieces: 909 kick and clap, crisp hats, a bit of shaker.
+  house: {
+    kickDecay: 0.4, kickVol: -3, kickPunch: 5.5, hatHp: 7600, hatVol: -17, clapVol: -9, snareVol: -11,
+    samples: { shaker: ["shaker", -15], tamb: ["tambourine", -19], rim: ["sidestick", -13], percHi: ["bongohi", -12], percLo: ["congalo", -12], tom: ["tomlo", -12] },
+  },
+  // UKG / 2-step: tight kick, snappier snare and rim, more open hats.
+  garage: {
+    kickDecay: 0.32, kickVol: -3, kickPunch: 6, hatHp: 8200, hatVol: -16, clapVol: -10, snareVol: -9,
+    samples: { shaker: ["maracas", -15], tamb: ["tambourine", -18], rim: ["sidestick", -11], percHi: ["bongohi", -13], percLo: ["bongolo", -13], tom: ["tommid", -13] },
+  },
+  // BUNT. stutter house: big round kick, airy shaker, clap up front.
+  stutter: {
+    kickDecay: 0.45, kickVol: -2, kickPunch: 5, hatHp: 8000, hatVol: -18, clapVol: -8, snareVol: -11,
+    samples: { shaker: ["shaker", -13], tamb: ["tambourine", -17], rim: ["sidestick", -13], percHi: ["bongohi", -13], percLo: ["congalo", -13], tom: ["tomlo", -12] },
+  },
+  // AVAION WACUKA: live percussion carries the groove.
+  afro: {
+    kickDecay: 0.3, kickVol: -4, kickPunch: 5, hatHp: 7800, hatVol: -19, clapVol: -11, snareVol: -12,
+    samples: { shaker: ["shaker", -12], tamb: ["cabasa", -14], percHi: ["congaopen", -7], percLo: ["congalo", -7], tom: ["tomlo", -9], rim: ["claves", -11] },
+  },
+  // Drum & bass: sampled acoustic snare and ride-ish hats over a short kick.
+  dnb: {
+    kickDecay: 0.28, kickVol: -3, kickPunch: 6.5, hatHp: 8600, hatVol: -17, clapVol: -12, snareVol: -6,
+    samples: { snare: ["snare", -5], shaker: ["shaker", -16], tamb: ["ride", -18], rim: ["sidestick", -12], percHi: ["bongohi", -14], percLo: ["bongolo", -14], tom: ["tommid", -11] },
+  },
+  neutral: {
+    kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
+    samples: {},
+  },
 };
 
 export class DrumKit {
   readonly output: ToneNS.Gain;
-  ready?: Promise<void>;
+  readonly ready: Promise<void>;
   private nodes: ToneNS.ToneAudioNode[] = [];
+  private players: Partial<Record<DrumInst, ToneNS.Player>> = {};
+  private sampleDb: Partial<Record<DrumInst, number>> = {};
+  private disposed = false;
   private kick: ToneNS.MembraneSynth;
   private snare: ToneNS.NoiseSynth;
   private snareBody: ToneNS.MembraneSynth;
@@ -56,15 +89,15 @@ export class DrumKit {
     };
     this.kick = track(new T.MembraneSynth({
       pitchDecay: 0.045,
-      octaves: 5.5,
+      octaves: k.kickPunch,
       oscillator: { type: "sine" },
       envelope: { attack: 0.001, decay: k.kickDecay, sustain: 0, release: 0.1 },
       volume: k.kickVol,
     }));
     to(this.kick);
-    this.snare = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.16, sustain: 0 }, volume: -12 }));
+    this.snare = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.16, sustain: 0 }, volume: k.snareVol }));
     to(this.snare, track(new T.Filter(1200, "highpass")));
-    this.snareBody = track(new T.MembraneSynth({ pitchDecay: 0.02, octaves: 2, envelope: { attack: 0.001, decay: 0.12, sustain: 0 }, volume: -10 }));
+    this.snareBody = track(new T.MembraneSynth({ pitchDecay: 0.02, octaves: 2, envelope: { attack: 0.001, decay: 0.12, sustain: 0 }, volume: k.snareVol + 2 }));
     to(this.snareBody);
     this.clap = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.14, sustain: 0 }, volume: k.clapVol }));
     to(this.clap, track(new T.Filter({ type: "bandpass", frequency: 1300, Q: 0.9 })));
@@ -72,16 +105,32 @@ export class DrumKit {
     to(this.hatC, track(new T.Filter(k.hatHp, "highpass")));
     this.hatO = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.24, sustain: 0 }, volume: k.hatVol - 1 }));
     to(this.hatO, track(new T.Filter(k.hatHp - 500, "highpass")));
+    // Synth fallbacks for percussion, used until (or if) the samples load.
     this.shaker = track(new T.NoiseSynth({ noise: { type: "pink" }, envelope: { attack: 0.004, decay: 0.05, sustain: 0 }, volume: k.hatVol - 1 }));
     to(this.shaker, track(new T.Filter({ type: "bandpass", frequency: 6500, Q: 1.2 })));
     this.tamb = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.08, sustain: 0 }, volume: k.hatVol }));
     to(this.tamb, track(new T.Filter({ type: "bandpass", frequency: 8500, Q: 2.5 })));
-    this.percHi = track(new T.MembraneSynth({ pitchDecay: 0.012, octaves: 1.2, envelope: { attack: 0.001, decay: 0.16, sustain: 0 }, volume: k.percVol }));
+    this.percHi = track(new T.MembraneSynth({ pitchDecay: 0.012, octaves: 1.2, envelope: { attack: 0.001, decay: 0.16, sustain: 0 }, volume: -12 }));
     to(this.percHi);
-    this.percLo = track(new T.MembraneSynth({ pitchDecay: 0.014, octaves: 1.2, envelope: { attack: 0.001, decay: 0.2, sustain: 0 }, volume: k.percVol }));
+    this.percLo = track(new T.MembraneSynth({ pitchDecay: 0.014, octaves: 1.2, envelope: { attack: 0.001, decay: 0.2, sustain: 0 }, volume: -12 }));
     to(this.percLo);
-    this.rim = track(new T.MembraneSynth({ pitchDecay: 0.002, octaves: 1, envelope: { attack: 0.0005, decay: 0.035, sustain: 0 }, volume: k.percVol - 2 }));
+    this.rim = track(new T.MembraneSynth({ pitchDecay: 0.002, octaves: 1, envelope: { attack: 0.0005, decay: 0.035, sustain: 0 }, volume: -14 }));
     to(this.rim);
+
+    const wanted = Object.entries(k.samples) as [DrumInst, [KitSample, number]][];
+    this.ready = !wanted.length
+      ? Promise.resolve()
+      : loadKit(T).then((buffers) => {
+          if (this.disposed) return;
+          for (const [inst, [sample, db]] of wanted) {
+            const buf = buffers[sample];
+            if (!buf) continue;
+            const player = track(new T.Player({ url: buf, volume: db, fadeOut: 0.01 }));
+            to(player);
+            this.players[inst] = player;
+            this.sampleDb[inst] = db;
+          }
+        });
   }
 
   private guards = new Map<string, (t: number) => number>();
@@ -106,6 +155,14 @@ export class DrumKit {
 
   private play(inst: DrumInst, time: number, velocity: number, at: (t: number) => number): void {
     const v = Math.max(0.05, Math.min(1, velocity));
+    const player = this.players[inst];
+    if (player) {
+      // Velocity as a level change; restarting a Player chokes the previous hit.
+      const t = at(time);
+      player.volume.setValueAtTime(this.sampleDb[inst]! + 20 * Math.log10(v), t);
+      player.start(t);
+      return;
+    }
     switch (inst) {
       case "kick":
         this.kick.triggerAttackRelease(50, 0.3, at(time), v);
@@ -136,7 +193,8 @@ export class DrumKit {
         this.percHi.triggerAttackRelease(330, 0.12, at(time), v);
         break;
       case "percLo":
-        this.percLo.triggerAttackRelease(196, 0.15, at(time), v);
+      case "tom":
+        this.percLo.triggerAttackRelease(inst === "tom" ? 120 : 196, 0.15, at(time), v);
         break;
       case "rim":
         this.rim.triggerAttackRelease(1100, 0.03, at(time), v);
@@ -145,6 +203,7 @@ export class DrumKit {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.nodes.forEach((n) => n.dispose());
     this.output.dispose();
   }

@@ -25,7 +25,7 @@ import { SOUND_LABELS } from "./sounds";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
-const LAB_VERSION = "0.1.0";
+const LAB_VERSION = "0.2.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",
@@ -46,10 +46,10 @@ const ISSUES: { id: string; label: string }[] = [
 const STAR_LABELS = ["gar nicht", "kaum", "teils", "ziemlich", "voll"];
 const LEAD_MODE: Record<string, string> = {
   "vocal-chop": "Vocal-Chop",
-  "deep-chop": "Stutter-Chop",
-  topline: "Topline",
+  "gated-vowel": "Gedehnter Vokal mit Gate",
+  topline: "Gesungene Topline",
+  "brass-hook": "Bläser-Hook",
   folk: "Folk-Riff",
-  afro: "Ruf & Antwort",
 };
 
 interface ExploreState {
@@ -347,12 +347,18 @@ function renderIdea(): void {
   if (!idea) {
     title.textContent = blind ? "Noch kein Loop" : "";
     meta.textContent = blind ? "Starte rechts eine Runde." : "";
+    $("idea-refs").replaceChildren();
     for (const lane of PLAY_LANES) $(`sub-${lane}`).textContent = "";
     drawRolls();
     return;
   }
   title.textContent = hidden ? "Unbekannter Loop" : `${idea.artist} · ${idea.variantName}`;
   meta.textContent = `${keyName(idea.key)} · ${idea.bpm} BPM · ${idea.bars} Takte`;
+  const refs = $("idea-refs");
+  refs.replaceChildren();
+  if (!hidden && idea.references.length) {
+    refs.append(h("strong", {}, "Zum Vergleich anhören: "), document.createTextNode(idea.references.join(" · ")));
+  }
   $("bpm").textContent = String(idea.bpm);
   $("key-actual").textContent =
     !blind && state.explore.keyChoice === "auto" ? `→ ${keyName(idea.key)}` : "";
