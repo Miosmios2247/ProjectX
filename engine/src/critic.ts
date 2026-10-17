@@ -11,6 +11,8 @@ export interface MelodyTargets {
   pitches: [number, number];
   /** Largest span in semitones. */
   range: number;
+  /** Smallest span worth having (a hook that never moves gets dull). */
+  rangeMin?: number;
   /** Share of moves that are repeats or steps (≤ 2 semitones). */
   steps: number;
   /** Share of onsets on off-beat 16ths. */
@@ -19,6 +21,11 @@ export interface MelodyTargets {
   repeat: number;
   /** Share of strong-beat notes on chord tones. */
   chordTones: number;
+  /**
+   * Band for the share of ALL notes on chord tones. Fred again..'s hooks keep a
+   * fixed pitch set that the chords recolour: only 35–55 % chord tones.
+   */
+  chordShare?: [number, number];
 }
 
 export interface MelodyReport {
@@ -29,6 +36,7 @@ export interface MelodyReport {
   sync: number;
   repeat: number;
   chordTones: number;
+  chordShare: number;
 }
 
 const isStrongStep = (start: number) => Math.abs(start - Math.round(start)) < 0.01 && Math.round(start) % 4 === 0;
@@ -61,7 +69,7 @@ export function scoreMelody(
 ): MelodyReport {
   const sorted = [...notes].sort((a, b) => a.start - b.start);
   if (!sorted.length) {
-    return { penalty: 1000, pitches: 0, range: 0, steps: 0, sync: 0, repeat: 0, chordTones: 0 };
+    return { penalty: 1000, pitches: 0, range: 0, steps: 0, sync: 0, repeat: 0, chordTones: 0, chordShare: 0 };
   }
   const pitches = new Set(sorted.map((n) => n.pitch)).size;
   const lo = Math.min(...sorted.map((n) => n.pitch));
@@ -91,10 +99,12 @@ export function scoreMelody(
   let strong = 0;
   let strongChord = 0;
   let rubs = 0;
+  let inChord = 0;
   for (const n of sorted) {
     const slot = chordSlotForNote(slots, n.start, n.len);
     const pcs = chordPcs(slot.chord);
     const pc = mod12(n.pitch);
+    if (pcs.includes(pc)) inChord++;
     if (isStrongStep(n.start) || n.len >= 4) {
       strong++;
       const roles = chordRoles(slot.chord);
@@ -104,6 +114,7 @@ export function scoreMelody(
     if (n.len >= 2 && !pcs.includes(pc) && rubsSemitone(pc, pcs)) rubs++;
   }
   const chordTones = strong ? strongChord / strong : 1;
+  const chordShare = inChord / sorted.length;
 
   // Repetition: compare every phrase with the first one.
   const phrases: Note[][] = [];
@@ -126,13 +137,19 @@ export function scoreMelody(
   let penalty = 0;
   penalty += pitches < pMin ? (pMin - pitches) * 3 : pitches > pMax ? (pitches - pMax) * 3 : 0;
   penalty += Math.max(0, range - targets.range) * 1.5;
+  if (targets.rangeMin) penalty += Math.max(0, targets.rangeMin - range) * 0.8;
   penalty += Math.max(0, targets.steps - steps) * 12;
   penalty += Math.abs(sync - targets.sync) * 6;
   penalty += Math.abs(repeat - targets.repeat) * 10;
   penalty += Math.max(0, targets.chordTones - chordTones) * 20;
+  if (targets.chordShare) {
+    const [lo, hi] = targets.chordShare;
+    penalty += Math.max(0, lo - chordShare) * 15 + Math.max(0, chordShare - hi) * 15;
+  }
   penalty += bigLeaps * 2 + unrecovered * 1.5 + rubs * 3;
-  if (!stableEnd) penalty += 4;
-  return { penalty, pitches, range, steps, sync, repeat, chordTones };
+  // A recoloured fixed hook may end on a colour tone; others should land on a stable one.
+  if (!stableEnd && !targets.chordShare) penalty += 4;
+  return { penalty, pitches, range, steps, sync, repeat, chordTones, chordShare };
 }
 
 /** Bars per phrase for the repetition check. */

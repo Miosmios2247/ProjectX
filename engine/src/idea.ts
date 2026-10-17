@@ -85,11 +85,12 @@ export function generateIdea(params: IdeaParams): Idea {
   );
   const leadNotes = lead.notes;
 
-  // Pluck, calmer when the lead is busy
+  // Pluck, calmer when the lead or a 16th bass is busy (two 16th motors at once is too much)
   const pr = createRng(seeds.pluck);
   const pluckProfile = variant.lanes.pluck;
   let pluckRefs = pluckProfile.rhythms;
-  if (leadNotes.length / bars > 7 && pluckRefs.length > 1) {
+  const busyBass = rhythmDensity(getRhythm(bassRhythmId)) >= 8;
+  if ((leadNotes.length / bars > 7 || busyBass) && pluckRefs.length > 1) {
     const sorted = [...pluckRefs].sort(
       (a, b) => rhythmDensity(getRhythm(refId(a))) - rhythmDensity(getRhythm(refId(b))),
     );

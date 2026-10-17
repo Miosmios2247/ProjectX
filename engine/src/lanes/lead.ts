@@ -397,10 +397,53 @@ function chordChopLead(ctx: Ctx, rhythm: Rhythm, rng: Rng): Note[] {
   return notes;
 }
 
+/**
+ * The few pitches a Fred again.. hook lives on: neighbouring scale notes,
+ * 2–5 of them and a 4th to a 5th wide, that every chord of the loop can
+ * recolour (one or two of them belong to each chord, the rest become 9ths,
+ * 11ths or maj7s). The minor-key tonic is avoided (the cell sits on ♭3–♭7
+ * or 2–5 of the minor key), which keeps major and minor ambiguous.
+ */
+function hookWindow(ctx: Ctx, rng: Rng, size: number): number[] {
+  const scale = scalePcs(ctx.key);
+  const minorTonic = ctx.key.mode === "minor" ? ctx.key.tonic : mod12(ctx.key.tonic + 9);
+  const notes: number[] = [];
+  for (let m = ctx.lo; m <= ctx.hi; m++) if (scale.includes(mod12(m))) notes.push(m);
+  const bars = ctx.totalSteps / STEPS_PER_BAR;
+  let best: number[] = [];
+  let bestScore = -Infinity;
+  for (let i = 0; i + size <= notes.length; i++) {
+    const win = notes.slice(i, i + size);
+    if (win[win.length - 1] - win[0] > 7) continue;
+    let score = 0;
+    for (const slot of ctx.slots) {
+      const pcs = chordPcs(slot.chord);
+      const w = slot.length / STEPS_PER_BAR;
+      const tones = win.filter((p) => pcs.includes(mod12(p))).length;
+      const rubs = win.filter((p) => !pcs.includes(mod12(p)) && rubsSemitone(mod12(p), pcs)).length;
+      score += w * ((tones >= 1 ? 1 : -1) - (tones === size && size > 1 ? 0.3 : 0) - rubs * 0.6);
+    }
+    if (win.some((p) => mod12(p) === minorTonic)) score -= 0.6 * bars;
+    score -= Math.abs((win[0] + win[win.length - 1]) / 2 - (ctx.lo + ctx.hi) / 2) * 0.05;
+    score += rng.next() * 0.8;
+    if (score > bestScore) {
+      bestScore = score;
+      best = win;
+    }
+  }
+  return best.length ? best : vocalPool(ctx, rng, size);
+}
+
+/**
+ * Fred again..-style vocal hook: a 1–2 bar cell of short, detached syllables on
+ * a fixed set of pitches, repeated (A A A A'); at phrase ends the cell answers
+ * with a stutter, a reversal or a pitched-up last syllable.
+ */
 function chopLead(ctx: Ctx, rhythm: Rhythm, rng: Rng, poolSize: number): Note[] {
-  const pool = vocalPool(ctx, rng, poolSize);
+  const pool = hookWindow(ctx, rng, poolSize);
   const span = rhythm.bars * STEPS_PER_BAR;
   const clampIdx = (i: number) => Math.max(0, Math.min(pool.length - 1, i));
+  // Mostly repeats and steps: ~35 % repeat, ~50 % step, ~10 % third, rare jumps.
   const motif: number[] = [];
   let cur = rng.int(0, pool.length - 1);
   rhythm.hits.forEach((h, i) => {
@@ -408,34 +451,55 @@ function chopLead(ctx: Ctx, rhythm: Rhythm, rng: Rng, poolSize: number): Note[] 
       const stutter = h.step - rhythm.hits[i - 1].step <= 1;
       if (!(stutter && rng.chance(0.85))) {
         const r = rng.next();
-        if (r < 0.4) {
+        if (r < 0.35) {
           // repeat the syllable
         } else if (r < 0.85) cur = clampIdx(cur + (rng.chance(0.5) ? 1 : -1));
+        else if (r < 0.95) cur = clampIdx(cur + (rng.chance(0.5) ? 2 : -2));
         else cur = rng.pick([0, pool.length - 1]);
       }
     }
     motif.push(cur);
   });
   // Sometimes one slice is pitched up an octave, like a re-pitched sample.
-  const jumpAt = rng.chance(0.3) && rhythm.hits.length > 3 ? rng.int(1, rhythm.hits.length - 1) : -1;
+  const jumpAt = rng.chance(0.2) && rhythm.hits.length > 3 ? rng.int(1, rhythm.hits.length - 1) : -1;
 
   const notes: Note[] = [];
   for (let offset = 0; offset < ctx.totalSteps; offset += span) {
     const phraseEnd = (offset + span) % (4 * STEPS_PER_BAR) === 0;
-    const vary = offset > 0 && phraseEnd && rng.chance(0.7);
+    const vary = offset > 0 && phraseEnd && rng.chance(0.8);
+    const how = rng.weighted(
+      [
+        { v: "stutter", w: 0.4 },
+        { v: "reverse", w: 0.3 },
+        { v: "octave", w: 0.3 },
+      ],
+      (x) => x.w,
+    ).v;
     const hits = shift(rhythm.hits, offset);
+    const idxs = hits.map((_, i) => motif[i]);
+    if (vary && how === "reverse" && idxs.length >= 3) {
+      const tail = idxs.slice(-3).reverse();
+      idxs.splice(idxs.length - 3, 3, ...tail);
+    }
     const pitches = hits.map((h, i) => {
-      let idx = motif[i];
-      if (vary && i >= hits.length - 2) idx = clampIdx(idx + rng.pick([-1, 1, 1]));
-      const pitch = pool[idx] + (i === jumpAt && pool[idx] + 12 <= ctx.hi + 5 ? 12 : 0);
+      const idx = idxs[i];
+      let pitch = pool[idx] + (i === jumpAt && pool[idx] + 12 <= ctx.hi + 5 ? 12 : 0);
+      if (vary && how === "octave" && i === hits.length - 1 && pitch + 12 <= ctx.hi + 7) pitch += 12;
       return fitToChord(pitch, h, pool, ctx);
     });
-    const chunk = toNotes(hits, pitches, rng, 0.88, 96);
-    // Phrase end: the last slice stutters as two 32nds ("re-re").
+    // Short, detached syllables.
+    const chunk = toNotes(hits, pitches, rng, 0.72, 96);
     const last = chunk[chunk.length - 1];
-    if (vary && last && last.len >= 1) {
-      chunk[chunk.length - 1] = { ...last, len: 0.45 };
-      chunk.push({ ...last, start: last.start + 0.5, len: 0.45, vel: Math.max(1, last.vel - 8) });
+    if (vary && how === "stutter" && last) {
+      // 16th repeats of the last syllable for half a beat to a beat, up to the phrase end.
+      const end = offset + span;
+      const reps = Math.min(rng.pick([2, 3, 4]), Math.floor(end - last.start));
+      if (reps >= 2) {
+        chunk.pop();
+        for (let r = 0; r < reps; r++) {
+          chunk.push({ ...last, start: last.start + r, len: 0.6, vel: clampVel(last.vel - 6 + r * 4) });
+        }
+      }
     }
     notes.push(...chunk);
   }
@@ -543,7 +607,9 @@ function gatedVowelLead(ctx: Ctx, gate: Rhythm, rng: Rng): Note[] {
 /** What the critic aims for in each mode (styles can override parts). */
 export const LEAD_TARGETS: Record<LeadMode, MelodyTargets> = {
   // Fred again..: 2–4 pitches, small range, syncopated syllables, strong repetition.
-  "vocal-chop": { pitches: [2, 4], range: 9, steps: 0.6, sync: 0.4, repeat: 0.8, chordTones: 0.8 },
+  // Fred again.. (Hooktheory stats): 2–5 pitches, 5–7 semitones, steps and repeats,
+  // simple rhythm, a fixed pitch set the chords recolour (35–55 % chord tones).
+  "vocal-chop": { pitches: [2, 5], range: 7, rangeMin: 4, steps: 0.85, sync: 0.35, repeat: 0.85, chordTones: 0.3, chordShare: [0.35, 0.65] },
   // BUNT.: one held vowel per chord, gated; almost no melody.
   "gated-vowel": { pitches: [1, 3], range: 7, steps: 0.95, sync: 0.35, repeat: 0.85, chordTones: 0.95 },
   // AVAION: a singable line, mostly steps, phrases that answer each other.
@@ -563,10 +629,10 @@ export interface LeadResult {
 function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm | null, rng: Rng, k: number): LeadResult {
   switch (mode) {
     case "vocal-chop":
-      // Half the candidates keep a few fixed pitches, half follow the chords.
-      return k % 2 === 0
-        ? { notes: chopLead(ctx, rhythm, rng, rng.chance(0.5) ? 3 : 4), build: "fixed" }
-        : { notes: chordChopLead(ctx, rhythm, rng), build: "chords" };
+      // Mostly a fixed pitch set the chords recolour; now and then chops that follow the chords.
+      return k % 5 === 4
+        ? { notes: chordChopLead(ctx, rhythm, rng), build: "chords" }
+        : { notes: chopLead(ctx, rhythm, rng, rng.weighted([2, 3, 3, 4, 4, 5].map((n) => ({ n })), () => 1).n), build: "fixed" };
     case "gated-vowel":
       return { notes: gatedVowelLead(ctx, rhythm, rng), build: "vowel" };
     case "topline":

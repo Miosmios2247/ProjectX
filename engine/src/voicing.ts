@@ -17,12 +17,19 @@ export interface VoicingOptions {
   rootBottom?: number;
   /** Preferred range for the top note. */
   topRange?: [number, number];
+  /**
+   * Bonus for keeping one common tone on top across the loop (Fred again..:
+   * the piano holds a note the chords share while the harmony moves under it).
+   */
+  topPedal?: number;
+  /** Pitch class of that held top note (set by voiceProgression). */
+  pedalPc?: number;
 }
 
 // Lowest sensible pitch for the lower note of each interval (in semitones).
 // Below these, intervals get muddy ("low interval limits").
 const LOW_LIMIT: Record<number, number> = {
-  1: 52, 2: 51, 3: 48, 4: 46, 5: 45, 6: 46, 7: 34, 8: 41, 9: 41, 10: 41, 11: 41,
+  1: 52, 2: 51, 3: 48, 4: 48, 5: 45, 6: 46, 7: 34, 8: 41, 9: 41, 10: 41, 11: 41,
 };
 
 const MAX_SPAN: Record<Spread, number> = { close: 16, piano: 24, open: 27 };
@@ -118,6 +125,7 @@ export function voiceChord(
       else s += 0.5 * (c - 1);
     }
     if (mod12(low) === chord.bass) s -= opts.rootBottom ?? 1.5;
+    if (opts.topPedal && opts.pedalPc !== undefined && mod12(top) === opts.pedalPc) s -= opts.topPedal;
     if (roles.colors.includes(mod12(top))) s -= opts.colorTop ?? 0;
     if (opts.spread === "close") s += Math.max(0, span - 12) * 0.6;
     if (opts.spread === "open" && span < 12) s += (12 - span) * 0.5;
@@ -182,8 +190,22 @@ export function voiceProgression(
 ): number[][] {
   const out: number[][] = [];
   let prev: number[] | null = null;
+  let o = opts;
+  if (opts.topPedal) {
+    // The note most chords share becomes the held top note.
+    let bestPc = -1;
+    let bestCount = 0;
+    for (let pc = 0; pc < 12; pc++) {
+      const count = chords.filter((c) => c.intervals.some((i) => mod12(c.root + i) === pc)).length + rng.next() * 0.5;
+      if (count > bestCount) {
+        bestCount = count;
+        bestPc = pc;
+      }
+    }
+    o = { ...opts, pedalPc: bestPc };
+  }
   for (const chord of chords) {
-    const v = voiceChord(chord, prev, opts, rng);
+    const v = voiceChord(chord, prev, o, rng);
     out.push(v);
     prev = v;
   }

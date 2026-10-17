@@ -150,7 +150,7 @@
     "inversions": 0.05,
     "substitution": 0,
     "lift": 0.2,
-    "stretch": 0.3,
+    "stretch": 0.5,
     "liftMap": {
      "III": [
       "VII"
@@ -178,11 +178,11 @@
        "weight": 3
       },
       {
-       "id": "piano-quarters",
+       "id": "hold-push",
        "weight": 2
       },
       {
-       "id": "piano-pushed",
+       "id": "pulse-8ths",
        "weight": 1
       },
       {
@@ -190,11 +190,7 @@
        "weight": 1
       },
       {
-       "id": "hold-push",
-       "weight": 2
-      },
-      {
-       "id": "stabs-push",
+       "id": "piano-pushed",
        "weight": 1
       }
      ],
@@ -211,7 +207,8 @@
       "topRange": [
        67,
        77
-      ]
+      ],
+      "topPedal": 3
      }
     },
     "bass": {
@@ -402,9 +399,9 @@
      }
     ],
     "colors": {
-     "seventh": 0.6,
-     "triad": 0.2,
-     "ninth": 0.2
+     "triad": 0.45,
+     "seventh": 0.45,
+     "ninth": 0.1
     },
     "colorConsistency": 0.6,
     "inversions": 0,
@@ -460,7 +457,8 @@
       ],
       "spread": "close",
       "colorTop": 0.8,
-      "rootBottom": 0.6
+      "rootBottom": 0.6,
+      "topPedal": 3
      }
     },
     "bass": {
@@ -486,13 +484,17 @@
       {
        "id": "sub-hold-push",
        "weight": 1
+      },
+      {
+       "id": "rolling-16ths",
+       "weight": 1
       }
      ],
      "range": [
       28,
       43
      ],
-     "chromatic": true
+     "pedal": 0.15
     },
     "lead": {
      "sound": [
@@ -666,7 +668,8 @@
       ],
       "spread": "piano",
       "colorTop": 0.8,
-      "rootBottom": 1.2
+      "rootBottom": 1.2,
+      "topPedal": 3
      }
     },
     "bass": {

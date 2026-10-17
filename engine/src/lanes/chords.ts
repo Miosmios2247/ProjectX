@@ -21,14 +21,19 @@ export function chordsLane(
   for (const h of hits) {
     const own = slotIndexAt(slots, h.step);
     // A hit just before a change that rings into it plays the next chord early (a "push").
-    const target = chordSlotForNote(slots, h.step, h.len);
+    let target = chordSlotForNote(slots, h.step, h.len);
+    // At the loop end a push anticipates the first chord (the loop starts again).
+    const loopEnd = slots[slots.length - 1].start + slots[slots.length - 1].length;
+    if (target === slots[slots.length - 1] && loopEnd - h.step <= 2 && h.step + h.len > loopEnd + 0.5 && slots.length > 1) {
+      target = slots[0];
+    }
     const idx = slots.indexOf(target);
     const pushed = idx !== own;
     if (!pushed && idx === pushedInto && h.step === target.start) continue; // already sounding
     if (pushed) pushedInto = idx;
     const slot = slots[idx];
     const voicing = voicings[idx];
-    const end = slot.start + slot.length;
+    const end = idx === 0 && h.step >= slot.start + slot.length ? loopEnd : slot.start + slot.length;
     const len = Math.max(0.5, Math.min(h.len, end - h.step));
     let voices = voicing;
     if (h.role === "top") voices = voicing.slice(Math.max(1, voicing.length - 3));
