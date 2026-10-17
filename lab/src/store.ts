@@ -6,7 +6,7 @@ export interface RatingDoc {
   raterId: string | null;
   labVersion: string;
   engineVersion: string;
-  mode: "entdecken" | "blindtest" | "duell";
+  mode: "entdecken" | "blindtest" | "duell" | "referenz" | "summen";
   styleId: string;
   variantId: string;
   artist: string;
@@ -36,6 +36,10 @@ export interface RatingDoc {
   duelId?: string;
   winner?: "a" | "b" | "tie";
   order?: "ab" | "ba";
+  /** Reference comparison (from lab 0.5): only measurements, never the song. */
+  reference?: { name: string; from: number; ref: unknown; idea: unknown };
+  /** Hook-Summer (from lab 0.5): statistics of a hummed hook, never the melody. */
+  hum?: { song: string; bpm: number; stats: unknown };
 }
 
 export type StoredRating = RatingDoc & { id: string };

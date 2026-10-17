@@ -71,6 +71,12 @@ export interface ArrangementSection {
   kickOnly?: boolean;
   /** The sung lead gets a stacked harmony (a 3rd and a 5th below), AVAION's vocal stack before the drop. */
   leadHarmony?: boolean;
+  /** A synth lead plays the hook an octave higher (AVAION's drop lead). */
+  leadDouble?: boolean;
+  /** The pluck plays this sound here, whatever sound the idea picked (AVAION's nylon guitar intro). */
+  pluckSound?: string;
+  /** The rater's Fred again.. recording plays as it is, like a voice memo (round 5, needs a recording). */
+  voiceMemo?: boolean;
 }
 
 export interface StyleVariant {
@@ -100,6 +106,8 @@ export interface StyleVariant {
     gate?: { lanes: LaneId[]; pattern: number[]; depth: number };
     /** Level of a quiet noise/tape bed under the loop (0..1). */
     noise?: number;
+    /** How long the sidechain pump takes to recover, in beats (time constant; default 0.16). */
+    pumpRelease?: number;
   };
   soundHints: string[];
   /** Song preview for this variant; falls back to the artist's arrangement. */

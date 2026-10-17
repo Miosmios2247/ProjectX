@@ -1,10 +1,12 @@
 // Drum kits for the listening context: synthesized 909-style kick, snare,
 // clap and hats, sampled percussion per style (congas, shaker, toms ...).
+// Round 5 plays kick, hats and snare from CC0 samples (Sonic Pi), layers a
+// finger snap on the clap and hits a real crash on the drop.
 
 import type * as ToneNS from "tone";
 import type { DrumInst } from "../../engine/src/index";
 import { timeGuard } from "./sounds";
-import { KitSample, loadKit } from "./samples";
+import { KIT5_SAMPLES, Kit5Sample, KitSample, loadKit } from "./samples";
 
 type T = ToneLib;
 
@@ -53,6 +55,29 @@ const KITS: Record<string, KitShape> = {
     trim: 3, kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
     samples: {},
   },
+};
+
+type Kit5Inst = "kick" | "hatC" | "hatO" | "snare";
+
+interface Kit5Shape {
+  /** Sample and level (dB) per instrument. */
+  samples: Partial<Record<Kit5Inst, [Kit5Sample, number]>>;
+  /** Level (dB) of a finger snap layered on the clap; omitted = no snap. */
+  snap?: number;
+}
+
+// Round-5 drums, levels balanced against the round-4 kits by offline loudness.
+const KITS5: Record<string, Kit5Shape> = {
+  // Fred again.. / AVAION Pieces: punchy house kick, crisp hats, snap on the clap.
+  house: { samples: { kick: ["kick-haus", -5.5], hatC: ["hat-gem", -20], hatO: ["hat-gump", -22], snare: ["snare-dub", -15] }, snap: -17 },
+  // UKG / 2-step: tight clicky kick, bright hats, crisp snare.
+  garage: { samples: { kick: ["kick-tek", -6.5], hatC: ["hat-cab", -19], hatO: ["hat-gump", -21], snare: ["snare-dolf", -12] }, snap: -16 },
+  // BUNT.: big round kick, soft hats.
+  stutter: { samples: { kick: ["kick-klub", -8.5], hatC: ["hat-star", -21], hatO: ["hat-gump", -23], snare: ["snare-dub", -16] }, snap: -20 },
+  // WACUKA: deep round kick, acoustic hats under the congas.
+  afro: { samples: { kick: ["kick-pure", -8], hatC: ["hat-acoustic", -21], hatO: ["hat-open-acoustic", -24], snare: ["snare-elec", -15] }, snap: -18 },
+  // Drum & bass: short kick, sharp hats, a snare with body.
+  dnb: { samples: { kick: ["kick-gas", -1.5], hatC: ["hat-zap", -17], hatO: ["hat-gump", -19], snare: ["snare-generic", -4.5] } },
 };
 
 export class DrumKit {
@@ -124,9 +149,10 @@ export class DrumKit {
     to(this.crashSynth, track(new T.Filter(5200, "highpass")));
 
     const wanted = Object.entries(k.samples) as [DrumInst, [KitSample, number]][];
-    this.ready = !wanted.length
-      ? Promise.resolve()
-      : loadKit(T, wanted.map(([, [sample]]) => sample)).then((buffers) => {
+    const loads: Promise<void>[] = [];
+    if (wanted.length) {
+      loads.push(
+        loadKit(T, wanted.map(([, [sample]]) => sample)).then((buffers) => {
           if (this.disposed) return;
           for (const [inst, [sample, db]] of wanted) {
             const buf = buffers[sample];
@@ -136,8 +162,45 @@ export class DrumKit {
             this.players[inst] = player;
             this.sampleDb[inst] = db;
           }
-        });
+        }),
+      );
+    }
+    const k5 = soundSet === "v5" ? KITS5[kitId] ?? KITS5.house : null;
+    if (k5) {
+      loads.push(
+        loadKit(T, KIT5_SAMPLES, "samples/kit5/").then((buffers) => {
+          if (this.disposed) return;
+          for (const [inst, [sample, db]] of Object.entries(k5.samples) as [Kit5Inst, [Kit5Sample, number]][]) {
+            const buf = buffers[sample];
+            if (!buf) continue;
+            const player = track(new T.Player({ url: buf, volume: db, fadeOut: 0.01 }));
+            to(player);
+            this.players[inst] = player;
+            this.sampleDb[inst] = db;
+          }
+          if (k5.snap !== undefined && buffers.snap) {
+            this.snap = track(new T.Player({ url: buffers.snap, volume: k5.snap, fadeOut: 0.01 }));
+            to(this.snap);
+            this.snapDb = k5.snap;
+          }
+          if (buffers.crash) {
+            this.crashSample = track(new T.Player({ url: buffers.crash, volume: k.hatVol + 1, fadeOut: 0.3 }));
+            to(this.crashSample);
+          }
+          if (buffers.impact) {
+            this.impact = track(new T.Player({ url: buffers.impact, volume: -12, fadeOut: 0.2 }));
+            to(this.impact);
+          }
+        }),
+      );
+    }
+    this.ready = Promise.all(loads).then(() => undefined);
   }
+
+  private snap: ToneNS.Player | null = null;
+  private snapDb = 0;
+  private crashSample: ToneNS.Player | null = null;
+  private impact: ToneNS.Player | null = null;
 
   private guards = new Map<string, (t: number) => number>();
 
@@ -152,7 +215,11 @@ export class DrumKit {
 
   crash(time: number): void {
     try {
-      this.crashSynth.triggerAttackRelease(1.4, this.guard("crash")(time), 0.9);
+      const t = this.guard("crash")(time);
+      if (this.crashSample) {
+        this.crashSample.start(t);
+        this.impact?.start(this.guard("impact")(time));
+      } else this.crashSynth.triggerAttackRelease(1.4, t, 0.9);
     } catch {
       // drop the hit, keep the loop running
     }
@@ -186,10 +253,15 @@ export class DrumKit {
         this.snareBody.triggerAttackRelease(190, 0.1, this.guard("snareBody")(time), v * 0.8);
         break;
       case "clap":
-        // Three quick bursts make a clap.
+        // Three quick bursts make a clap; round 5 adds a finger snap on top.
         this.clap.triggerAttackRelease(0.02, at(time), v * 0.7);
         this.clap.triggerAttackRelease(0.02, at(time + 0.011), v * 0.75);
         this.clap.triggerAttackRelease(0.13, at(time + 0.022), v);
+        if (this.snap) {
+          const t = this.guard("snap")(time);
+          this.snap.volume.setValueAtTime(this.snapDb + 20 * Math.log10(v), t);
+          this.snap.start(t);
+        }
         break;
       case "hatC":
         this.hatC.triggerAttackRelease(0.04, at(time), v);

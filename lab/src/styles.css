@@ -658,3 +658,14 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 .studio-count { font-family: var(--font-mono); font-size: var(--step-0); color: var(--muted); }
 .studio-row .actions { display: flex; flex-wrap: wrap; gap: 6px; }
 .studio-info { font-size: var(--step-0); color: var(--muted); min-height: 1em; }
+
+/* Reference comparison and Hook-Summer */
+.tool summary { cursor: pointer; font-weight: 600; }
+.tool[open] summary { margin-bottom: 8px; }
+.tool .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tool-body { display: grid; gap: 8px; margin-top: 8px; }
+.inline-field { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.inline-field input { width: 6.5em; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; }
+.inline-field input[type="text"] { width: 12em; }
+.tool-result { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: var(--step-1); }
+.hum-roll { width: 100%; height: 70px; border-radius: 8px; background: var(--panel-2); }

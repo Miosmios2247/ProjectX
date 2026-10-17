@@ -24,8 +24,8 @@ export const SOUND_LABELS: Record<string, string> = {
   "garage-piano": "Piano-Stabs",
   rhodes: "E-Piano",
   "keys-pad": "Piano + Pad",
-  "lush-keys": "Piano + Streicher (satt)",
-  "bright-piano": "Helles Flügel-Piano",
+  "lush-keys": "Piano + Streicher + weiche Fläche",
+  "bright-piano": "Helles Flügel-Piano + Synth-Fläche",
   "guitar-strum": "Akustikgitarre",
   "piano-high": "Piano hoch",
   "guitar-pick": "Nylon-Gitarre",
@@ -36,11 +36,13 @@ export const SOUND_LABELS: Record<string, string> = {
   reese: "Reese-Bass",
   "deep-bass": "Deep-Bass",
   "house-bass": "House-Bass",
+  "bounce-sub": "Hüpfender Sub-Bass",
   "vox-chop": "Vocal-Slices",
   "vox-stretch": "Gedehnter Vokal",
   "vox-sing": "Gesang (Vokal)",
   "brass-lead": "Bläser-Lead",
   harmonica: "Mundharmonika",
+  "deep-pluck": "Deep-House-Pluck",
   "neutral-keys": "Neutral",
   "neutral-bass": "Neutral",
   "neutral-lead": "Neutral",
@@ -265,6 +267,34 @@ function grainVowel(T: T, set: string, grainy: boolean, chain: ToneNS.ToneAudioN
   };
 }
 
+/**
+ * Adds a quiet pad under held chords: a supersaw for BUNT.'s gated pads (the lane's
+ * stutter gate chops it together with the piano), or a soft, slow one for AVAION.
+ */
+function withPad(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number, minDuration: number, soft = false): Voice {
+  const pad = new T.PolySynth(T.Synth, {
+    // count 3 is Tone's default: other counts rebuild the oscillators inside the audio callback.
+    oscillator: soft ? { type: "fattriangle", count: 3, spread: 18 } : { type: "fatsawtooth", count: 3, spread: 28 },
+    envelope: soft ? { attack: 0.45, decay: 0.5, sustain: 0.85, release: 1.2 } : { attack: 0.08, decay: 0.3, sustain: 0.8, release: 0.5 },
+    volume: T.gainToDb(level),
+  });
+  pad.maxPolyphony = 24;
+  const tone = new T.Filter({ type: "lowpass", frequency: soft ? 1400 : 2600, Q: 0.6 });
+  pad.chain(tone, into);
+  return {
+    ...voice,
+    trigger(midi, duration, time, velocity, index) {
+      voice.trigger(midi, duration, time, velocity, index);
+      if (duration >= minDuration) safely(() => pad.triggerAttackRelease(freq(T, midi), duration, time, velocity * 0.8));
+    },
+    dispose() {
+      pad.dispose();
+      tone.dispose();
+      voice.dispose();
+    },
+  };
+}
+
 /** Adds a filtered noise layer that follows each note, like a synth's noise oscillator. */
 function withNoise(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number): Voice {
   const noise = new T.NoiseSynth({
@@ -342,6 +372,16 @@ function monoVoice(
   };
 }
 
+// Round-5 level trims where a sound changed (Salamander layers, new synths).
+const SOUND_TRIM_V5: Record<string, number> = {
+  "felt-piano": -3,
+  "keys-pad": -4.6,
+  "lush-keys": -4.3,
+  "bright-piano": -1.8,
+  "garage-piano": 0.5,
+  "piano-high": -1.5,
+};
+
 // Level trims (dB) per sound, from offline loudness measurements of the
 // style loops, so lanes sit in a balanced mix whatever sound they use.
 const SOUND_TRIM: Record<string, number> = {
@@ -354,11 +394,13 @@ const SOUND_TRIM: Record<string, number> = {
   "guitar-strum": -8.5,
   "piano-high": -1.5,
   "guitar-pick": -8.5,
+  "deep-pluck": 1.5,
   "lofi-sine": -1.5,
   sub: -6,
   reese: 1,
   "deep-bass": 1.5,
   "house-bass": 3.5,
+  "bounce-sub": -1.5,
   "vox-chop": 0.5,
   "vox-stretch": 0,
   "vox-sing": -4,
@@ -367,17 +409,24 @@ const SOUND_TRIM: Record<string, number> = {
 };
 
 export function createVoice(T: T, id: string, options: PlayerOptions = { soundSet: "v5", grain: true }): Voice {
-  const out = new T.Gain(T.dbToGain(SOUND_TRIM[id] ?? 0));
+  const v5 = options.soundSet === "v5";
+  const trim = (v5 ? SOUND_TRIM_V5[id] : undefined) ?? SOUND_TRIM[id] ?? 0;
+  const out = new T.Gain(T.dbToGain(trim));
   switch (id) {
     // ---- keys (sampled piano / e-piano, sometimes with a string pad under long chords)
     case "felt-piano":
-      return sampledVoice(T, ["piano"], {
+      // Round 5: the soft grand layer with a slow tape wobble, like Fred again..'s worn felt pianos.
+      return sampledVoice(T, [v5 ? "grand-soft" : "piano"], {
         release: 0.9,
-        chain: [new T.Filter(2300, "lowpass"), new T.Filter({ type: "lowshelf", frequency: 200, gain: -3 })],
+        chain: [
+          new T.Filter(2300, "lowpass"),
+          new T.Filter({ type: "lowshelf", frequency: 200, gain: -3 }),
+          ...(v5 ? [new T.Vibrato(0.55, 0.035)] : []),
+        ],
         layer: { set: "strings", minDuration: 0.6, gain: 0.32, attack: 0.35, release: 1.2 },
       }, out);
     case "garage-piano":
-      return sampledVoice(T, ["piano"], {
+      return sampledVoice(T, [v5 ? "grand-hard" : "piano"], {
         release: 0.22,
         chain: [new T.Filter(5200, "lowpass"), new T.Distortion(0.05)],
       }, out);
@@ -387,28 +436,34 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
         chain: [new T.Tremolo(4, 0.2).start(), new T.Chorus(0.8, 2.5, 0.3).start()],
       }, out);
     case "keys-pad":
-      return sampledVoice(T, ["piano"], {
+      return sampledVoice(T, [v5 ? "grand-soft" : "piano"], {
         release: 0.8,
         chain: [new T.Filter(3800, "lowpass")],
         layer: { set: "strings", minDuration: 0.3, gain: 0.5, attack: 0.3, release: 1.2 },
       }, out);
-    case "lush-keys":
-      return sampledVoice(T, ["piano"], {
+    case "lush-keys": {
+      // Round 5 adds a soft synth pad under long chords (AVAION's warm deep-house pads).
+      const keys = sampledVoice(T, [v5 ? "grand-soft" : "piano"], {
         release: 0.9,
         chain: [new T.Filter(4200, "lowpass"), new T.Chorus(0.6, 3, 0.25).start()],
         layer: { set: "strings", minDuration: 0.3, gain: 0.45, attack: 0.25, release: 1.3 },
       }, out);
-    case "bright-piano":
-      // Bright grand with a held string layer, so a stutter gate has something to chop.
-      return sampledVoice(T, ["piano"], {
+      return v5 ? withPad(T, keys, out, 0.2, 0.6, true) : keys;
+    }
+    case "bright-piano": {
+      // Bright grand with a held string layer, so a stutter gate has something to chop;
+      // round 5 plays the hard concert-grand layer and adds a gated supersaw pad.
+      const piano = sampledVoice(T, [v5 ? "grand-hard" : "piano"], {
         release: 0.8,
-        chain: [new T.Filter({ type: "highshelf", frequency: 2500, gain: 4 })],
+        chain: [new T.Filter({ type: "highshelf", frequency: 2500, gain: v5 ? 2 : 4 })],
         layer: { set: "strings", minDuration: 0.9, gain: 0.4, attack: 0.25, release: 1.2 },
       }, out);
+      return v5 ? withPad(T, piano, out, 0.29, 0.6) : piano;
+    }
     case "guitar-strum":
       return sampledVoice(T, ["guitar"], { release: 0.4, chain: [new T.Filter(110, "highpass")] }, out);
     case "piano-high":
-      return sampledVoice(T, ["piano"], {
+      return sampledVoice(T, [v5 ? "grand-hard" : "piano"], {
         release: 1.0,
         chain: [new T.Filter({ type: "highshelf", frequency: 3000, gain: 3 })],
       }, out);
@@ -434,6 +489,32 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
       });
       s.maxPolyphony = 24;
       return polyVoice(T, s, [new T.Filter({ type: "lowpass", frequency: 2400, Q: 1.2 })], out);
+    }
+    case "drop-lead": {
+      // A bright supersaw lead that doubles the hook an octave up in AVAION's drops.
+      const s = new T.PolySynth(T.Synth, {
+        // count 3 is Tone's default: other counts rebuild the oscillators inside the audio callback.
+        oscillator: { type: "fatsawtooth", count: 3, spread: 22 },
+        envelope: { attack: 0.006, decay: 0.2, sustain: 0.55, release: 0.18 },
+        // Measured: about 5 dB under the sung vocal it doubles, clearly there without taking over.
+        volume: -4,
+      });
+      s.maxPolyphony = 8;
+      return polyVoice(T, s, [new T.Filter({ type: "lowpass", frequency: 3600, Q: 0.7 })], out);
+    }
+    case "deep-pluck": {
+      // Deep-house pluck (AVAION, "Selected" style): saw and square, a fast filter
+      // envelope and a breath of noise, softened by the reverb send.
+      const s = new T.PolySynth(T.MonoSynth, {
+        oscillator: { type: "fatsawtooth", count: 3, spread: 12 },
+        filter: { type: "lowpass", Q: 2, rolloff: -24 },
+        filterEnvelope: { attack: 0.001, decay: 0.22, sustain: 0.05, release: 0.2, baseFrequency: 450, octaves: 3 },
+        envelope: { attack: 0.002, decay: 0.35, sustain: 0, release: 0.25 },
+        // Measured: as loud as the nylon guitar it alternates with.
+        volume: 0,
+      });
+      s.maxPolyphony = 16;
+      return polyVoice(T, s, [new T.Filter(4500, "lowpass")], out);
     }
     case "lofi-sine": {
       // Sine one-shot with pitch wobble and saturation: a bubbling bed (Fred again..).
@@ -527,6 +608,18 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
         volume: -7,
       });
       return monoVoice(T, s, [], out);
+    }
+    case "bounce-sub": {
+      // BUNT.'s bouncing sub (round 5): a round sub with a short knock on each note,
+      // so the offbeat bass bounces under the sidechain and is heard on small speakers too.
+      const s = new T.MonoSynth({
+        oscillator: { type: "triangle" },
+        filter: { type: "lowpass", Q: 0.8, rolloff: -24 },
+        filterEnvelope: { attack: 0.001, decay: 0.08, sustain: 0.3, release: 0.08, baseFrequency: 150, octaves: 2.6 },
+        envelope: { attack: 0.002, decay: 0.16, sustain: 0.55, release: 0.07 },
+        volume: -4,
+      });
+      return monoVoice(T, s, [new T.Distortion(0.12)], out);
     }
     case "house-bass": {
       const s = new T.MonoSynth({

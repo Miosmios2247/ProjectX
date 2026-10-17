@@ -10,7 +10,7 @@
 <div class="app">
   <header class="masthead">
     <div class="brand">
-      <p class="eyebrow">ProjectX · Hörtest Runde 4 · Stil-Profile v0.4</p>
+      <p class="eyebrow">ProjectX · Hörtest Runde 5 · Stil-Profile v0.5</p>
       <h1>Hör-Labor</h1>
       <p class="lede">Wähle einen Künstler, hör dir die Idee an und sag mir, wie sehr sie nach ihm klingt. Im Blindtest rätst du, von wem ein Loop sein soll.</p>
     </div>
@@ -162,6 +162,43 @@
         <label class="check" id="voice-on" hidden><input type="checkbox" id="voice-use" checked> Meine Stimmen im Lead verwenden</label>
       </section>
 
+      <details class="card tool" id="ref-card">
+        <summary>Vergleich mit einem Vorbild-Song</summary>
+        <p class="muted small">Lade einen Song, den du als Datei hast (MP3, M4A, WAV). Er bleibt in deinem Browser. Mit dem Umschalter hörst du Idee und Vorbild gleich laut; „Klang vergleichen“ misst Bass, Höhen, Tempo und Pumpen. Gespeichert werden nur diese Messwerte.</p>
+        <div class="actions">
+          <button type="button" class="btn" id="ref-pick">Song laden</button>
+          <input type="file" id="ref-file" accept="audio/*" hidden>
+        </div>
+        <p class="voice-status" id="ref-status" aria-live="polite"></p>
+        <div class="tool-body" id="ref-on" hidden>
+          <div class="seg duel-switch" role="group" aria-label="Hören">
+            <button type="button" id="ref-idea" aria-pressed="true">Idee</button>
+            <button type="button" id="ref-song" aria-pressed="false">Vorbild</button>
+          </div>
+          <label class="small inline-field">Ausschnitt ab <input type="number" id="ref-from" min="0" step="1" inputmode="numeric"> Sekunden</label>
+          <button type="button" class="btn" id="ref-compare">Klang vergleichen</button>
+          <ul class="tool-result" id="ref-result"></ul>
+        </div>
+      </details>
+
+      <details class="card tool" id="hum-card">
+        <summary>Hook summen</summary>
+        <p class="muted small">Summ die Hook eines Vorbild-Songs ins Mikro, am besten mit Kopfhörern. Erst kommt ein Takt Klick zum Einzählen, dann hast du vier Takte. Das Hör-Labor erkennt Tonschritte und Rhythmus und speichert nur die Statistik, keine Melodie.</p>
+        <label class="small inline-field">Song <input type="text" id="hum-song" maxlength="80" placeholder="z. B. Clouds"></label>
+        <label class="small inline-field">Tempo <input type="number" id="hum-bpm" min="60" max="200" step="1" inputmode="numeric"> BPM</label>
+        <div class="actions">
+          <button type="button" class="btn" id="hum-record">Mit Klick aufnehmen</button>
+          <button type="button" class="btn" id="hum-pick">Datei</button>
+          <input type="file" id="hum-file" accept="audio/*" hidden>
+        </div>
+        <p class="voice-status" id="hum-status" aria-live="polite"></p>
+        <div class="tool-body" id="hum-on" hidden>
+          <canvas class="hum-roll" id="hum-roll" role="img" aria-label="Erkannte Töne"></canvas>
+          <ul class="tool-result" id="hum-result"></ul>
+          <button type="button" class="btn primary" id="hum-save">Statistik speichern</button>
+        </div>
+      </details>
+
       <details class="card hints" id="hints">
         <summary>Klang-Tipps für FL Studio</summary>
         <ul id="hint-list"></ul>
@@ -207,7 +244,7 @@
   </section>
 
   <footer class="foot">
-    <p>Die Stil-Profile beruhen auf einer Recherche (Interviews, Tutorials, Akkord-Transkriptionen) und sind keine offiziellen Inhalte der Künstler. Die Stimmen sind Chor-Samples als Platzhalter, nicht die echten Vocals. Für den echten Eindruck die MIDI-Dateien mit deinen eigenen Sounds in FL Studio anhören. Samples: FluidR3 GM (MIT), GeneralUser GS.</p>
+    <p>Die Stil-Profile beruhen auf einer Recherche (Interviews, Tutorials, Akkord-Transkriptionen) und sind keine offiziellen Inhalte der Künstler. Ohne eigene Aufnahme sind die Stimmen Chor-Samples als Platzhalter, nicht die echten Vocals. Eigene Aufnahmen und Vorbild-Songs bleiben in deinem Browser. Für den echten Eindruck die MIDI-Dateien mit deinen eigenen Sounds in FL Studio anhören. Samples: Salamander Grand Piano von Alexander Holm (CC BY 3.0), Sonic Pi (CC0), FluidR3 GM (MIT), GeneralUser GS.</p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

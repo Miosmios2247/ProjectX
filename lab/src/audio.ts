@@ -9,6 +9,7 @@ import { Voice, createVoice } from "./sounds";
 import { OWN_VOICE_KIND, OwnVoice, OwnVoiceKind, ownVoice } from "./voice";
 import { DrumKit } from "./drumkit";
 import { harmonyFor, legatoEnds } from "./phrasing";
+import { loadFile } from "./samples";
 
 export type PlayLane = LaneId | "drums";
 export type SoundMode = "style" | "neutral";
@@ -37,6 +38,9 @@ const NEUTRAL: Record<LaneId, string> = {
   pluck: "neutral-pluck",
 };
 
+/** Sounds new in round 5: the duel's round-4 version plays what the variant had then. */
+const V4_SOUND: Record<string, string> = { "bounce-sub": "sub", "deep-pluck": "guitar-pick" };
+
 // Per-lane level trims (dB), balanced with offline renders.
 const LANE_TRIM: Record<PlayLane, number> = { chords: -2, bass: 0, lead: -1, pluck: 0, drums: -1 };
 const REVERB_SEND: Record<PlayLane, number> = { chords: 0.55, bass: 0, lead: 0.6, pluck: 0.7, drums: 0.08 };
@@ -45,6 +49,8 @@ const DUCKED: PlayLane[] = ["chords", "bass", "lead", "pluck"];
 
 const PLAY_LANES_ALL: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const OPEN = 20000;
+/** Master level (dB) per sound set: round 5 is mastered to about -14 LUFS (streaming level), round 4 matched to it for fair duels. */
+const MASTER_DB: Record<PlayerOptions["soundSet"], number> = { v5: -3.1, v4: -3.6 };
 /** Level of a closed stutter gate on the vowel (about -24 dB). */
 const CHOP_FLOOR = 0.06;
 
@@ -77,6 +83,23 @@ export class Player {
   private gate = {} as Record<PlayLane, ToneNS.Gain>;
   private noise!: ToneNS.Noise;
   private noiseLevel!: ToneNS.Gain;
+  /** Round 5: vinyl crackle instead of pink noise under Fred again.. */
+  private vinyl!: ToneNS.Player;
+  private vinylLevel!: ToneNS.Gain;
+  private sat!: ToneNS.Distortion;
+  private comp!: ToneNS.Compressor;
+  /** After the limiter: muted while a reference song plays (A/B). */
+  private out!: ToneNS.Gain;
+  /** Lead echo send; Fred again.. "throws" open it on the last syllable of a phrase. */
+  private delaySend!: ToneNS.Gain;
+  /** Voices that play in some song sections only (AVAION's drop lead and guitar intro). */
+  private sectionVoices = new Map<string, Voice>();
+  /** Fred again..'s voice-memo intro. */
+  private memo: ToneNS.Player | null = null;
+  private memoChain: ToneNS.ToneAudioNode[] = [];
+  /** Song ticks [from, to) in which the voice memo plays and the chops wait. */
+  private memoSpans: [number, number][] = [];
+  private stairEvent: number | null = null;
   /** Song form: low-pass on the music bus, noise riser for builds. */
   private songFilter!: ToneNS.Filter;
   private riser!: ToneNS.Noise;
@@ -124,10 +147,13 @@ export class Player {
 
   async build(): Promise<void> {
     const T = this.T;
-    const comp = new T.Compressor({ threshold: -16, ratio: 3, attack: 0.01, release: 0.2 });
+    // Master: a touch of saturation and glue compression (round 5), then a limiter.
+    this.sat = new T.Distortion({ distortion: 0.06, oversample: "2x", wet: 0 });
+    this.comp = new T.Compressor({ threshold: -16, ratio: 3, attack: 0.01, release: 0.2 });
     const limiter = new T.Limiter(-1);
-    this.master = new T.Gain(T.dbToGain(-5.5));
-    this.master.chain(comp, limiter, T.getDestination());
+    this.master = new T.Gain(T.dbToGain(MASTER_DB.v5));
+    this.out = new T.Gain(1);
+    this.master.chain(this.sat, this.comp, limiter, this.out, T.getDestination());
     this.duck = new T.Gain(1);
     this.songFilter = new T.Filter({ type: "lowpass", frequency: OPEN, rolloff: -24, Q: 0.6 });
     this.duck.chain(this.songFilter, this.master);
@@ -138,6 +164,7 @@ export class Player {
     this.delay = new T.FeedbackDelay({ delayTime: "8n.", feedback: 0.28, wet: 1 });
     const delaySend = new T.Gain(0.16);
     delaySend.connect(this.delay);
+    this.delaySend = delaySend;
     this.delay.connect(this.master);
     for (const lane of PLAY_LANES_ALL) {
       const g = new T.Gain(T.dbToGain(LANE_TRIM[lane]));
@@ -157,6 +184,12 @@ export class Player {
     const noiseTone = new T.Filter({ type: "bandpass", frequency: 2400, Q: 0.35 });
     this.noise = new T.Noise("pink");
     this.noise.chain(noiseTone, this.noiseLevel, this.duck);
+    this.vinylLevel = new T.Gain(0);
+    this.vinyl = new T.Player({ loop: true, fadeIn: 0.05, fadeOut: 0.05 });
+    this.vinyl.chain(this.vinylLevel, this.duck);
+    void loadFile(T, "samples/texture/vinyl.mp3").then((buf) => {
+      if (buf) this.vinyl.buffer = buf;
+    });
     // White-noise riser for builds, with a little reverb.
     this.riserLevel = new T.Gain(0);
     this.riserFilter = new T.Filter({ type: "bandpass", frequency: 500, Q: 1.4 });
@@ -176,6 +209,69 @@ export class Player {
     if (!this.built) return;
     const base = this.T.dbToGain(LANE_TRIM[lane]);
     this.laneGain[lane].gain.rampTo(muted ? 0 : base, 0.03);
+  }
+
+  /** A voice for some song sections only, e.g. AVAION's drop lead that plays the hook an octave higher. */
+  private sectionVoice(lane: LaneId, id: string): Voice {
+    const key = `${lane}:${id}:${this.options.soundSet}`;
+    const cur = this.sectionVoices.get(key);
+    if (cur) return cur;
+    const voice = createVoice(this.T, id, this.options);
+    voice.output.connect(this.laneGain[lane]);
+    this.sectionVoices.set(key, voice);
+    return voice;
+  }
+
+  /** Fred again..: the rater's own recording plays as it is at the start of a voice-memo section. */
+  private scheduleMemo(arrangement: ArrangementSection[] | null, ppq: number, secPerBeat: number): void {
+    const T = this.T;
+    this.memo?.dispose();
+    this.memo = null;
+    this.memoChain.forEach((n) => n.dispose());
+    this.memoChain = [];
+    this.memoSpans = [];
+    const own = this.ownVoices.chop;
+    if (!arrangement || !own || !this.useOwnVoice || this.soundMode === "neutral" || this.options.soundSet !== "v5") return;
+    if (!arrangement.some((s) => s.voiceMemo)) return;
+    // Phone-memo colour, like the chops.
+    const chain = [new T.Gain(own.analysis.gain * T.dbToGain(-10)), new T.Filter(250, "highpass"), new T.Filter(6500, "lowpass")];
+    this.memoChain = chain;
+    for (let i = 1; i < chain.length; i++) chain[i - 1].connect(chain[i]);
+    chain[chain.length - 1].connect(this.laneGain.lead);
+    const memo = new T.Player({ url: own.buffer, fadeIn: 0.01, fadeOut: 0.3 });
+    memo.connect(chain[0]);
+    this.memo = memo;
+    const transport = T.getTransport();
+    let bar = 0;
+    for (const sec of arrangement) {
+      if (sec.voiceMemo) {
+        const seconds = Math.min(own.buffer.duration, sec.bars * 4 * secPerBeat - 0.1);
+        // The chops come in on the next two-bar line after the memo, so the hook starts a phrase.
+        const from = Math.round(bar * 4 * ppq);
+        const pairs = Math.ceil(seconds / (8 * secPerBeat));
+        this.memoSpans.push([from, from + Math.round(Math.min(sec.bars, pairs * 2) * 4 * ppq)]);
+        this.songEvents.push(
+          transport.schedule((time) => {
+            try {
+              memo.start(time, 0, seconds);
+            } catch {
+              // a missed memo is better than a stopped song
+            }
+          }, `${Math.round(bar * 4 * ppq)}i`),
+        );
+      }
+      bar += sec.bars;
+    }
+  }
+
+  private inMemo(tick: number): boolean {
+    const t = (((tick + 2) % this.songTicks) + this.songTicks) % this.songTicks;
+    return this.memoSpans.some(([a, b]) => t >= a && t < b);
+  }
+
+  /** Silence the lab's output (while a reference song plays) without stopping it. */
+  setOutputMuted(muted: boolean): void {
+    if (this.built) this.out.gain.rampTo(muted ? 0 : 1, 0.04);
   }
 
   /** Switch sound options (duels); keeps playing with the new sounds unless `reload` is off. */
@@ -234,6 +330,10 @@ export class Player {
     if (this.duckEvent !== null) transport.clear(this.duckEvent);
     if (this.gateEvent !== null) transport.clear(this.gateEvent);
     this.gateEvent = null;
+    if (this.stairEvent !== null) transport.clear(this.stairEvent);
+    this.stairEvent = null;
+    this.delaySend.gain.cancelScheduledValues(T.now());
+    this.delaySend.gain.value = 0.16;
     for (const id of this.songEvents) transport.clear(id);
     this.songEvents = [];
 
@@ -280,7 +380,8 @@ export class Player {
     const harmonize = ownKind !== "chop";
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
-      const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
+      const sound = this.options.soundSet === "v4" ? V4_SOUND[data.sound] ?? data.sound : data.sound;
+      const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : sound);
       const sorted = [...data.notes].sort((a, b) => a.start - b.start);
       const top = Math.max(...sorted.map((n) => n.pitch), 0);
       // Raw vocal: repeated syllables merge into held notes; stretched vowel: one per chord.
@@ -307,17 +408,43 @@ export class Player {
           hold: held(start, holdEnds[i]),
           harm: harmony[i] ?? [],
           vel: n.vel / 127,
+          // The last syllable before a rest of a beat or more ends a phrase.
+          phraseEnd: !sorted[i + 1] || sorted[i + 1].start - (n.start + n.len) >= 4,
           i,
         };
       });
+      const v5 = this.options.soundSet === "v5" && !neutral;
+      const throws = lane === "lead" && v5 && idea.styleId === "fred-again";
+      const memoSection = !!arrangement?.some((s) => s.voiceMemo) && lane === "lead";
+      const doubler = lane === "lead" && v5 && arrangement?.some((s) => s.leadDouble) ? this.sectionVoice("lead", "drop-lead") : null;
+      // AVAION's guitar intro: the pluck switches to the nylon guitar there.
+      const swaps = new Map<string, Voice>();
+      if (lane === "pluck" && v5) {
+        for (const s of arrangement ?? []) {
+          if (!s.pluckSound || s.pluckSound === data.sound || swaps.has(s.pluckSound)) continue;
+          const v = this.sectionVoice("pluck", s.pluckSound);
+          v.prepare?.(sorted, []);
+          swaps.set(s.pluckSound, v);
+        }
+      }
       const part = new T.Part((time, ev: (typeof events)[number]) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
+        // While the voice memo plays (Fred again.. intro), the chops wait.
+        if (memoSection && sec?.voiceMemo && this.memo && this.inMemo(transport.getTicksAtTime(time))) return;
         const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
+        if (throws && ev.phraseEnd) {
+          // Echo throw: the phrase's last syllable rings out in the delay.
+          this.delaySend.gain.setValueAtTime(0.6, time);
+          this.delaySend.gain.setValueAtTime(0.16, time + ev.dur + 0.05);
+        }
+        if (doubler && sec?.leadDouble) doubler.trigger(ev.midi + 12, ev.dur, time, ev.vel * 0.8, ev.i);
         if (chopped) {
           // One held vowel per syllable; the gate follows the notes (open level = accent).
+          // In a build the stutter stairs take over the gate (see below).
           const gated = !sec?.leadHold && !sec?.leadRaw;
           if (ev.hold > 0) voice.trigger(ev.midi + up, ev.hold, time, gated ? peak * 0.9 : ev.vel * 0.72, ev.i);
+          if (sec?.build && v5) return;
           chop.cancelScheduledValues(time);
           if (gated) {
             chop.setTargetAtTime(ev.vel / peak, time, 0.0015);
@@ -332,13 +459,32 @@ export class Player {
           if (dur > 0) voice.trigger(ev.midi, dur, time, ev.vel * (sec.leadHold ? 0.72 : 0.9), ev.i);
           return;
         }
-        voice.trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
+        (swaps.get(sec?.pluckSound ?? "") ?? voice).trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
         if (lane === "lead" && sec?.leadHarmony) {
           ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), -(k + 1)));
         }
       }, events);
       loopPart(part);
+      if (chopped && v5 && arrangement?.some((s) => s.build)) {
+        // BUNT.'s stutter stairs: in a build the vowel gate speeds up, 8ths, then 16ths, then 32nds.
+        const stepTicks = ppq / 8;
+        this.stairEvent = transport.scheduleRepeat((time) => {
+          const sec = sectionAt(time);
+          if (!sec?.build) return;
+          const tick = transport.getTicksAtTime(time) + 2;
+          const bar = Math.floor(tick / (4 * ppq));
+          const info = this.song.find((s) => bar % songBars >= s.startBar && bar % songBars < s.startBar + s.bars);
+          const inSec = info ? (bar % songBars) - info.startBar : 0;
+          const rate = inSec < sec.bars - 2 ? 8 : inSec < sec.bars - 1 ? 16 : 32;
+          const per = 32 / rate;
+          const pos = Math.round(tick / stepTicks) % per;
+          chop.cancelScheduledValues(time);
+          chop.setTargetAtTime(pos < per / 2 || per === 1 ? 1 : CHOP_FLOOR, time, 0.0015);
+          if (per === 1) chop.setTargetAtTime(CHOP_FLOOR, time + (secPerBeat / 8) * 0.55, 0.002);
+        }, "32n", 0);
+      }
     }
+    this.scheduleMemo(arrangement, ppq, secPerBeat);
     const kit = this.kitFor(neutral ? "neutral" : idea.drums.kit);
     // Kick stays straight; hats and percussion get the style's drum swing.
     const drumEvents = idea.drums.hits.map((h) => ({
@@ -354,7 +500,9 @@ export class Player {
     loopPart(drumPart);
 
     // Sidechain: duck on every beat, recover quickly. No kick, no pumping.
+    // Round 5 shapes the pump per artist: long for Fred again.., short and hard for BUNT.
     const depth = neutral ? 0.3 : idea.mix.sidechain;
+    const pump = this.options.soundSet === "v5" && !neutral ? idea.mix.pumpRelease ?? 0.16 : 0.16;
     const g = this.duck.gain;
     this.duckEvent = transport.scheduleRepeat((time) => {
       const sec = sectionAt(time);
@@ -364,7 +512,7 @@ export class Player {
         return;
       }
       g.setValueAtTime(1 - depth, time);
-      g.setTargetAtTime(1, time + 0.015, secPerBeat * 0.16);
+      g.setTargetAtTime(1, time + 0.015, secPerBeat * pump);
     }, "4n", 0);
     if (depth <= 0.01) g.value = 1;
 
@@ -388,7 +536,10 @@ export class Player {
       }, "16n", 0);
     }
 
-    this.noiseLevel.gain.rampTo(neutral ? 0 : (idea.mix.noise ?? 0) * (this.wantPlaying ? 1 : 0), 0.05);
+    this.applyMaster();
+    const bed = this.bedLevels();
+    this.noiseLevel.gain.rampTo(bed.noise * (this.wantPlaying ? 1 : 0), 0.05);
+    this.vinylLevel.gain.rampTo(bed.vinyl * (this.wantPlaying ? 1 : 0), 0.05);
     this.reverbIn.gain.value = neutral ? 0.25 : idea.mix.reverb;
     for (const lane of this.muted) this.setMuted(lane, true);
   }
@@ -489,12 +640,33 @@ export class Player {
 
   /** Wait (up to a few seconds) until sampled instruments of the loaded idea are ready. */
   async prepare(timeoutMs = 8000): Promise<void> {
-    const waits = Object.values(this.voices)
-      .map((v) => v?.voice.ready)
+    const waits = [...Object.values(this.voices).map((v) => v?.voice), ...this.sectionVoices.values()]
+      .map((v) => v?.ready)
       .filter((p): p is Promise<void> => !!p);
     if (this.kit?.kit.ready) waits.push(this.kit.kit.ready);
     if (!waits.length) return;
     await Promise.race([Promise.all(waits), new Promise((r) => setTimeout(r, timeoutMs))]);
+  }
+
+  /** Round 5 masters with saturation and glue; round 4 keeps its old chain (level-matched). */
+  private applyMaster(): void {
+    const v5 = this.options.soundSet === "v5";
+    const now = this.T.now();
+    this.sat.wet.setValueAtTime(v5 ? 0.3 : 0, now);
+    this.comp.threshold.setValueAtTime(v5 ? -20 : -16, now);
+    this.comp.ratio.setValueAtTime(v5 ? 2.5 : 3, now);
+    this.comp.attack.setValueAtTime(v5 ? 0.02 : 0.01, now);
+    this.comp.release.setValueAtTime(v5 ? 0.25 : 0.2, now);
+    this.master.gain.setValueAtTime(this.T.dbToGain(MASTER_DB[this.options.soundSet]), now);
+  }
+
+  /** Level of the noise bed: vinyl crackle under Fred again.. (round 5), pink noise elsewhere. */
+  private bedLevels(): { noise: number; vinyl: number } {
+    const idea = this.idea;
+    if (!idea || this.soundMode === "neutral") return { noise: 0, vinyl: 0 };
+    const level = idea.mix.noise ?? 0;
+    const crackle = this.options.soundSet === "v5" && idea.styleId === "fred-again" && this.vinyl.loaded;
+    return crackle ? { noise: 0, vinyl: Math.min(1, level * 12) } : { noise: level, vinyl: 0 };
   }
 
   play(): void {
@@ -503,9 +675,11 @@ export class Player {
     if (transport.state !== "started") transport.start("+0.05");
     this.wantPlaying = true;
     if (this.noise.state !== "started") this.noise.start();
+    if (this.vinyl.loaded && this.vinyl.state !== "started") this.vinyl.start();
     if (this.song.length && this.riser.state !== "started") this.riser.start();
-    const level = this.soundMode === "neutral" ? 0 : (this.idea?.mix.noise ?? 0);
-    this.noiseLevel.gain.rampTo(level, 0.1);
+    const bed = this.bedLevels();
+    this.noiseLevel.gain.rampTo(bed.noise, 0.1);
+    this.vinylLevel.gain.rampTo(bed.vinyl, 0.1);
   }
 
   stop(): void {
@@ -520,6 +694,10 @@ export class Player {
     this.noiseLevel.gain.cancelScheduledValues(this.T.now());
     this.noiseLevel.gain.value = 0;
     if (this.noise.state === "started") this.noise.stop();
+    this.vinylLevel.gain.cancelScheduledValues(this.T.now());
+    this.vinylLevel.gain.value = 0;
+    if (this.vinyl.state === "started") this.vinyl.stop();
+    if (this.memo?.state === "started") this.memo.stop();
     this.riserLevel.gain.cancelScheduledValues(this.T.now());
     this.riserLevel.gain.value = 0;
     if (this.riser.state === "started") this.riser.stop();
@@ -536,4 +714,20 @@ export class Player {
     if (!this.song.length || !this.playing || this.T.getTransport().state !== "started") return -1;
     return (this.T.getTransport().ticks % this.songTicks) / this.songTicks;
   }
+}
+
+/** Renders one loop of an idea offline (for the reference comparison). Stop live playback first. */
+export async function renderOffline(T: ToneLib, idea: Idea, options: PlayerOptions = DEFAULT_OPTIONS): Promise<{ chs: Float32Array[]; rate: number }> {
+  const seconds = (idea.bars * 4 * 60) / idea.bpm;
+  const buf = await T.Offline(async () => {
+    const p = new Player(T);
+    await p.build();
+    p.setOptions(options, false);
+    p.load(idea, "style");
+    await p.prepare(15000);
+    p.play();
+  }, seconds + 0.3);
+  const chs: Float32Array[] = [];
+  for (let c = 0; c < buf.numberOfChannels; c++) chs.push(buf.getChannelData(c).slice(Math.round(0.1 * buf.sampleRate)));
+  return { chs, rate: buf.sampleRate };
 }

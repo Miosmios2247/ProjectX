@@ -12,7 +12,8 @@
     "chords"
    ],
    "filter": 1200,
-   "leadRaw": true
+   "leadRaw": true,
+   "voiceMemo": true
   },
   {
    "name": "Aufbau",
@@ -303,7 +304,8 @@
     "sidechain": 0.75,
     "reverb": 0.42,
     "drumKit": "house",
-    "noise": 0.03
+    "noise": 0.03,
+    "pumpRelease": 0.24
    },
    "soundHints": [
     "Loop beginnt auf dem maj7-Akkord der VI. Stufe; keine V→I-Auflösung, lieber Moll-v",
@@ -554,7 +556,8 @@
     "sidechain": 0.5,
     "reverb": 0.3,
     "drumKit": "garage",
-    "noise": 0.02
+    "noise": 0.02,
+    "pumpRelease": 0.24
    },
    "soundHints": [
     "909-Kick, ab und zu zwei 16tel hintereinander (die erste leiser); Hats mit Swing, Kick gerade",
@@ -737,7 +740,8 @@
     "sidechain": 0.3,
     "reverb": 0.3,
     "drumKit": "dnb",
-    "noise": 0.02
+    "noise": 0.02,
+    "pumpRelease": 0.24
    },
    "soundHints": [
     "Breakbeat mit Kick auf 1 und auf der 3+, Snare auf 2 und 4",

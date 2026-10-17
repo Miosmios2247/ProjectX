@@ -46,7 +46,8 @@
     "lead",
     "pluck",
     "drums"
-   ]
+   ],
+   "leadDouble": true
   }
  ],
  "variants": [
@@ -234,7 +235,14 @@
     },
     "pluck": {
      "sound": [
-      "guitar-pick"
+      {
+       "id": "guitar-pick",
+       "weight": 2
+      },
+      {
+       "id": "deep-pluck",
+       "weight": 1
+      }
      ],
      "mode": "pick",
      "rhythms": [
@@ -257,12 +265,60 @@
     "sidechain": 0.45,
     "reverb": 0.35,
     "drumKit": "house",
-    "noise": 0
+    "noise": 0,
+    "pumpRelease": 0.16
    },
    "soundHints": [
     "Er singt selbst, eher hoch und unbearbeitet-direkt; die Topline ist der Hook",
     "Songs entstehen von der Gitarre aus: Akustik-/Nylon-Gitarre unter den Akkorden",
     "Warme, breite Akkord-Stapel (add9, maj7), Deep-House-Groove"
+   ],
+   "arrangement": [
+    {
+     "name": "Gitarren-Intro",
+     "bars": 4,
+     "lanes": [
+      "pluck"
+     ],
+     "filter": 5000,
+     "pluckSound": "guitar-pick"
+    },
+    {
+     "name": "Strophe",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "pluck",
+      "lead",
+      "bass",
+      "drums"
+     ],
+     "noKick": true
+    },
+    {
+     "name": "Aufbau",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "lead",
+      "drums"
+     ],
+     "noKick": true,
+     "build": true,
+     "leadHarmony": true
+    },
+    {
+     "name": "Drop",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ],
+     "leadDouble": true
+    }
    ]
   },
   {
@@ -441,7 +497,8 @@
     "sidechain": 0.35,
     "reverb": 0.3,
     "drumKit": "afro",
-    "noise": 0
+    "noise": 0,
+    "pumpRelease": 0.14
    },
    "soundHints": [
     "Der Hook ist ein Synth-Lead aus einem Trompeten-Sound + Rauschfilter mit LFO (Serum), nicht die Stimme",
@@ -708,7 +765,8 @@
     "sidechain": 0.4,
     "reverb": 0.34,
     "drumKit": "garage",
-    "noise": 0.01
+    "noise": 0.01,
+    "pumpRelease": 0.16
    },
    "soundHints": [
     "2-Step: Kick auf 1 und 11, Snare 5 und 13, offene Hats auf den Offbeats; Swing nur auf Hats/Percussion",

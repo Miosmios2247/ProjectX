@@ -214,7 +214,7 @@
     },
     "bass": {
      "sound": [
-      "sub"
+      "bounce-sub"
      ],
      "rhythms": [
       {
@@ -325,7 +325,8 @@
       0
      ],
      "depth": 0.7
-    }
+    },
+    "pumpRelease": 0.11
    },
    "soundHints": [
     "Vocal-Hook aus einem bestehenden Song: Vokale lang gedehnt, verzerrt und mit 1/16-Gate „gestottert“",
@@ -485,7 +486,8 @@
     "sidechain": 0.3,
     "reverb": 0.3,
     "drumKit": "dnb",
-    "noise": 0.01
+    "noise": 0.01,
+    "pumpRelease": 0.11
    },
    "soundHints": [
     "Drum-&-Bass-Break (Kick 1 und 3+, Snare 2 und 4) unter einer ruhigen Dur-Folge",
@@ -655,7 +657,8 @@
     "sidechain": 0.35,
     "reverb": 0.3,
     "drumKit": "house",
-    "noise": 0
+    "noise": 0,
+    "pumpRelease": 0.16
    },
    "soundHints": [
     "Dur-Tonarten, vi–IV–I, Four-on-the-floor um 125 BPM",

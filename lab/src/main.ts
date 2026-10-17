@@ -20,7 +20,9 @@ import {
   randomSeed,
   zip,
 } from "../../engine/src/index";
-import { DEFAULT_OPTIONS, PlayForm, Player, PlayLane, SoundMode } from "./audio";
+import { DEFAULT_OPTIONS, PlayForm, Player, PlayLane, SoundMode, renderOffline } from "./audio";
+import { HumStats, HummedNote, humStats, transcribe } from "./hum";
+import { MixProfile, analyzeMix, compareMix, loudestStretch, mixDown } from "./reference";
 import { DUELS, Duel, duelsFor } from "./duels";
 import { SOUND_LABELS } from "./sounds";
 import {
@@ -37,6 +39,7 @@ import {
 } from "./voice";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
+import type * as ToneNS from "tone";
 
 const LAB_VERSION = "0.5.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
@@ -399,6 +402,8 @@ function renderIdea(): void {
     refs.append(h("strong", {}, "Zum Vergleich anhören: "), document.createTextNode(idea.references.join(" · ")));
   }
   $("bpm").textContent = String(idea.bpm);
+  const humTempo = document.getElementById("hum-bpm") as HTMLInputElement | null;
+  if (humTempo && !humTempo.value) humTempo.placeholder = String(idea.bpm);
   $("key-actual").textContent =
     !blind && state.explore.keyChoice === "auto" ? `→ ${keyName(idea.key)}` : "";
   for (const slot of idea.progression) {
@@ -759,6 +764,10 @@ async function exportLocal(): Promise<void> {
 
 async function togglePlay(): Promise<void> {
   if (!player) return;
+  if (ref.listening) {
+    stopReference();
+    renderRef();
+  }
   try {
     await player.unlock();
   } catch {
@@ -1220,6 +1229,244 @@ async function restoreVoices(): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Reference comparison (the song stays in the browser; only measurements are saved)
+
+const REF_SECONDS = 16;
+const ref = {
+  name: "",
+  buffer: null as AudioBuffer | null,
+  profile: null as MixProfile | null,
+  from: 0,
+  listening: false,
+  player: null as ToneNS.Player | null,
+  gain: null as ToneNS.Gain | null,
+};
+
+function refStatus(text: string): void {
+  $("ref-status").textContent = text;
+}
+
+function renderRef(): void {
+  $("ref-on").hidden = !ref.buffer;
+  $("ref-idea").setAttribute("aria-pressed", String(!ref.listening));
+  $("ref-song").setAttribute("aria-pressed", String(ref.listening));
+  ($("ref-from") as HTMLInputElement).value = String(Math.round(ref.from));
+}
+
+async function loadReference(file: File): Promise<void> {
+  const T = window.Tone;
+  if (!T) return;
+  refStatus("Lese den Song …");
+  try {
+    const decoded = await T.getContext().decodeAudioData(await file.arrayBuffer());
+    const chs = Array.from({ length: Math.min(2, decoded.numberOfChannels) }, (_, c) => decoded.getChannelData(c));
+    ref.from = loudestStretch(mixDown(chs), decoded.sampleRate, REF_SECONDS);
+    ref.profile = analyzeMix(chs, decoded.sampleRate, { from: ref.from, maxSeconds: REF_SECONDS });
+    ref.buffer = decoded;
+    ref.name = file.name;
+    stopReference();
+    refStatus(
+      `${file.name}: etwa ${ref.profile.bpm ? Math.round(ref.profile.bpm) : "?"} BPM. Der Ausschnitt startet beim lautesten Teil (meist der Drop).`,
+    );
+  } catch {
+    refStatus("Diese Datei kann der Browser nicht lesen. Probier MP3, M4A oder WAV.");
+  }
+  renderRef();
+}
+
+function stopReference(): void {
+  ref.listening = false;
+  try {
+    ref.player?.stop();
+  } catch {
+    // not started
+  }
+  player?.setOutputMuted(false);
+}
+
+/** Switch between idea and reference; the reference plays as loud as a streamed song (-14 LUFS). */
+async function listenReference(on: boolean): Promise<void> {
+  const T = window.Tone;
+  if (!T || !ref.buffer || !ref.profile) return;
+  if (!on) {
+    stopReference();
+    renderRef();
+    return;
+  }
+  await T.start();
+  if (!ref.player || !ref.gain) {
+    ref.gain = new T.Gain(1).toDestination();
+    ref.player = new T.Player({ loop: true, fadeIn: 0.02, fadeOut: 0.05 }).connect(ref.gain);
+  }
+  ref.player.buffer = new T.ToneAudioBuffer(ref.buffer);
+  ref.player.loopStart = ref.from;
+  ref.player.loopEnd = Math.min(ref.buffer.duration, ref.from + REF_SECONDS);
+  ref.gain.gain.value = T.dbToGain(Math.max(-24, Math.min(12, -14 - ref.profile.lufs)));
+  try {
+    ref.player.stop();
+  } catch {
+    // not started
+  }
+  ref.player.start(T.now() + 0.02, ref.from);
+  ref.listening = true;
+  player?.setOutputMuted(true);
+  renderRef();
+}
+
+async function compareReference(): Promise<void> {
+  const T = window.Tone;
+  const idea = state.idea;
+  if (!T || !idea || !ref.profile || !ref.buffer) return;
+  if (player?.playing) {
+    player.stop();
+    renderPlay();
+  }
+  stopReference();
+  renderRef();
+  refStatus("Messe die Idee …");
+  const button = $("ref-compare") as HTMLButtonElement;
+  button.disabled = true;
+  try {
+    const { chs, rate } = await renderOffline(T, idea, DEFAULT_OPTIONS);
+    const mine = analyzeMix(chs, rate, { bpm: idea.bpm });
+    const lines = compareMix(ref.profile, mine);
+    $("ref-result").replaceChildren(...lines.map((l) => h("li", {}, l)));
+    refStatus(`Vergleich mit ${ref.name} (ab ${Math.round(ref.from)} s).`);
+    const round = (p: MixProfile) => ({ lufs: +p.lufs.toFixed(1), bands: p.bands.map((b) => +b.toFixed(1)), bpm: p.bpm, pump: +p.pump.toFixed(1) });
+    await store.add(buildDoc(idea, "referenz", { reference: { name: ref.name.slice(0, 120), from: Math.round(ref.from), ref: round(ref.profile), idea: round(mine) } }));
+  } catch (e) {
+    refStatus("Die Messung hat nicht geklappt.");
+    toast(errorText(e));
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function setReferenceStart(seconds: number): void {
+  if (!ref.buffer) return;
+  ref.from = Math.max(0, Math.min(ref.buffer.duration - 2, seconds));
+  const chs = Array.from({ length: Math.min(2, ref.buffer.numberOfChannels) }, (_, c) => ref.buffer!.getChannelData(c));
+  ref.profile = analyzeMix(chs, ref.buffer.sampleRate, { from: ref.from, maxSeconds: REF_SECONDS });
+  if (ref.listening) void listenReference(true);
+  renderRef();
+}
+
+// ---------------------------------------------------------------------------
+// Hook-Summer (only statistics are saved, never the melody)
+
+const HUM_BARS = 4;
+const hum = { notes: [] as HummedNote[], stats: null as HumStats | null, bpm: 120, t0: 0, recording: false };
+
+function humStatus(text: string): void {
+  $("hum-status").textContent = text;
+}
+
+function humBpm(): number {
+  const v = Number(($("hum-bpm") as HTMLInputElement).value);
+  return v >= 60 && v <= 200 ? v : state.idea?.bpm ?? 120;
+}
+
+function showHum(notes: HummedNote[], bpm: number, t0: number): void {
+  hum.notes = notes;
+  hum.bpm = bpm;
+  hum.t0 = t0;
+  hum.stats = notes.length >= 3 ? humStats(notes, bpm, t0) : null;
+  $("hum-on").hidden = !hum.stats;
+  if (!hum.stats) {
+    humStatus("Zu wenige Töne erkannt. Summ etwas lauter, mit kurzen Pausen zwischen den Tönen.");
+    return;
+  }
+  const s = hum.stats;
+  const pct = (x: number) => `${Math.round(x * 100)} %`;
+  $("hum-result").replaceChildren(
+    h("li", {}, `${s.notes} Töne, ${s.pitches} verschiedene, Umfang ${s.range} Halbtöne`),
+    h("li", {}, `Schritte (bis 2 Halbtöne): ${pct(s.steps)}, Wiederholungen: ${pct(s.repeats)}`),
+    h("li", {}, `${s.notesPerBar.toFixed(1)} Töne pro Takt, ${pct(s.sync)} zwischen den Achteln (Synkopen)`),
+  );
+  const step = 60 / bpm / 4;
+  const asNotes = notes.map((n) => ({
+    pitch: n.midi,
+    start: Math.max(0, (n.start - t0) / step),
+    len: Math.max(0.5, (n.end - n.start) / step),
+    vel: 100,
+  }));
+  const canvas = $("hum-roll") as HTMLCanvasElement;
+  const total = Math.max(16, Math.ceil((asNotes[asNotes.length - 1].start + 2) / 16) * 16);
+  drawNotes(canvas, asNotes, total, { note: cssVar("--lane-lead"), grid: cssVar("--grid"), bar: cssVar("--grid-bar") });
+  humStatus("Das hat das Hör-Labor gehört. Passt es ungefähr? Dann speichere die Statistik.");
+}
+
+async function analyzeHum(bytes: ArrayBuffer, t0: number): Promise<void> {
+  const T = window.Tone;
+  if (!T) return;
+  try {
+    const decoded = await T.getContext().decodeAudioData(bytes);
+    showHum(transcribe(decoded.getChannelData(0), decoded.sampleRate), humBpm(), t0);
+  } catch {
+    humStatus("Diese Aufnahme kann der Browser nicht lesen. Probier MP3, M4A oder WAV.");
+  }
+}
+
+async function recordHum(): Promise<void> {
+  const T = window.Tone;
+  if (!T || hum.recording) return;
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    humStatus(NO_MIC);
+    return;
+  }
+  let stream: MediaStream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: true } });
+  } catch {
+    humStatus(NO_MIC);
+    return;
+  }
+  await T.start();
+  if (player?.playing) {
+    player.stop();
+    renderPlay();
+  }
+  const bpm = humBpm();
+  const beat = 60 / bpm;
+  const click = new T.Synth({ oscillator: { type: "square" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0, release: 0.02 }, volume: -16 }).toDestination();
+  const rec = new MediaRecorder(stream);
+  const chunks: Blob[] = [];
+  rec.ondataavailable = (e) => {
+    if (e.data.size) chunks.push(e.data);
+  };
+  hum.recording = true;
+  ($("hum-record") as HTMLButtonElement).disabled = true;
+  rec.start();
+  const t = T.now() + 0.15;
+  const beats = 4 * (HUM_BARS + 1);
+  for (let k = 0; k < beats; k++) click.triggerAttackRelease(k % 4 === 0 ? 1760 : 1320, 0.03, t + k * beat, k < 4 ? 0.9 : 0.5);
+  humStatus("Eins, zwei, drei, vier – dann summ die Hook, vier Takte lang.");
+  window.setTimeout(() => rec.stop(), (0.15 + beats * beat + 0.3) * 1000);
+  rec.onstop = () => {
+    stream.getTracks().forEach((tr) => tr.stop());
+    click.dispose();
+    hum.recording = false;
+    ($("hum-record") as HTMLButtonElement).disabled = false;
+    humStatus("Werte die Aufnahme aus …");
+    void new Blob(chunks, { type: rec.mimeType }).arrayBuffer().then((bytes) => analyzeHum(bytes, 0.15 + 4 * beat));
+  };
+}
+
+async function saveHum(): Promise<void> {
+  const idea = state.idea;
+  if (!idea || !hum.stats) return;
+  const song = ($("hum-song") as HTMLInputElement).value.trim().slice(0, 80);
+  try {
+    await store.add(buildDoc(idea, "summen", { hum: { song: song || "ohne Namen", bpm: hum.bpm, stats: hum.stats } }));
+    toast("Statistik gespeichert. Danke!");
+    $("hum-on").hidden = true;
+    humStatus("");
+  } catch (e) {
+    toast(errorText(e));
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Wiring
 
 function wire(): void {
@@ -1255,6 +1502,26 @@ function wire(): void {
     if (file && slot) void file.arrayBuffer().then((bytes) => addTake(slot, { name: file.name, bytes }));
   });
   $("voice-use").addEventListener("change", () => applyVoices());
+  $("ref-pick").addEventListener("click", () => ($("ref-file") as HTMLInputElement).click());
+  $("ref-file").addEventListener("change", (e) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (file) void loadReference(file);
+  });
+  $("ref-idea").addEventListener("click", () => void listenReference(false));
+  $("ref-song").addEventListener("click", () => void listenReference(true));
+  $("ref-from").addEventListener("change", (e) => setReferenceStart(Number((e.target as HTMLInputElement).value) || 0));
+  $("ref-compare").addEventListener("click", () => void compareReference());
+  $("hum-record").addEventListener("click", () => void recordHum());
+  $("hum-pick").addEventListener("click", () => ($("hum-file") as HTMLInputElement).click());
+  $("hum-file").addEventListener("change", (e) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (file) void file.arrayBuffer().then((bytes) => analyzeHum(bytes, 0));
+  });
+  $("hum-save").addEventListener("click", () => void saveHum());
   $("form-loop").addEventListener("click", () => setForm("loop"));
   $("form-song").addEventListener("click", () => setForm("song"));
   $("bpm-down").addEventListener("click", () => bump(-1));
