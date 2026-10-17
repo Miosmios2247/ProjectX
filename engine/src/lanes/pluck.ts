@@ -119,9 +119,11 @@ export function complementLead(pluck: readonly Note[], lead: readonly Note[], ra
     const l = sounding[0];
     const together = Math.abs(l.start - p.start) < 0.3;
     if (together && Math.abs(p.pitch - l.pitch) <= 4 && out.length > 0) continue;
+    // Arps move under the hook; a counter-line or stabs keep their register and just get quieter.
     let pitch = p.pitch;
-    if (pitch >= l.pitch - 2 && mode !== "stab" && pitch - 12 >= range[0] - 5) pitch -= 12;
-    out.push({ ...p, pitch, vel: clampVel(p.vel - (pitch > l.pitch ? 16 : 8)) });
+    const movable = mode !== "stab" && mode !== "counter";
+    if (movable && pitch >= l.pitch - 2 && pitch - 12 >= range[0] - 5) pitch -= 12;
+    out.push({ ...p, pitch, vel: clampVel(p.vel - (pitch > l.pitch ? 14 : 8)) });
   }
   return out;
 }
