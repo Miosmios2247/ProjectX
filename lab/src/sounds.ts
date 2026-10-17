@@ -163,6 +163,30 @@ function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Ga
   };
 }
 
+/** Adds a filtered noise layer that follows each note, like a synth's noise oscillator. */
+function withNoise(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number): Voice {
+  const noise = new T.NoiseSynth({
+    noise: { type: "pink" },
+    envelope: { attack: 0.01, decay: 0.25, sustain: 0.35, release: 0.12 },
+    volume: T.gainToDb(level),
+  });
+  const band = new T.Filter({ type: "bandpass", frequency: 1800, Q: 0.8 });
+  noise.chain(band, into);
+  const at = timeGuard(noise);
+  return {
+    ...voice,
+    trigger(midi, duration, time, velocity) {
+      voice.trigger(midi, duration, time, velocity);
+      safely(() => noise.triggerAttackRelease(duration, at(time), velocity));
+    },
+    dispose() {
+      noise.dispose();
+      band.dispose();
+      voice.dispose();
+    },
+  };
+}
+
 function polyVoice(
   T: T,
   synth: ToneNS.PolySynth<any>,
@@ -218,7 +242,27 @@ function monoVoice(
 
 // Level trims (dB) per sound, from offline loudness measurements of the
 // style loops, so lanes sit in a balanced mix whatever sound they use.
-const SOUND_TRIM: Record<string, number> = {};
+const SOUND_TRIM: Record<string, number> = {
+  "felt-piano": -4.5,
+  "garage-piano": 0.5,
+  rhodes: -4,
+  "keys-pad": -6,
+  "lush-keys": -4.5,
+  "bright-piano": -1.5,
+  "guitar-strum": -8.5,
+  "piano-high": -4.5,
+  "guitar-pick": -8.5,
+  "lofi-sine": -1.5,
+  sub: -6,
+  reese: 1,
+  "deep-bass": 1.5,
+  "house-bass": 3.5,
+  "vox-chop": 0.5,
+  "vox-stretch": -1.5,
+  "vox-sing": -4,
+  "brass-lead": 1.5,
+  harmonica: -5,
+};
 
 export function createVoice(T: T, id: string): Voice {
   const out = new T.Gain(T.dbToGain(SOUND_TRIM[id] ?? 0));
@@ -273,7 +317,7 @@ export function createVoice(T: T, id: string): Voice {
       const s = new T.PolySynth(T.Synth, {
         oscillator: { type: "square" },
         envelope: { attack: 0.001, decay: 0.09, sustain: 0, release: 0.05 },
-        volume: -16,
+        volume: -5.5,
       });
       s.maxPolyphony = 16;
       return polyVoice(T, s, [new T.Filter(2600, "lowpass")], out);
@@ -281,9 +325,10 @@ export function createVoice(T: T, id: string): Voice {
     case "staccato-synth": {
       // Short saw stabs on the loop chords (BUNT.: "staccato synth" next to the vocal).
       const s = new T.PolySynth(T.Synth, {
-        oscillator: { type: "fatsawtooth", count: 2, spread: 18 },
+        // count 3 is Tone's default: other counts rebuild the oscillators inside the audio callback.
+        oscillator: { type: "fatsawtooth", count: 3, spread: 18 },
         envelope: { attack: 0.002, decay: 0.16, sustain: 0, release: 0.08 },
-        volume: -18,
+        volume: -1,
       });
       s.maxPolyphony = 24;
       return polyVoice(T, s, [new T.Filter({ type: "lowpass", frequency: 2400, Q: 1.2 })], out);
@@ -331,16 +376,16 @@ export function createVoice(T: T, id: string): Voice {
         pick: (_m, n) => (n % 4 === 3 ? 1 : 0),
         chain: [new T.Filter(160, "highpass"), new T.Vibrato(5, 0.06)],
       }, out);
-    case "brass-lead":
-      // Trumpet through a moving filter, like the "WACUKA" drop lead.
-      return sampledVoice(T, ["trumpet"], {
+    case "brass-lead": {
+      // Trumpet plus noise through one LFO filter, like the "WACUKA" drop lead (Serum).
+      const filter = new T.AutoFilter({ frequency: "8n", baseFrequency: 700, octaves: 2.2, depth: 0.6 }).start();
+      const voice = sampledVoice(T, ["trumpet"], {
         attack: 0.01,
         release: 0.15,
-        chain: [
-          new T.AutoFilter({ frequency: "8n", baseFrequency: 700, octaves: 2.2, depth: 0.6 }).start(),
-          new T.Distortion(0.12),
-        ],
+        chain: [filter, new T.Distortion(0.12)],
       }, out);
+      return withNoise(T, voice, filter, 0.12);
+    }
     case "harmonica":
       return sampledVoice(T, ["harmonica"], { release: 0.15 }, out);
     // ---- bass (synthesized)

@@ -9,6 +9,8 @@ import { KitSample, loadKit } from "./samples";
 type T = ToneLib;
 
 interface KitShape {
+  /** Output level (dB), balanced with offline loudness measurements. */
+  trim: number;
   kickDecay: number;
   kickVol: number;
   /** Kick start pitch in octaves above 50 Hz (more = harder click). */
@@ -24,31 +26,31 @@ interface KitShape {
 const KITS: Record<string, KitShape> = {
   // Fred again.. / AVAION Pieces: 909 kick and clap, crisp hats, a bit of shaker.
   house: {
-    kickDecay: 0.4, kickVol: -3, kickPunch: 5.5, hatHp: 7600, hatVol: -17, clapVol: -9, snareVol: -11,
+    trim: 3, kickDecay: 0.4, kickVol: -3, kickPunch: 5.5, hatHp: 7600, hatVol: -17, clapVol: -9, snareVol: -11,
     samples: { shaker: ["shaker", -15], tamb: ["tambourine", -19], rim: ["sidestick", -13], percHi: ["bongohi", -12], percLo: ["congalo", -12], tom: ["tomlo", -12] },
   },
   // UKG / 2-step: tight kick, snappier snare and rim, more open hats.
   garage: {
-    kickDecay: 0.32, kickVol: -3, kickPunch: 6, hatHp: 8200, hatVol: -16, clapVol: -10, snareVol: -9,
+    trim: 4.5, kickDecay: 0.32, kickVol: -3, kickPunch: 6, hatHp: 8200, hatVol: -16, clapVol: -10, snareVol: -9,
     samples: { shaker: ["maracas", -15], tamb: ["tambourine", -18], rim: ["sidestick", -11], percHi: ["bongohi", -13], percLo: ["bongolo", -13], tom: ["tommid", -13] },
   },
   // BUNT. stutter house: big round kick, airy shaker, clap up front.
   stutter: {
-    kickDecay: 0.45, kickVol: -2, kickPunch: 5, hatHp: 8000, hatVol: -18, clapVol: -8, snareVol: -11,
+    trim: 1.5, kickDecay: 0.45, kickVol: -2, kickPunch: 5, hatHp: 8000, hatVol: -18, clapVol: -8, snareVol: -11,
     samples: { shaker: ["shaker", -13], tamb: ["tambourine", -17], rim: ["sidestick", -13], percHi: ["bongohi", -13], percLo: ["congalo", -13], tom: ["tomlo", -12] },
   },
   // AVAION WACUKA: live percussion carries the groove.
   afro: {
-    kickDecay: 0.3, kickVol: -4, kickPunch: 5, hatHp: 7800, hatVol: -19, clapVol: -11, snareVol: -12,
+    trim: 3.5, kickDecay: 0.3, kickVol: -4, kickPunch: 5, hatHp: 7800, hatVol: -19, clapVol: -11, snareVol: -12,
     samples: { shaker: ["shaker", -12], tamb: ["cabasa", -14], percHi: ["congaopen", -7], percLo: ["congalo", -7], tom: ["tomlo", -9], rim: ["claves", -11] },
   },
   // Drum & bass: sampled acoustic snare and ride-ish hats over a short kick.
   dnb: {
-    kickDecay: 0.28, kickVol: -3, kickPunch: 6.5, hatHp: 8600, hatVol: -17, clapVol: -12, snareVol: -6,
+    trim: 4.5, kickDecay: 0.28, kickVol: -3, kickPunch: 6.5, hatHp: 8600, hatVol: -17, clapVol: -12, snareVol: -6,
     samples: { snare: ["snare", -5], shaker: ["shaker", -16], tamb: ["ride", -18], rim: ["sidestick", -12], percHi: ["bongohi", -14], percLo: ["bongolo", -14], tom: ["tommid", -11] },
   },
   neutral: {
-    kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
+    trim: 3, kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
     samples: {},
   },
 };
@@ -74,7 +76,7 @@ export class DrumKit {
 
   constructor(T: T, kitId: string) {
     const k = KITS[kitId] ?? KITS.house;
-    this.output = new T.Gain(1);
+    this.output = new T.Gain(T.dbToGain(k.trim));
     const track = <N extends ToneNS.ToneAudioNode>(n: N): N => {
       this.nodes.push(n);
       return n;
