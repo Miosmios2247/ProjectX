@@ -1,6 +1,8 @@
-// Sound presets for the lab, synthesized with Tone.js (no samples needed).
+// Sound presets for the lab: sampled instruments where it matters (piano,
+// guitar, voices), synthesized with Tone.js elsewhere.
 
 import type * as ToneNS from "tone";
+import { loadSet } from "./samples";
 
 type T = ToneLib;
 
@@ -8,6 +10,8 @@ export interface Voice {
   output: ToneNS.ToneAudioNode;
   trigger(midi: number, duration: number, time: number, velocity: number): void;
   dispose(): void;
+  /** Resolves when samples are loaded (synth voices are ready at once). */
+  ready?: Promise<void>;
 }
 
 export const SOUND_LABELS: Record<string, string> = {
@@ -61,6 +65,75 @@ function safely(fn: () => void): void {
   } catch {
     // a dropped note is better than a stopped loop
   }
+}
+
+interface SampledOptions {
+  attack?: number;
+  release?: number;
+  chain?: ToneNS.ToneAudioNode[];
+  /** Which sample set plays this note (index into the set list). */
+  pick?: (midi: number, count: number) => number;
+  /** Extra sampler that only plays notes at least this long (seconds), e.g. a pad layer. */
+  layer?: { set: string; minDuration: number; gain: number; attack?: number; release?: number };
+}
+
+/** Sampled instrument. Notes that arrive before the samples are loaded are skipped. */
+function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Gain): Voice {
+  const input = new T.Gain(1);
+  const chain = opts.chain ?? [];
+  let node: ToneNS.ToneAudioNode = input;
+  for (const c of chain) {
+    node.connect(c);
+    node = c;
+  }
+  node.connect(out);
+  const samplers: (ToneNS.Sampler | null)[] = sets.map(() => null);
+  let layer: ToneNS.Sampler | null = null;
+  let layerGain: ToneNS.Gain | null = null;
+  let disposed = false;
+  const loads = sets.map((id, i) =>
+    loadSet(T, id).then((buffers) => {
+      if (disposed || !Object.keys(buffers).length) return;
+      const smp = new T.Sampler({ urls: buffers, attack: opts.attack ?? 0, release: opts.release ?? 0.8 });
+      smp.connect(input);
+      samplers[i] = smp;
+    }),
+  );
+  if (opts.layer) {
+    const l = opts.layer;
+    loads.push(
+      loadSet(T, l.set).then((buffers) => {
+        if (disposed || !Object.keys(buffers).length) return;
+        layerGain = new T.Gain(l.gain);
+        layer = new T.Sampler({ urls: buffers, attack: l.attack ?? 0.3, release: l.release ?? 1 });
+        layer.connect(layerGain);
+        layerGain.connect(input);
+      }),
+    );
+  }
+  let count = 0;
+  return {
+    output: out,
+    ready: Promise.all(loads).then(() => undefined),
+    trigger(midi, duration, time, velocity) {
+      const i = opts.pick ? opts.pick(midi, count++) : 0;
+      const smp = samplers[i] ?? samplers.find((x) => x);
+      if (smp) safely(() => smp.triggerAttackRelease(freq(T, midi), duration, time, velocity));
+      const l = layer;
+      if (l && opts.layer && duration >= opts.layer.minDuration) {
+        safely(() => l.triggerAttackRelease(freq(T, midi), duration, time, velocity * 0.8));
+      }
+    },
+    dispose() {
+      disposed = true;
+      samplers.forEach((x) => x?.dispose());
+      (layer as ToneNS.Sampler | null)?.dispose();
+      (layerGain as ToneNS.Gain | null)?.dispose();
+      input.dispose();
+      chain.forEach((c) => c.dispose());
+      out.dispose();
+    },
+  };
 }
 
 function polyVoice(

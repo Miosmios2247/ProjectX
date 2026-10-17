@@ -624,6 +624,10 @@ async function togglePlay(): Promise<void> {
   if (player.playing) player.stop();
   else {
     if (player.idea !== state.idea) player.load(state.idea, state.mode === "blind" ? state.blind.soundMode : "style");
+    const btn = $("play") as HTMLButtonElement;
+    btn.classList.add("is-loading");
+    await player.prepare();
+    btn.classList.remove("is-loading");
     player.play();
   }
   renderPlay();
@@ -675,6 +679,7 @@ async function startRound(): Promise<void> {
     try {
       await player.unlock();
       player.load(idea, state.blind.soundMode);
+      await player.prepare();
       player.play();
     } catch {
       toast("Audio konnte nicht starten. Tippe auf Play.");

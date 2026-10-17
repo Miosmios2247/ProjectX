@@ -175,6 +175,16 @@ export class Player {
     for (const lane of this.muted) this.setMuted(lane, true);
   }
 
+  /** Wait (up to a few seconds) until sampled instruments of the loaded idea are ready. */
+  async prepare(timeoutMs = 8000): Promise<void> {
+    const waits = Object.values(this.voices)
+      .map((v) => v?.voice.ready)
+      .filter((p): p is Promise<void> => !!p);
+    if (this.kit?.kit.ready) waits.push(this.kit.kit.ready);
+    if (!waits.length) return;
+    await Promise.race([Promise.all(waits), new Promise((r) => setTimeout(r, timeoutMs))]);
+  }
+
   play(): void {
     if (!this.built) return;
     const transport = this.T.getTransport();

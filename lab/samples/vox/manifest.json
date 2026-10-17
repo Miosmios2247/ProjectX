@@ -1,0 +1,158 @@
+{
+  "oohs": {
+    "63": {
+      "file": "oohs-63.wav",
+      "fineCents": -46,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "69": {
+      "file": "oohs-69.wav",
+      "fineCents": 21,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "73": {
+      "file": "oohs-73.wav",
+      "fineCents": 21,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "77": {
+      "file": "oohs-77.wav",
+      "fineCents": 21,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "80": {
+      "file": "oohs-80.wav",
+      "fineCents": 21,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "83": {
+      "file": "oohs-83.wav",
+      "fineCents": -46,
+      "srcRate": 44100,
+      "loop": true
+    },
+    "104": {
+      "file": "oohs-104.wav",
+      "fineCents": -46,
+      "srcRate": 44100,
+      "loop": true
+    }
+  },
+  "aahs": {
+    "45": {
+      "file": "aahs-45.wav",
+      "fineCents": 0,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "49": {
+      "file": "aahs-49.wav",
+      "fineCents": -18,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "51": {
+      "file": "aahs-51.wav",
+      "fineCents": 7,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "55": {
+      "file": "aahs-55.wav",
+      "fineCents": 5,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "59": {
+      "file": "aahs-59.wav",
+      "fineCents": 1,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "61": {
+      "file": "aahs-61.wav",
+      "fineCents": 22,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "65": {
+      "file": "aahs-65.wav",
+      "fineCents": 10,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "69": {
+      "file": "aahs-69.wav",
+      "fineCents": 8,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "71": {
+      "file": "aahs-71.wav",
+      "fineCents": 1,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "73": {
+      "file": "aahs-73.wav",
+      "fineCents": 10,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "77": {
+      "file": "aahs-77.wav",
+      "fineCents": 32,
+      "srcRate": 28000,
+      "loop": true
+    },
+    "79": {
+      "file": "aahs-79.wav",
+      "fineCents": 26,
+      "srcRate": 28000,
+      "loop": true
+    }
+  },
+  "synthvox": {
+    "55": {
+      "file": "synthvox-55.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    },
+    "58": {
+      "file": "synthvox-58.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    },
+    "61": {
+      "file": "synthvox-61.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    },
+    "67": {
+      "file": "synthvox-67.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    },
+    "73": {
+      "file": "synthvox-73.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    },
+    "83": {
+      "file": "synthvox-83.wav",
+      "fineCents": 0,
+      "srcRate": 28800,
+      "loop": true
+    }
+  }
+}

@@ -25,6 +25,7 @@ const KITS: Record<string, KitShape> = {
 
 export class DrumKit {
   readonly output: ToneNS.Gain;
+  ready?: Promise<void>;
   private nodes: ToneNS.ToneAudioNode[] = [];
   private kick: ToneNS.MembraneSynth;
   private snare: ToneNS.NoiseSynth;
