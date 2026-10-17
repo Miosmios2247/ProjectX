@@ -89,6 +89,7 @@ export function generateIdea(params: IdeaParams): Idea {
     lr.fork("notes"),
     leadProfile.targets,
     loopHome(key, template),
+    params.flags ?? {},
   );
   const leadNotes = lead.notes;
 
@@ -136,7 +137,7 @@ export function generateIdea(params: IdeaParams): Idea {
 
   return {
     engineVersion: ENGINE_VERSION,
-    params: { ...params, laneSeeds: { ...(params.laneSeeds ?? {}) } },
+    params: { ...params, laneSeeds: { ...(params.laneSeeds ?? {}) }, flags: { ...(params.flags ?? {}) } },
     seeds,
     styleId: style.id,
     variantId: variant.id,

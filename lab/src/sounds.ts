@@ -2,6 +2,7 @@
 // synthesized basses and a neutral set for the blind test.
 
 import type * as ToneNS from "tone";
+import type { PlayerOptions } from "./audio";
 import { SAMPLE_SETS, loadSet } from "./samples";
 
 type T = ToneLib;
@@ -265,7 +266,7 @@ const SOUND_TRIM: Record<string, number> = {
   harmonica: -5,
 };
 
-export function createVoice(T: T, id: string): Voice {
+export function createVoice(T: T, id: string, options: PlayerOptions = { soundSet: "v5", grain: true }): Voice {
   const out = new T.Gain(T.dbToGain(SOUND_TRIM[id] ?? 0));
   switch (id) {
     // ---- keys (sampled piano / e-piano, sometimes with a string pad under long chords)

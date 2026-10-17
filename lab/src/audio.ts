@@ -14,6 +14,16 @@ export type PlayLane = LaneId | "drums";
 export type SoundMode = "style" | "neutral";
 export type PlayForm = "loop" | "song";
 
+/** Sound switches, so a duel can compare the newer sounds with the older ones. */
+export interface PlayerOptions {
+  /** "v5": sounds from round 5 (samples, kits, master); "v4": those of round 4. */
+  soundSet: "v5" | "v4";
+  /** BUNT.: the held vowel is stretched with a grainy texture. */
+  grain: boolean;
+}
+
+export const DEFAULT_OPTIONS: PlayerOptions = { soundSet: "v5", grain: true };
+
 export interface SongSection {
   name: string;
   startBar: number;
@@ -89,6 +99,7 @@ export class Player {
   /** The rater's own recording, used for vocal leads when `useOwnVoice` is on. */
   ownVoice: OwnVoice | null = null;
   useOwnVoice = true;
+  options: PlayerOptions = { ...DEFAULT_OPTIONS };
 
   constructor(tone: ToneLib) {
     this.T = tone;
@@ -167,14 +178,23 @@ export class Player {
     this.laneGain[lane].gain.rampTo(muted ? 0 : base, 0.03);
   }
 
+  /** Switch sound options (duels); keeps playing with the new sounds unless `reload` is off. */
+  setOptions(options: Partial<PlayerOptions>, reload = true): void {
+    const next = { ...this.options, ...options };
+    if (next.soundSet === this.options.soundSet && next.grain === this.options.grain) return;
+    this.options = next;
+    if (reload && this.built && this.idea) this.load(this.idea, this.soundMode);
+  }
+
   private voiceFor(lane: LaneId, id: string): Voice {
     const own = lane === "lead" && this.useOwnVoice ? this.ownVoice : null;
     const kind = own ? OWN_VOICE_KIND[id] : undefined;
-    const key = own && kind ? `${id}:own:${own.id}` : id;
+    const opts = `${this.options.soundSet}:${this.options.grain ? "g" : "-"}`;
+    const key = own && kind ? `${id}:own:${own.id}:${opts}` : `${id}:${opts}`;
     const cur = this.voices[lane];
     if (cur && cur.id === key) return cur.voice;
     cur?.voice.dispose();
-    const voice = own && kind ? ownVoice(this.T, own, kind) : createVoice(this.T, id);
+    const voice = own && kind ? ownVoice(this.T, own, kind, this.options) : createVoice(this.T, id, this.options);
     voice.output.connect(this.laneGain[lane]);
     this.voices[lane] = { id: key, voice };
     return voice;
@@ -192,11 +212,12 @@ export class Player {
   }
 
   private kitFor(id: string): DrumKit {
-    if (this.kit && this.kit.id === id) return this.kit.kit;
+    const key = `${id}:${this.options.soundSet}`;
+    if (this.kit && this.kit.id === key) return this.kit.kit;
     this.kit?.kit.dispose();
-    const kit = new DrumKit(this.T, id);
+    const kit = new DrumKit(this.T, id, this.options.soundSet);
     kit.output.connect(this.laneGain.drums);
-    this.kit = { id, kit };
+    this.kit = { id: key, kit };
     return kit;
   }
 

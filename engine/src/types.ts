@@ -139,6 +139,16 @@ export interface LaneData {
   detail?: string;
 }
 
+/** Switches for duels: an older and a newer rule side by side. Omitted = the current rule. */
+export interface IdeaFlags {
+  /** BUNT.: vowel on a tone that fits every chord ("pedal") or the older smooth path through the chords ("path"). */
+  vowel?: "pedal" | "path";
+  /** Pickup notes into a phrase: "on" wherever one fits, "off" never; omitted = now and then. */
+  pickups?: "on" | "off";
+  /** Fred again..: chops on a fixed pitch set, chops that follow the chords, or both (default). */
+  chops?: "mixed" | "fixed" | "chords";
+}
+
 export interface IdeaParams {
   styleId: string;
   variantId: string;
@@ -148,6 +158,7 @@ export interface IdeaParams {
   seed: number;
   laneSeeds?: Partial<Record<LaneId | "drums", number>>;
   bpm?: number | null;
+  flags?: IdeaFlags;
 }
 
 export interface Idea {

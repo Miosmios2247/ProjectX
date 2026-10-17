@@ -20,7 +20,7 @@ import {
   isAvoidNote,
   scalePcs,
 } from "../theory";
-import { LeadMode, Note } from "../types";
+import { IdeaFlags, LeadMode, Note } from "../types";
 
 interface Ctx {
   slots: readonly ChordSlot[];
@@ -29,6 +29,8 @@ interface Ctx {
   home: PitchClass;
   /** Scale tones that fit every chord of the loop (never an avoid note). */
   universal: PitchClass[];
+  /** Duel switches (older or newer rules). */
+  flags: IdeaFlags;
   lo: number;
   hi: number;
   totalSteps: number;
@@ -359,7 +361,10 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
   for (let k = 1; k < phrases.length; k++) {
     const next = phrases[k];
     const at = k * spanA;
-    if (!next.hits.length || next.hits[0].step !== at || !rng.chance(PICKUP[mode])) continue;
+    if (ctx.flags.pickups === "off") break;
+    // "on" (a duel) adds a pickup wherever one fits, so the two versions differ.
+    const chance = ctx.flags.pickups === "on" ? 1 : PICKUP[mode];
+    if (!next.hits.length || next.hits[0].step !== at || !rng.chance(chance)) continue;
     const pick = pickupInto(next.degrees[0], at, ctx, space, rng);
     const prev = phrases[k - 1];
     const from = pick.hits[0].step;
@@ -748,13 +753,15 @@ export interface LeadResult {
 
 function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm | null, rng: Rng, k: number): LeadResult {
   switch (mode) {
-    case "vocal-chop":
+    case "vocal-chop": {
       // Mostly a fixed pitch set the chords recolour; now and then chops that follow the chords.
-      return k % 5 === 4
+      const chops = ctx.flags.chops ?? "mixed";
+      return chops === "chords" || (chops === "mixed" && k % 5 === 4)
         ? { notes: chordChopLead(ctx, rhythm, rng), build: "chords" }
         : { notes: chopLead(ctx, rhythm, rng, rng.weighted([2, 3, 3, 4, 4, 5].map((n) => ({ n })), () => 1).n), build: "fixed" };
+    }
     case "gated-vowel": {
-      const { path, build } = vowelPath(ctx, rng);
+      const { path, build } = ctx.flags.vowel === "path" ? { path: smoothVowelPath(ctx, rng), build: "vowel" } : vowelPath(ctx, rng);
       return { notes: gatedVowelLead(ctx, rhythm, rng, path), build };
     }
     case "topline":
@@ -778,8 +785,9 @@ export function leadLane(
   rng: Rng,
   targets: Partial<MelodyTargets> = {},
   home: PitchClass = key.tonic,
+  flags: IdeaFlags = {},
 ): LeadResult {
-  const ctx: Ctx = { slots, key, home, universal: universalPcs(slots, key), lo: range[0], hi: range[1], totalSteps, tensions };
+  const ctx: Ctx = { slots, key, home, universal: universalPcs(slots, key), flags, lo: range[0], hi: range[1], totalSteps, tensions };
   const want: MelodyTargets = { ...LEAD_TARGETS[mode], ...targets };
   const phrase = phraseStepsFor(rhythm.bars, totalSteps);
   let best: LeadResult = { notes: [], build: "" };

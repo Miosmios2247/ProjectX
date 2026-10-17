@@ -75,7 +75,7 @@ export class DrumKit {
   private rim: ToneNS.MembraneSynth;
   private crashSynth: ToneNS.NoiseSynth;
 
-  constructor(T: T, kitId: string) {
+  constructor(T: T, kitId: string, readonly soundSet: "v5" | "v4" = "v5") {
     const k = KITS[kitId] ?? KITS.house;
     this.output = new T.Gain(T.dbToGain(k.trim));
     const track = <N extends ToneNS.ToneAudioNode>(n: N): N => {

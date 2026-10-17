@@ -20,13 +20,14 @@ import {
   randomSeed,
   zip,
 } from "../../engine/src/index";
-import { PlayForm, Player, PlayLane, SoundMode } from "./audio";
+import { DEFAULT_OPTIONS, PlayForm, Player, PlayLane, SoundMode } from "./audio";
+import { DUELS, Duel, duelsFor } from "./duels";
 import { SOUND_LABELS } from "./sounds";
 import { OwnVoice, clearVoiceBytes, describeVoice, loadOwnVoice, loadVoiceBytes, saveVoiceBytes } from "./voice";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
-const LAB_VERSION = "0.4.0";
+const LAB_VERSION = "0.5.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",
@@ -43,7 +44,12 @@ const ISSUES: { id: string; label: string }[] = [
   { id: "drums", label: "Drums" },
   { id: "groove", label: "Groove/Tempo" },
   { id: "sounds", label: "Sounds" },
+  { id: "voice", label: "Stimme" },
+  { id: "mix", label: "Mix/Klangqualität" },
 ];
+/** Goal of the plan: an average of at least 4 from at least 5 ratings. */
+const GOAL = 4;
+const GOAL_MIN = 5;
 const STAR_LABELS = ["gar nicht", "kaum", "teils", "ziemlich", "voll"];
 const LEAD_MODE: Record<string, string> = {
   "vocal-chop": "Vocal-Chop",
@@ -68,8 +74,10 @@ interface HistoryEntry {
   params: ExploreState;
 }
 
+type Mode = "explore" | "blind" | "duel";
+
 const state = {
-  mode: "explore" as "explore" | "blind",
+  mode: "explore" as Mode,
   explore: {
     styleId: STYLES[0].id,
     variantId: STYLES[0].variants[0].id,
@@ -94,6 +102,15 @@ const state = {
     docId: null as string | null,
     soundMode: "style" as SoundMode,
     quality: null as number | null,
+  },
+  duel: {
+    round: 0,
+    duel: null as Duel | null,
+    /** Version 1 and 2 (same seed); order says whether version 1 is the newer one ("ab"). */
+    ideas: null as [Idea, Idea] | null,
+    order: "ab" as "ab" | "ba",
+    current: 0 as 0 | 1,
+    voted: null as "1" | "2" | "=" | null,
   },
 };
 
@@ -209,7 +226,10 @@ function show(idea: Idea | null): void {
   state.idea = idea;
   renderIdea();
   renderSongBar();
-  if (idea && player) player.load(idea, state.mode === "blind" ? state.blind.soundMode : "style");
+  if (!player) return;
+  const options = state.mode === "duel" ? { ...DEFAULT_OPTIONS, ...duelArm(state.duel.current)?.options } : DEFAULT_OPTIONS;
+  player.setOptions(options, !idea);
+  if (idea) player.load(idea, state.mode === "blind" ? state.blind.soundMode : "style");
 }
 
 function newIdea(): void {
@@ -344,8 +364,8 @@ function drawRolls(): void {
 
 function renderIdea(): void {
   const idea = state.idea;
-  const blind = state.mode === "blind";
-  const hidden = blind && !state.blind.guessed;
+  const blind = state.mode !== "explore";
+  const hidden = (state.mode === "blind" && !state.blind.guessed) || (state.mode === "duel" && !state.duel.voted);
   const title = $("idea-title");
   const meta = $("idea-meta");
   const strip = $("chord-strip");
@@ -359,11 +379,12 @@ function renderIdea(): void {
     drawRolls();
     return;
   }
-  title.textContent = hidden ? "Unbekannter Loop" : `${idea.artist} · ${idea.variantName}`;
+  title.textContent =
+    state.mode === "duel" ? `${idea.artist} · ${idea.variantName} · Version ${state.duel.current + 1}` : hidden ? "Unbekannter Loop" : `${idea.artist} · ${idea.variantName}`;
   meta.textContent = `${keyName(idea.key)} · ${idea.bpm} BPM · ${idea.bars} Takte`;
   const refs = $("idea-refs");
   refs.replaceChildren();
-  if (!hidden && idea.references.length) {
+  if ((!hidden || state.mode === "duel") && idea.references.length) {
     refs.append(h("strong", {}, "Zum Vergleich anhören: "), document.createTextNode(idea.references.join(" · ")));
   }
   $("bpm").textContent = String(idea.bpm);
@@ -485,16 +506,16 @@ function generateIdeaCached(s: ExploreState): Idea {
   return idea;
 }
 
-/** The blind test always plays the plain loop. */
+/** The blind test and duels always play the plain loop. */
 function playForm(): PlayForm {
-  return state.mode === "blind" ? "loop" : state.form;
+  return state.mode === "explore" ? state.form : "loop";
 }
 
 function renderForm(): void {
   $("form-loop").setAttribute("aria-pressed", String(state.form === "loop"));
   $("form-song").setAttribute("aria-pressed", String(state.form === "song"));
-  ($("form-loop") as HTMLButtonElement).disabled = state.mode === "blind";
-  ($("form-song") as HTMLButtonElement).disabled = state.mode === "blind";
+  ($("form-loop") as HTMLButtonElement).disabled = state.mode !== "explore";
+  ($("form-song") as HTMLButtonElement).disabled = state.mode !== "explore";
   renderSongBar();
 }
 
@@ -541,24 +562,53 @@ function renderStoreStatus(): void {
   $("local-export").hidden = !(store.status === "local" && store.ratings.length > 0);
 }
 
+function avg(xs: number[]): number {
+  return xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
+}
+
+function goalCell(ratings: number[]): HTMLElement {
+  const td = h("td");
+  const wrap = h("div", { class: "goal" });
+  const mean = ratings.length ? avg(ratings) : 0;
+  const ok = ratings.length >= GOAL_MIN && mean >= GOAL;
+  wrap.dataset.ok = String(ok);
+  const bar = h("div", { class: "goal-bar", role: "img", "aria-label": ratings.length ? `Ø ${fmt(mean)} von 5, Ziel 4` : "keine Bewertungen" });
+  const fill = h("span");
+  fill.style.width = `${(mean / 5) * 100}%`;
+  bar.append(fill, h("i"));
+  const left = GOAL_MIN - ratings.length;
+  const mark = ok ? "✓ am Ziel" : ratings.length && mean >= GOAL ? `noch ${left}` : ratings.length ? `${fmt(GOAL - mean)} fehlen` : "–";
+  wrap.append(bar, h("span", { class: "goal-mark" }, mark));
+  td.append(wrap);
+  return td;
+}
+
+function blindCell(list: StoredRating[]): HTMLElement {
+  return h("td", { class: "num" }, list.length ? `${list.filter((r) => r.correct).length}/${list.length}` : "–");
+}
+
 function renderResults(): void {
   const all = store.ratings;
   const explore = all.filter((r) => r.mode === "entdecken" && typeof r.rating === "number");
   const blind = all.filter((r) => r.mode === "blindtest" && typeof r.correct === "boolean");
-  $("kpi-count").textContent = String(explore.length + blind.length);
-  $("kpi-avg").textContent = explore.length
-    ? fmt(explore.reduce((a, r) => a + (r.rating ?? 0), 0) / explore.length)
-    : "–";
+  const duels = all.filter((r) => r.mode === "duell" && !!r.winner && !!r.duelId);
+  $("kpi-count").textContent = String(explore.length + blind.length + duels.length);
+  $("kpi-avg").textContent = explore.length ? fmt(avg(explore.map((r) => r.rating ?? 0))) : "–";
   const correct = blind.filter((r) => r.correct).length;
   $("kpi-blind").textContent = blind.length ? `${Math.round((correct / blind.length) * 100)} %` : "–";
   $("kpi-blind-sub").textContent = blind.length ? `${correct} von ${blind.length} richtig` : "Blindtest richtig";
 
   const body = $("res-body");
   body.replaceChildren();
+  let atGoal = 0;
+  let variants = 0;
   for (const style of STYLES) {
     for (const v of style.variants) {
+      variants++;
       const ex = explore.filter((r) => r.styleId === style.id && r.variantId === v.id);
       const bl = blind.filter((r) => r.styleId === style.id && r.variantId === v.id);
+      const ratings = ex.map((r) => r.rating ?? 0);
+      if (ratings.length >= GOAL_MIN && avg(ratings) >= GOAL) atGoal++;
       const issues = new Map<string, number>();
       for (const r of ex) for (const i of r.issues ?? []) issues.set(i, (issues.get(i) ?? 0) + 1);
       const top = [...issues.entries()].sort((a, b) => b[1] - a[1])[0];
@@ -568,12 +618,36 @@ function renderResults(): void {
       tr.append(
         name,
         h("td", { class: "num" }, String(ex.length)),
-        h("td", { class: "num" }, ex.length ? fmt(ex.reduce((a, r) => a + (r.rating ?? 0), 0) / ex.length) : "–"),
-        h("td", { class: "num" }, bl.length ? `${bl.filter((r) => r.correct).length}/${bl.length}` : "–"),
+        h("td", { class: "num" }, ex.length ? fmt(avg(ratings)) : "–"),
+        goalCell(ratings),
+        blindCell(bl.filter((r) => r.soundMode !== "neutral")),
+        blindCell(bl.filter((r) => r.soundMode === "neutral")),
         h("td", {}, top ? `${ISSUES.find((i) => i.id === top[0])?.label ?? top[0]} (${top[1]})` : "–"),
       );
       body.append(tr);
     }
+  }
+  $("kpi-goal").textContent = `${atGoal}/${variants}`;
+
+  const dbody = $("duel-body");
+  dbody.replaceChildren();
+  for (const d of DUELS) {
+    const votes = duels.filter((r) => r.duelId === d.id);
+    const a = votes.filter((r) => r.winner === "a").length;
+    const b = votes.filter((r) => r.winner === "b").length;
+    const tie = votes.length - a - b;
+    // A clear lead needs a few votes; until then the comparison stays open.
+    const verdict = votes.length < 6 ? "offen" : a >= b * 2 && a - b >= 3 ? "neu vorn" : b >= a * 2 && b - a >= 3 ? "alt vorn" : "kein klarer Unterschied";
+    const tr = h("tr");
+    tr.append(
+      h("td", {}, d.title),
+      h("td", { class: "num" }, String(votes.length)),
+      h("td", { class: "num" }, String(a)),
+      h("td", { class: "num" }, String(b)),
+      h("td", { class: "num" }, String(tie)),
+      h("td", {}, verdict),
+    );
+    dbody.append(tr);
   }
   $("res-empty").hidden = all.length > 0;
   renderBlindScore();
@@ -622,7 +696,7 @@ function buildDoc(idea: Idea, mode: RatingDoc["mode"], extra: Partial<RatingDoc>
     sounds,
     soundMode: mode === "blindtest" ? state.blind.soundMode : "style",
     muted: [...state.muted],
-    form: mode === "blindtest" ? "loop" : state.form,
+    form: mode === "entdecken" ? state.form : "loop",
     ownVoice: !!player?.usesOwnVoice(idea),
     rating: null,
     issues: [],
@@ -683,7 +757,7 @@ async function togglePlay(): Promise<void> {
   if (!state.idea) return;
   if (player.playing) player.stop();
   else {
-    if (player.idea !== state.idea) player.load(state.idea, state.mode === "blind" ? state.blind.soundMode : "style");
+    if (player.idea !== state.idea) show(state.idea);
     const btn = $("play") as HTMLButtonElement;
     btn.classList.add("is-loading");
     await player.prepare();
@@ -826,15 +900,18 @@ function renderBlind(): void {
   renderBlindScore();
 }
 
-function setMode(mode: "explore" | "blind"): void {
+function setMode(mode: Mode): void {
   if (state.mode === mode) return;
   state.mode = mode;
   $("tab-explore").setAttribute("aria-selected", String(mode === "explore"));
   $("tab-blind").setAttribute("aria-selected", String(mode === "blind"));
+  $("tab-duel").setAttribute("aria-selected", String(mode === "duel"));
   $("artists").hidden = mode !== "explore";
   $("blind-intro").hidden = mode !== "blind";
+  $("duel-intro").hidden = mode !== "duel";
   $("rating-form").hidden = mode !== "explore";
   $("guess").hidden = mode !== "blind";
+  $("duel-card").hidden = mode !== "duel";
   $("new-idea").hidden = mode !== "explore";
   document.body.dataset.mode = mode;
   if (player?.playing) player.stop();
@@ -842,9 +919,121 @@ function setMode(mode: "explore" | "blind"): void {
   renderForm();
   renderPlay();
   if (mode === "explore") show(state.exploreIdea);
-  else show(state.blind.idea);
+  else if (mode === "blind") show(state.blind.idea);
+  else show(state.duel.ideas?.[state.duel.current] ?? null);
   renderBlind();
+  renderDuel();
   renderHistory();
+}
+
+// ---------------------------------------------------------------------------
+// Duels
+
+/** The arm behind version 1 or 2 of the current duel. */
+function duelArm(version: 0 | 1) {
+  const d = state.duel;
+  if (!d.duel) return null;
+  const newerFirst = d.order === "ab";
+  return (version === 0) === newerFirst ? d.duel.a : d.duel.b;
+}
+
+function sameNotes(a: Idea, b: Idea): boolean {
+  return JSON.stringify(a.lanes) === JSON.stringify(b.lanes);
+}
+
+/** A random variant and a comparison that applies to it; rule duels get a seed where the versions differ. */
+function pickDuel(): { duel: Duel; ideas: [Idea, Idea] } {
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const style = STYLES[Math.floor(Math.random() * STYLES.length)];
+    const variant = style.variants[Math.floor(Math.random() * style.variants.length)];
+    const options = duelsFor(style.id, variant.id);
+    if (!options.length) continue;
+    const duel = options[Math.floor(Math.random() * options.length)];
+    const base: IdeaParams = { styleId: style.id, variantId: variant.id, key: null, bars: state.explore.bars, seed: randomSeed() };
+    const a = generateIdea({ ...base, flags: duel.a.flags });
+    const b = generateIdea({ ...base, flags: duel.b.flags });
+    if ((duel.a.flags || duel.b.flags) && sameNotes(a, b)) continue;
+    return { duel, ideas: [a, b] };
+  }
+  const duel = DUELS[0];
+  const style = STYLES[0];
+  const base: IdeaParams = { styleId: style.id, variantId: style.variants[0].id, key: null, bars: state.explore.bars, seed: randomSeed() };
+  return { duel, ideas: [generateIdea(base), generateIdea(base)] };
+}
+
+async function startDuel(): Promise<void> {
+  const { duel, ideas } = pickDuel();
+  const d = state.duel;
+  d.round++;
+  d.duel = duel;
+  d.order = Math.random() < 0.5 ? "ab" : "ba";
+  // ideas[0] belongs to arm a; version 1 is arm a when the order is "ab".
+  d.ideas = d.order === "ab" ? ideas : [ideas[1], ideas[0]];
+  d.current = 0;
+  d.voted = null;
+  show(d.ideas[0]);
+  renderDuel();
+  if (player) {
+    try {
+      await player.unlock();
+      await player.prepare();
+      player.play();
+    } catch {
+      toast("Audio konnte nicht starten. Tippe auf Play.");
+    }
+    renderPlay();
+  }
+}
+
+/** Switch between version 1 and 2; keeps playing so the difference is easy to hear. */
+async function switchDuel(version: 0 | 1): Promise<void> {
+  const d = state.duel;
+  if (!d.ideas) return;
+  d.current = version;
+  show(d.ideas[version]);
+  renderDuel();
+  if (player && !player.playing) {
+    try {
+      await player.unlock();
+      await player.prepare();
+      player.play();
+    } catch {
+      toast("Audio konnte nicht starten. Tippe auf Play.");
+    }
+    renderPlay();
+  }
+}
+
+async function voteDuel(choice: "1" | "2" | "="): Promise<void> {
+  const d = state.duel;
+  if (!d.duel || !d.ideas || d.voted) return;
+  d.voted = choice;
+  const winner = choice === "=" ? "tie" : (choice === "1") === (d.order === "ab") ? "a" : "b";
+  renderDuel();
+  renderIdea();
+  try {
+    await store.add(buildDoc(d.ideas[0], "duell", { duelId: d.duel.id, winner, order: d.order }));
+  } catch (e) {
+    toast(errorText(e));
+  }
+}
+
+function renderDuel(): void {
+  const d = state.duel;
+  const idea = d.ideas?.[0];
+  $("duel-title").textContent = idea ? `Welche klingt mehr nach ${idea.artist}?` : "Welche klingt mehr nach dem Künstler?";
+  $("duel-round").textContent = d.ideas ? `Duell ${d.round}` : "Bereit, wenn du es bist.";
+  $("duel-start").hidden = !!d.ideas;
+  $("duel-play").hidden = !d.ideas || !!d.voted;
+  $("duel-reveal").hidden = !d.voted;
+  $("duel-v1").setAttribute("aria-pressed", String(!!d.ideas && d.current === 0));
+  $("duel-v2").setAttribute("aria-pressed", String(!!d.ideas && d.current === 1));
+  if (d.voted && d.duel) {
+    const v1 = duelArm(0)!.label;
+    const v2 = duelArm(1)!.label;
+    const picked = d.voted === "=" ? "Kein Unterschied gewählt." : `Du hast Version ${d.voted} gewählt.`;
+    $("duel-verdict").textContent = `${picked} Version 1 war: ${v1}. Version 2 war: ${v2}.`;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -992,6 +1181,14 @@ function wire(): void {
   $("bpm-up").addEventListener("click", () => bump(1));
   $("tab-explore").addEventListener("click", () => setMode("explore"));
   $("tab-blind").addEventListener("click", () => setMode("blind"));
+  $("tab-duel").addEventListener("click", () => setMode("duel"));
+  $("duel-start").addEventListener("click", () => void startDuel());
+  $("duel-next").addEventListener("click", () => void startDuel());
+  $("duel-v1").addEventListener("click", () => void switchDuel(0));
+  $("duel-v2").addEventListener("click", () => void switchDuel(1));
+  $("duel-pick1").addEventListener("click", () => void voteDuel("1"));
+  $("duel-pick2").addEventListener("click", () => void voteDuel("2"));
+  $("duel-same").addEventListener("click", () => void voteDuel("="));
 
   buildStars("stars", (v) => {
     state.rating = v;
@@ -1042,12 +1239,14 @@ function wire(): void {
       void togglePlay();
     } else if (e.key === "n" || e.key === "N") {
       if (state.mode === "explore") newIdea();
+    } else if (state.mode === "duel" && (e.key === "1" || e.key === "2")) {
+      void switchDuel(e.key === "1" ? 0 : 1);
     } else if (/^[1-5]$/.test(e.key)) {
       const v = Number(e.key);
       if (state.mode === "explore") {
         state.rating = v;
         renderRatingControls();
-      } else if (state.blind.guessed) void rateBlind(v);
+      } else if (state.mode === "blind" && state.blind.guessed) void rateBlind(v);
     }
   });
 
@@ -1077,6 +1276,7 @@ function boot(data: unknown): void {
   regenerate(state.history.length === 0);
   renderPlay();
   renderBlind();
+  renderDuel();
   renderRatingControls();
   renderResults();
   store.onChange = renderResults;

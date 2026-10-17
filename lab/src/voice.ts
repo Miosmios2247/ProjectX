@@ -3,6 +3,7 @@
 // sung on the topline like AVAION. Everything stays in the browser.
 
 import type * as ToneNS from "tone";
+import type { PlayerOptions } from "./audio";
 import type { Voice } from "./sounds";
 import { VoiceAnalysis, analyzeVoice, foldedRate } from "./voice-analysis";
 
@@ -62,7 +63,7 @@ export function describeVoice(v: OwnVoice): string {
 }
 
 /** A lead voice that plays the recording. Monophonic: each note cuts the previous one. */
-export function ownVoice(T: T, own: OwnVoice, kind: OwnVoiceKind): Voice {
+export function ownVoice(T: T, own: OwnVoice, kind: OwnVoiceKind, options: PlayerOptions = { soundSet: "v5", grain: true }): Voice {
   const { analysis, buffer } = own;
   const out = new T.Gain(T.dbToGain(OWN_TRIM[kind]));
   const nodes: ToneNS.ToneAudioNode[] = [];

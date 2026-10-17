@@ -17,6 +17,7 @@
     <div class="modes" role="tablist" aria-label="Modus">
       <button type="button" role="tab" id="tab-explore" aria-selected="true" aria-controls="panel-main">Entdecken</button>
       <button type="button" role="tab" id="tab-blind" aria-selected="false" aria-controls="panel-main">Blindtest</button>
+      <button type="button" role="tab" id="tab-duel" aria-selected="false" aria-controls="panel-main">Duell</button>
     </div>
   </header>
 
@@ -25,6 +26,11 @@
   <section class="blind-intro" id="blind-intro" hidden>
     <h2>Blindtest</h2>
     <p>Ein Loop läuft ohne Namen. Tippe, von wem er sein soll. So sehen wir, ob die Stile wirklich erkennbar sind.</p>
+  </section>
+
+  <section class="blind-intro" id="duel-intro" hidden>
+    <h2>Duell</h2>
+    <p>Dieselbe Idee in zwei Versionen. Schalte zwischen Version 1 und 2 hin und her und tippe, welche mehr nach dem Künstler klingt. So prüfen wir jede Änderung einzeln.</p>
   </section>
 
   <div class="transport">
@@ -120,6 +126,28 @@
         <p class="score" id="blind-score"></p>
       </section>
 
+      <section class="card guess duel" id="duel-card" hidden aria-labelledby="duel-title">
+        <h2 class="card-title" id="duel-title">Welche klingt mehr nach dem Künstler?</h2>
+        <p class="muted" id="duel-round">Bereit, wenn du es bist.</p>
+        <button type="button" class="btn primary wide" id="duel-start">Duell starten</button>
+        <div id="duel-play" hidden>
+          <div class="seg duel-switch" role="group" aria-label="Version">
+            <button type="button" id="duel-v1" aria-pressed="false">Version 1</button>
+            <button type="button" id="duel-v2" aria-pressed="false">Version 2</button>
+          </div>
+          <p class="muted small">Schalte während der Wiedergabe um, so hörst du den Unterschied am besten.</p>
+          <div class="guess-grid" id="duel-votes">
+            <button type="button" class="btn guess-btn" id="duel-pick1">Version 1</button>
+            <button type="button" class="btn guess-btn" id="duel-pick2">Version 2</button>
+            <button type="button" class="btn guess-btn" id="duel-same">Kein Unterschied</button>
+          </div>
+        </div>
+        <div class="reveal" id="duel-reveal" hidden>
+          <p class="verdict" id="duel-verdict"></p>
+          <button type="button" class="btn primary wide" id="duel-next">Nächstes Duell</button>
+        </div>
+      </section>
+
       <section class="card why" id="why" aria-labelledby="why-title">
         <h2 class="card-title" id="why-title">Warum klingt das so?</h2>
         <ul id="why-list"></ul>
@@ -157,14 +185,24 @@
     <div class="kpis">
       <div class="kpi"><span class="kpi-v" id="kpi-count">0</span><span class="kpi-l">Bewertungen</span></div>
       <div class="kpi"><span class="kpi-v" id="kpi-avg">–</span><span class="kpi-l">Ø Stil-Treffer (1–5)</span></div>
+      <div class="kpi"><span class="kpi-v" id="kpi-goal">–</span><span class="kpi-l">Varianten am Ziel (Ø ≥ 4 aus 5+ Bewertungen)</span></div>
       <div class="kpi"><span class="kpi-v" id="kpi-blind">–</span><span class="kpi-l" id="kpi-blind-sub">Blindtest richtig</span></div>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Stil</th><th class="num">Bewertungen</th><th class="num">Ø</th><th class="num">Blindtest</th><th>Häufigste Kritik</th></tr>
+          <tr><th>Stil</th><th class="num">Bewertungen</th><th class="num">Ø</th><th>Ziel 4,0</th><th class="num">Blind Stil</th><th class="num">Blind Neutral</th><th>Häufigste Kritik</th></tr>
         </thead>
         <tbody id="res-body"></tbody>
+      </table>
+    </div>
+    <h3 class="res-sub">Duelle</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Vergleich</th><th class="num">Stimmen</th><th class="num">Neu</th><th class="num">Alt</th><th class="num">Gleich</th><th>Stand</th></tr>
+        </thead>
+        <tbody id="duel-body"></tbody>
       </table>
     </div>
     <p class="empty" id="res-empty">Noch keine Bewertungen. Hör dir oben eine Idee an und bewerte sie, dann erscheint sie hier.</p>

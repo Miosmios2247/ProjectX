@@ -6,7 +6,7 @@ export interface RatingDoc {
   raterId: string | null;
   labVersion: string;
   engineVersion: string;
-  mode: "entdecken" | "blindtest";
+  mode: "entdecken" | "blindtest" | "duell";
   styleId: string;
   variantId: string;
   artist: string;
@@ -32,6 +32,10 @@ export interface RatingDoc {
   form?: "loop" | "song";
   /** Lead sung by the rater's own voice recording (from lab 0.3). */
   ownVoice?: boolean;
+  /** Duel (from lab 0.5): which comparison, which version won ("a" = newer), and whether version 1 was "a". */
+  duelId?: string;
+  winner?: "a" | "b" | "tie";
+  order?: "ab" | "ba";
 }
 
 export type StoredRating = RatingDoc & { id: string };
