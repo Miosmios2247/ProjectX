@@ -259,7 +259,7 @@ const SOUND_TRIM: Record<string, number> = {
   "deep-bass": 1.5,
   "house-bass": 3.5,
   "vox-chop": 0.5,
-  "vox-stretch": -1.5,
+  "vox-stretch": 0,
   "vox-sing": -4,
   "brass-lead": 1.5,
   harmonica: -5,

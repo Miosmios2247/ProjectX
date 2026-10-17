@@ -35,6 +35,8 @@ const DUCKED: PlayLane[] = ["chords", "bass", "lead", "pluck"];
 
 const PLAY_LANES_ALL: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const OPEN = 20000;
+/** Level of a closed stutter gate on the vowel (about -24 dB). */
+const CHOP_FLOOR = 0.06;
 
 /** Snare roll for a build: quarters, 8ths, 16ths, then 32nds on the last two beats. */
 function buildRoll(bars: number): { beat: number; vel: number }[] {
@@ -264,6 +266,11 @@ export class Player {
       const harmony = lane === "lead" && harmonize ? harmonyFor(sorted, idea.progression, idea.key) : [];
       const held = (start: number, end: number | null | undefined) =>
         end === null || end === undefined ? 0 : Math.max(0.03, (stepToBeat(end, idea.swing) - start) * secPerBeat * 0.98);
+      // BUNT.'s stutter: the vowel sounds on and a volume gate chops it (like ShaperBox or
+      // LFO Tool). Retriggering a sample on every 16th would never let the vowel speak.
+      const chopped = lane === "lead" && !neutral && data.detail === "gated-vowel";
+      const peak = Math.max(1, ...sorted.map((n) => n.vel)) / 127;
+      const chop = this.gate.lead.gain;
       const events = sorted.map((n, i) => {
         const start = stepToBeat(n.start, idea.swing);
         const end = stepToBeat(n.start + n.len, idea.swing);
@@ -282,12 +289,25 @@ export class Player {
       const part = new T.Part((time, ev: (typeof events)[number]) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
+        const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
+        if (chopped) {
+          // One held vowel per syllable; the gate follows the notes (open level = accent).
+          const gated = !sec?.leadHold && !sec?.leadRaw;
+          if (ev.hold > 0) voice.trigger(ev.midi + up, ev.hold, time, gated ? peak * 0.9 : ev.vel * 0.72, ev.i);
+          chop.cancelScheduledValues(time);
+          if (gated) {
+            chop.setTargetAtTime(ev.vel / peak, time, 0.0015);
+            chop.setTargetAtTime(CHOP_FLOOR, time + ev.dur, 0.003);
+          } else {
+            chop.setTargetAtTime(1, time, 0.004);
+          }
+          return;
+        }
         if (lane === "lead" && (sec?.leadRaw || sec?.leadHold)) {
           const dur = sec.leadHold ? ev.hold : ev.raw;
           if (dur > 0) voice.trigger(ev.midi, dur, time, ev.vel * (sec.leadHold ? 0.72 : 0.9), ev.i);
           return;
         }
-        const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
         voice.trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
         if (lane === "lead" && sec?.leadHarmony) {
           ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), ev.i));
