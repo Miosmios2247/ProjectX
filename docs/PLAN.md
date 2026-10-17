@@ -1,6 +1,6 @@
 # ProjectX – Planung: Stil-Generator-Plugin (VST3)
 
-> **Status:** Entwurf v0.1 · reine Planungsphase, noch kein Code · Stand 17.10.2026
+> **Status:** v0.2 · Phase 1 läuft: Das Hör-Labor (Runde 1) ist online, siehe [HOERLABOR.md](HOERLABOR.md) · Stand 17.10.2026
 > Wir planen gemeinsam weiter. Was noch zu entscheiden ist, steht in [Abschnitt 11](#11-offene-entscheidungen).
 
 ## 1. Vision
@@ -204,8 +204,8 @@ Bewerten, später 1:1 im Plugin.
 
 | Teil | Empfehlung | Warum |
 |---|---|---|
-| Musik-Gehirn | TypeScript, Theorie-Basis mit [Tonal.js](https://github.com/tonaljs/tonal) (MIT-Lizenz) | schnell zu entwickeln und zu testen, läuft im Browser **und** im Plugin |
-| Hör-Labor (Phase 1) | private Webseite (Claude-Artifact) mit Vorhör-Sounds, MIDI-Download, Bewertung und Blindtest | du testest am PC oder Handy, ohne etwas zu installieren; deine Bewertungen fließen in die nächste Runde |
+| Musik-Gehirn | TypeScript in `engine/`, eigener Theorie-Kern ohne fremde Bibliotheken | schnell zu entwickeln und zu testen, läuft im Browser **und** im Plugin |
+| Hör-Labor (Phase 1) | private Webseite (Claude-Artifact) mit Vorhör-Sounds, MIDI-Download (als ZIP), Bewertung und Blindtest | du testest am PC oder Handy, ohne etwas zu installieren; deine Bewertungen fließen in die nächste Runde |
 | Plugin-Hülle | C++ mit **JUCE** (aktuell Version 9) → VST3 + Standalone, später AU (Mac), evtl. CLAP | Industriestandard für Audio-Plugins |
 | Oberfläche | JUCE-WebView (HTML/CSS); JUCE 9 bringt dafür ein offizielles TypeScript-Paket mit | moderne Optik, Teile aus dem Hör-Labor wiederverwendbar |
 | Wiedergabe | in der C++-Hülle: synchron zu FL, auch bei geschlossenem Fenster und beim Export | das Gehirn erzeugt Noten nur auf Klick, abspielen tut die Hülle |

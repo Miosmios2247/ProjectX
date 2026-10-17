@@ -1,0 +1,158 @@
+<title>ProjectX Hör-Labor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@500;700&display=swap">
+<style>
+/*__CSS__*/
+</style>
+
+<div class="app">
+  <header class="masthead">
+    <div class="brand">
+      <p class="eyebrow">ProjectX · Hörtest Runde 1 · Stil-Profile v0.1</p>
+      <h1>Hör-Labor</h1>
+      <p class="lede">Wähle einen Künstler, hör dir die Idee an und sag mir, wie sehr sie nach ihm klingt. Im Blindtest rätst du, von wem ein Loop sein soll.</p>
+    </div>
+    <div class="modes" role="tablist" aria-label="Modus">
+      <button type="button" role="tab" id="tab-explore" aria-selected="true" aria-controls="panel-main">Entdecken</button>
+      <button type="button" role="tab" id="tab-blind" aria-selected="false" aria-controls="panel-main">Blindtest</button>
+    </div>
+  </header>
+
+  <section class="artists" id="artists" aria-label="Künstler"></section>
+
+  <section class="blind-intro" id="blind-intro" hidden>
+    <h2>Blindtest</h2>
+    <p>Ein Loop läuft ohne Namen. Tippe, von wem er sein soll. So sehen wir, ob die Stile wirklich erkennbar sind.</p>
+  </section>
+
+  <div class="transport">
+    <button type="button" class="play" id="play" aria-label="Abspielen">
+      <svg class="ico-play" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 4.5v11l9-5.5z" fill="currentColor"/></svg>
+      <svg class="ico-stop" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="10" height="10" rx="1.5" fill="currentColor"/></svg>
+      <span class="play-label">Play</span>
+    </button>
+    <div class="field">
+      <label for="key">Tonart</label>
+      <select id="key"></select>
+      <span class="key-actual" id="key-actual"></span>
+    </div>
+    <div class="field">
+      <span class="label" id="len-label">Länge</span>
+      <div class="seg" role="group" aria-labelledby="len-label">
+        <button type="button" id="len-4" aria-pressed="true">4 Takte</button>
+        <button type="button" id="len-8" aria-pressed="false">8 Takte</button>
+      </div>
+    </div>
+    <div class="field tempo">
+      <span class="label">Tempo</span>
+      <button type="button" class="step-btn" id="bpm-down" aria-label="Langsamer">−</button>
+      <output id="bpm" aria-live="polite">–</output><span class="unit">BPM</span>
+      <button type="button" class="step-btn" id="bpm-up" aria-label="Schneller">+</button>
+    </div>
+    <div class="spacer"></div>
+    <button type="button" class="btn primary" id="new-idea">Neue Idee</button>
+    <button type="button" class="btn" id="download">MIDI (ZIP)</button>
+  </div>
+
+  <div class="workspace" id="panel-main">
+    <section class="arrangement" aria-label="Spuren">
+      <div class="arr-head">
+        <span class="arr-title" id="idea-title"></span>
+        <span class="arr-meta" id="idea-meta"></span>
+      </div>
+      <div class="lanes" id="lanes">
+        <div class="lane-row chord-row">
+          <div class="lane-meta"><div class="lane-name">Akkordfolge</div></div>
+          <div class="chord-strip" id="chord-strip"></div>
+        </div>
+      </div>
+      <p class="kbd-hint">Tastatur: Leertaste = Play/Stopp · N = neue Idee · 1–5 = Bewertung. Die Würfel-Taste würfelt nur diese Spur neu; neue Akkorde passen alle anderen Spuren an.</p>
+    </section>
+
+    <aside class="side">
+      <form class="card rating" id="rating-form">
+        <h2 class="card-title">Bewertung</h2>
+        <p class="question" id="rating-q">Wie sehr klingt das nach dem Künstler?</p>
+        <div class="stars" role="radiogroup" aria-labelledby="rating-q" id="stars"></div>
+        <fieldset>
+          <legend>Was passt nicht? <span class="opt">optional</span></legend>
+          <div class="chips" id="issues"></div>
+        </fieldset>
+        <label for="comment" class="comment-label">Notiz <span class="opt">optional</span></label>
+        <textarea id="comment" rows="3" maxlength="2000" placeholder="Was fehlt? Was ist typisch, was nicht?"></textarea>
+        <div class="actions">
+          <button type="submit" class="btn primary" id="save-next" disabled>Speichern &amp; nächste Idee</button>
+          <button type="button" class="btn" id="save-only" disabled>Nur speichern</button>
+        </div>
+        <p class="store-status" id="store-status">Verbinde mit dem Speicher …</p>
+      </form>
+
+      <section class="card guess" id="guess" hidden aria-labelledby="guess-title">
+        <h2 class="card-title" id="guess-title">Wer ist das?</h2>
+        <p class="muted" id="blind-round">Bereit, wenn du es bist.</p>
+        <button type="button" class="btn primary wide" id="blind-start">Runde starten</button>
+        <div class="guess-grid" id="guess-buttons" hidden></div>
+        <div class="reveal" id="reveal" hidden>
+          <p class="verdict" id="verdict"></p>
+          <p class="question" id="blind-q">Wie gut klingt der Loop an sich?</p>
+          <div class="stars small" role="radiogroup" aria-labelledby="blind-q" id="blind-stars"></div>
+          <button type="button" class="btn primary wide" id="blind-next">Nächste Runde</button>
+        </div>
+        <div class="seg-field">
+          <span class="label" id="snd-label">Sounds</span>
+          <div class="seg" role="group" aria-labelledby="snd-label">
+            <button type="button" id="snd-style" aria-pressed="true">Stiltypisch</button>
+            <button type="button" id="snd-neutral" aria-pressed="false">Neutral</button>
+          </div>
+        </div>
+        <p class="muted small">Neutral heißt: gleiche Klänge für alle. Dann zählen nur Akkorde, Melodie und Rhythmus.</p>
+        <p class="score" id="blind-score"></p>
+      </section>
+
+      <details class="card hints" id="hints">
+        <summary>Klang-Tipps für FL Studio</summary>
+        <ul id="hint-list"></ul>
+      </details>
+    </aside>
+  </div>
+
+  <section class="history" aria-labelledby="hist-title">
+    <h2 id="hist-title">Verlauf</h2>
+    <ol id="history"></ol>
+  </section>
+
+  <section class="results" aria-labelledby="res-title">
+    <h2 id="res-title">Auswertung</h2>
+    <div class="kpis">
+      <div class="kpi"><span class="kpi-v" id="kpi-count">0</span><span class="kpi-l">Bewertungen</span></div>
+      <div class="kpi"><span class="kpi-v" id="kpi-avg">–</span><span class="kpi-l">Ø Stil-Treffer (1–5)</span></div>
+      <div class="kpi"><span class="kpi-v" id="kpi-blind">–</span><span class="kpi-l" id="kpi-blind-sub">Blindtest richtig</span></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Stil</th><th class="num">Bewertungen</th><th class="num">Ø</th><th class="num">Blindtest</th><th>Häufigste Kritik</th></tr>
+        </thead>
+        <tbody id="res-body"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="res-empty">Noch keine Bewertungen. Hör dir oben eine Idee an und bewerte sie, dann erscheint sie hier.</p>
+    <div id="local-export" hidden>
+      <button type="button" class="btn" id="export-local">Bewertungen als Datei sichern</button>
+      <textarea id="local-json" readonly hidden aria-label="Bewertungen als Text"></textarea>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Die Stil-Profile sind Hypothesen von ProjectX und keine offiziellen Inhalte der Künstler. Alle Klänge werden im Browser erzeugt; für den echten Eindruck die MIDI-Dateien mit deinen eigenen Sounds in FL Studio anhören.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
+<script>
+//__JS__
+</script>
