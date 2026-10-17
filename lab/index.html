@@ -154,18 +154,12 @@
       </section>
 
       <section class="card voice" id="voice-card" aria-labelledby="voice-title">
-        <h2 class="card-title" id="voice-title">Deine Stimme als Hook</h2>
-        <p class="muted small">Sing oder sprich ein paar Wörter, 5 bis 15 Sekunden. Daraus werden Vocal-Chops (Fred again..), ein gedehnter Vokal mit Gate (BUNT.) oder die Topline (AVAION). Die Aufnahme bleibt in deinem Browser.</p>
-        <div class="actions">
-          <button type="button" class="btn" id="voice-record">Aufnehmen</button>
-          <button type="button" class="btn" id="voice-pick">Datei wählen</button>
-          <input type="file" id="voice-file" accept="audio/*" hidden>
-        </div>
+        <h2 class="card-title" id="voice-title">Stimmen-Studio</h2>
+        <p class="muted small">Echte Stimmen machen am meisten aus. Nimm für jeden Künstler kurz deine Stimme auf (gern auch von Freunden) oder lade eine Datei, zum Beispiel freie Vocal-Samples. Bis zu drei Aufnahmen pro Künstler; das Hör-Labor nimmt die saubersten Silben und stimmt sie ohne Micky-Maus-Effekt um. Alles bleibt in deinem Browser.</p>
+        <div class="studio" id="studio"></div>
+        <input type="file" id="voice-file" accept="audio/*" hidden>
         <p class="voice-status" id="voice-status" aria-live="polite"></p>
-        <div class="voice-on" id="voice-on" hidden>
-          <label class="check"><input type="checkbox" id="voice-use" checked> Im Lead verwenden</label>
-          <button type="button" class="btn" id="voice-clear">Entfernen</button>
-        </div>
+        <label class="check" id="voice-on" hidden><input type="checkbox" id="voice-use" checked> Meine Stimmen im Lead verwenden</label>
       </section>
 
       <details class="card hints" id="hints">

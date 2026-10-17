@@ -6,7 +6,7 @@
 import type * as ToneNS from "tone";
 import { ArrangementSection, Idea, LaneId, stepToBeat } from "../../engine/src/index";
 import { Voice, createVoice } from "./sounds";
-import { OWN_VOICE_KIND, OwnVoice, ownVoice } from "./voice";
+import { OWN_VOICE_KIND, OwnVoice, OwnVoiceKind, ownVoice } from "./voice";
 import { DrumKit } from "./drumkit";
 import { harmonyFor, legatoEnds } from "./phrasing";
 
@@ -96,8 +96,8 @@ export class Player {
   idea: Idea | null = null;
   soundMode: SoundMode = "style";
   form: PlayForm = "loop";
-  /** The rater's own recording, used for vocal leads when `useOwnVoice` is on. */
-  ownVoice: OwnVoice | null = null;
+  /** The rater's own recordings per vocal kind, used for vocal leads when `useOwnVoice` is on. */
+  ownVoices: Partial<Record<OwnVoiceKind, OwnVoice>> = {};
   useOwnVoice = true;
   options: PlayerOptions = { ...DEFAULT_OPTIONS };
 
@@ -187,8 +187,8 @@ export class Player {
   }
 
   private voiceFor(lane: LaneId, id: string): Voice {
-    const own = lane === "lead" && this.useOwnVoice ? this.ownVoice : null;
-    const kind = own ? OWN_VOICE_KIND[id] : undefined;
+    const kind = lane === "lead" && this.useOwnVoice ? OWN_VOICE_KIND[id] : undefined;
+    const own = kind ? this.ownVoices[kind] ?? null : null;
     const opts = `${this.options.soundSet}:${this.options.grain ? "g" : "-"}`;
     const key = own && kind ? `${id}:own:${own.id}:${opts}` : `${id}:${opts}`;
     const cur = this.voices[lane];
@@ -200,13 +200,14 @@ export class Player {
     return voice;
   }
 
-  /** Whether the lead of this idea is sung by the own recording. */
+  /** Whether the lead of this idea is sung by an own recording. */
   usesOwnVoice(idea: Idea): boolean {
-    return !!this.ownVoice && this.useOwnVoice && this.soundMode !== "neutral" && !!OWN_VOICE_KIND[idea.lanes.lead.sound];
+    const kind = OWN_VOICE_KIND[idea.lanes.lead.sound];
+    return this.useOwnVoice && this.soundMode !== "neutral" && !!kind && !!this.ownVoices[kind];
   }
 
-  setOwnVoice(voice: OwnVoice | null, use = this.useOwnVoice): void {
-    this.ownVoice = voice;
+  setOwnVoices(voices: Partial<Record<OwnVoiceKind, OwnVoice>>, use = this.useOwnVoice): void {
+    this.ownVoices = voices;
     this.useOwnVoice = use;
     if (this.built && this.idea) this.load(this.idea, this.soundMode);
   }
@@ -274,8 +275,9 @@ export class Player {
       this.parts.push(part);
     };
 
-    // A harmony stack needs a polyphonic voice; a recorded voice sings alone.
-    const harmonize = !this.usesOwnVoice(idea);
+    // A recorded voice sings harmonies only on held vowels (chops stay single).
+    const ownKind = this.usesOwnVoice(idea) ? OWN_VOICE_KIND[idea.lanes.lead.sound] : undefined;
+    const harmonize = ownKind !== "chop";
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
       const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
@@ -285,6 +287,7 @@ export class Player {
       const rawEnds = lane === "lead" ? legatoEnds(sorted, idea.progression, idea.totalSteps, false) : [];
       const holdEnds = lane === "lead" ? legatoEnds(sorted, idea.progression, idea.totalSteps, true) : [];
       const harmony = lane === "lead" && harmonize ? harmonyFor(sorted, idea.progression, idea.key) : [];
+      voice.prepare?.(sorted, harmony);
       const held = (start: number, end: number | null | undefined) =>
         end === null || end === undefined ? 0 : Math.max(0.03, (stepToBeat(end, idea.swing) - start) * secPerBeat * 0.98);
       // BUNT.'s stutter: the vowel sounds on and a volume gate chops it (like ShaperBox or
@@ -331,7 +334,7 @@ export class Player {
         }
         voice.trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
         if (lane === "lead" && sec?.leadHarmony) {
-          ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), ev.i));
+          ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), -(k + 1)));
         }
       }, events);
       loopPart(part);

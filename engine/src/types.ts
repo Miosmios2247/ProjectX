@@ -123,6 +123,8 @@ export interface Note {
   start: number;
   len: number;
   vel: number;
+  /** A vocal sampler plays this syllable reversed (Fred again..-style answer). */
+  fx?: "rev";
 }
 
 export interface DrumHit {

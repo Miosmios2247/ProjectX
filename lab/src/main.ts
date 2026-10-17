@@ -23,7 +23,18 @@ import {
 import { DEFAULT_OPTIONS, PlayForm, Player, PlayLane, SoundMode } from "./audio";
 import { DUELS, Duel, duelsFor } from "./duels";
 import { SOUND_LABELS } from "./sounds";
-import { OwnVoice, clearVoiceBytes, describeVoice, loadOwnVoice, loadVoiceBytes, saveVoiceBytes } from "./voice";
+import {
+  OwnVoice,
+  OwnVoiceKind,
+  SLOT_FOR_KIND,
+  Take,
+  VOICE_SLOTS,
+  VoiceSlot,
+  describeVoice,
+  loadAllTakes,
+  loadOwnVoice,
+  saveTakes,
+} from "./voice";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
@@ -1037,47 +1048,124 @@ function renderDuel(): void {
 }
 
 // ---------------------------------------------------------------------------
-// Own voice
+// Voice studio
 
 const NO_MIC =
-  "Aufnehmen geht in diesem Fenster nicht. Nimm eine Sprachmemo mit dem Handy auf und lade sie mit „Datei wählen“.";
-let ownVoice: OwnVoice | null = null;
+  "Aufnehmen geht in diesem Fenster nicht. Nimm eine Sprachmemo mit dem Handy auf und lade sie mit „Datei“.";
+const MAX_TAKES = 3;
+const RECORD_SECONDS = 20;
+const SLOT_INFO: Record<VoiceSlot, { artist: string; prompt: string }> = {
+  fred: {
+    artist: "Fred again..",
+    prompt: "Sprich zwei, drei Sätze wie in einer Sprachmemo an einen Freund, dann sing kurz eine Zeile.",
+  },
+  bunt: {
+    artist: "BUNT.",
+    prompt: "Sing einen langen Vokal, erst „iiii“, dann „aaaa“, jeweils 3–5 Sekunden auf einem Ton.",
+  },
+  avaion: {
+    artist: "AVAION",
+    prompt: "Sing ein paar eigene Worte oder „ooh“, eher hoch, gern im Falsett.",
+  },
+};
+
+const studio = {
+  takes: { fred: [], bunt: [], avaion: [] } as Record<VoiceSlot, Take[]>,
+  voices: {} as Partial<Record<VoiceSlot, OwnVoice>>,
+  info: {} as Partial<Record<VoiceSlot, string>>,
+  recording: null as VoiceSlot | null,
+  fileFor: null as VoiceSlot | null,
+};
 let recorder: MediaRecorder | null = null;
 
 function voiceStatus(text: string): void {
   $("voice-status").textContent = text;
 }
 
-function renderVoice(): void {
-  $("voice-on").hidden = !ownVoice;
-  ($("voice-use") as HTMLInputElement).checked = player?.useOwnVoice ?? true;
-  const rec = $("voice-record");
-  rec.classList.toggle("is-recording", !!recorder);
-  if (!recorder) rec.textContent = "Aufnehmen";
+/** Each vocal sound uses its artist's recordings, or any other recording when there are none. */
+function applyVoices(): void {
+  const any = VOICE_SLOTS.map((s) => studio.voices[s]).find((v) => !!v);
+  const byKind: Partial<Record<OwnVoiceKind, OwnVoice>> = {};
+  for (const kind of ["chop", "stretch", "sing"] as OwnVoiceKind[]) {
+    const v = studio.voices[SLOT_FOR_KIND[kind]] ?? any;
+    if (v) byKind[kind] = v;
+  }
+  player?.setOwnVoices(byKind, ($("voice-use") as HTMLInputElement).checked);
+  renderStudio();
+}
+
+async function rebuildSlot(slot: VoiceSlot): Promise<void> {
+  const T = window.Tone;
+  const takes = studio.takes[slot];
+  if (!T || !takes.length) {
+    delete studio.voices[slot];
+    studio.info[slot] = "";
+    applyVoices();
+    return;
+  }
+  studio.info[slot] = "Analysiere …";
+  renderStudio();
+  try {
+    const v = await loadOwnVoice(T, takes);
+    if (!v.analysis.slices.length) {
+      delete studio.voices[slot];
+      studio.info[slot] = "Keine Stimme erkannt. Versuch es lauter oder näher am Mikrofon.";
+    } else {
+      studio.voices[slot] = v;
+      studio.info[slot] = describeVoice(v);
+    }
+  } catch {
+    delete studio.voices[slot];
+    studio.info[slot] = "Diese Datei kann der Browser nicht lesen. Probier MP3, M4A oder WAV.";
+  }
+  applyVoices();
+}
+
+async function addTake(slot: VoiceSlot, take: Take): Promise<void> {
+  studio.takes[slot] = [...studio.takes[slot], take].slice(-MAX_TAKES);
+  await saveTakes(slot, studio.takes[slot]);
+  await rebuildSlot(slot);
+}
+
+async function clearSlot(slot: VoiceSlot): Promise<void> {
+  studio.takes[slot] = [];
+  await saveTakes(slot, []);
+  await rebuildSlot(slot);
+}
+
+function renderStudio(): void {
+  const wrap = $("studio");
+  wrap.replaceChildren();
+  for (const slot of VOICE_SLOTS) {
+    const info = SLOT_INFO[slot];
+    const n = studio.takes[slot].length;
+    const row = h("div", { class: "studio-row", "data-slot": slot });
+    const head = h("div", { class: "studio-head" });
+    head.append(h("strong", {}, info.artist), h("span", { class: "studio-count" }, n ? `${n}/${MAX_TAKES} Aufnahmen` : "noch keine Aufnahme"));
+    const actions = h("div", { class: "actions" });
+    const rec = h("button", { type: "button", class: "btn", id: `rec-${slot}` }, studio.recording === slot ? "Stopp" : "Aufnehmen");
+    if (studio.recording === slot) rec.classList.add("is-recording");
+    rec.disabled = !!studio.recording && studio.recording !== slot;
+    rec.addEventListener("click", () => void toggleRecord(slot));
+    const pick = h("button", { type: "button", class: "btn", id: `file-${slot}` }, "Datei");
+    pick.addEventListener("click", () => {
+      studio.fileFor = slot;
+      ($("voice-file") as HTMLInputElement).click();
+    });
+    actions.append(rec, pick);
+    if (n) {
+      const del = h("button", { type: "button", class: "btn", id: `clear-${slot}` }, "Löschen");
+      del.addEventListener("click", () => void clearSlot(slot));
+      actions.append(del);
+    }
+    row.append(head, h("p", { class: "small" }, info.prompt), actions, h("p", { class: "studio-info", id: `info-${slot}` }, studio.info[slot] ?? ""));
+    wrap.append(row);
+  }
+  $("voice-on").hidden = !VOICE_SLOTS.some((s) => studio.voices[s]);
   if (state.idea) renderIdea();
 }
 
-async function useVoiceBytes(bytes: ArrayBuffer, name: string, persist: boolean): Promise<void> {
-  const T = window.Tone;
-  if (!T || !player) return;
-  voiceStatus("Analysiere die Aufnahme …");
-  try {
-    const v = await loadOwnVoice(T, bytes, name);
-    if (!v.analysis.slices.length) {
-      voiceStatus("Keine Stimme erkannt. Versuch es lauter oder näher am Mikrofon.");
-      return;
-    }
-    ownVoice = v;
-    player.setOwnVoice(v);
-    if (persist) await saveVoiceBytes(name, bytes);
-    voiceStatus(`${name}: ${describeVoice(v)}. Hörbar bei Fred again.., BUNT. und AVAION (Pieces, Liquid).`);
-  } catch {
-    voiceStatus("Diese Datei kann der Browser nicht lesen. Probier MP3, M4A oder WAV.");
-  }
-  renderVoice();
-}
-
-async function toggleRecord(): Promise<void> {
+async function toggleRecord(slot: VoiceSlot): Promise<void> {
   if (recorder) {
     recorder.stop();
     return;
@@ -1098,12 +1186,14 @@ async function toggleRecord(): Promise<void> {
   const chunks: Blob[] = [];
   const rec = new MediaRecorder(stream);
   recorder = rec;
+  studio.recording = slot;
   const started = Date.now();
-  const btn = $("voice-record");
+  renderStudio();
   const timer = window.setInterval(() => {
     const s = Math.floor((Date.now() - started) / 1000);
-    btn.textContent = `Stopp (0:${String(s).padStart(2, "0")})`;
-    if (s >= 15 && rec.state === "recording") rec.stop();
+    const btn = document.getElementById(`rec-${slot}`);
+    if (btn) btn.textContent = `Stopp (0:${String(s).padStart(2, "0")})`;
+    if (s >= RECORD_SECONDS && rec.state === "recording") rec.stop();
   }, 250);
   rec.ondataavailable = (e) => {
     if (e.data.size) chunks.push(e.data);
@@ -1112,20 +1202,21 @@ async function toggleRecord(): Promise<void> {
     window.clearInterval(timer);
     stream.getTracks().forEach((t) => t.stop());
     recorder = null;
-    renderVoice();
+    studio.recording = null;
+    voiceStatus("");
+    renderStudio();
     void new Blob(chunks, { type: rec.mimeType })
       .arrayBuffer()
-      .then((bytes) => useVoiceBytes(bytes, "Aufnahme", true));
+      .then((bytes) => addTake(slot, { name: `Aufnahme ${new Date().toLocaleTimeString("de-DE")}`, bytes }));
   };
   rec.start();
-  voiceStatus("Aufnahme läuft: sing oder sprich ein paar Wörter, dann auf Stopp tippen.");
-  renderVoice();
-  btn.textContent = "Stopp (0:00)";
+  voiceStatus(`Aufnahme für ${SLOT_INFO[slot].artist} läuft: ${SLOT_INFO[slot].prompt}`);
 }
 
-async function restoreVoice(): Promise<void> {
-  const row = await loadVoiceBytes();
-  if (row) await useVoiceBytes(row.bytes, row.name, false);
+async function restoreVoices(): Promise<void> {
+  studio.takes = await loadAllTakes();
+  await Promise.all(VOICE_SLOTS.map((s) => (studio.takes[s].length ? rebuildSlot(s) : Promise.resolve())));
+  renderStudio();
 }
 
 // ---------------------------------------------------------------------------
@@ -1156,25 +1247,14 @@ function wire(): void {
     state.explore.bpm = Math.max(60, Math.min(180, state.idea.bpm + d));
     regenerate(false);
   };
-  $("voice-record").addEventListener("click", () => void toggleRecord());
-  $("voice-pick").addEventListener("click", () => ($("voice-file") as HTMLInputElement).click());
   $("voice-file").addEventListener("change", (e) => {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
+    const slot = studio.fileFor;
     input.value = "";
-    if (file) void file.arrayBuffer().then((bytes) => useVoiceBytes(bytes, file.name, true));
+    if (file && slot) void file.arrayBuffer().then((bytes) => addTake(slot, { name: file.name, bytes }));
   });
-  $("voice-use").addEventListener("change", (e) => {
-    player?.setOwnVoice(ownVoice, (e.target as HTMLInputElement).checked);
-    renderVoice();
-  });
-  $("voice-clear").addEventListener("click", () => {
-    ownVoice = null;
-    player?.setOwnVoice(null);
-    void clearVoiceBytes();
-    voiceStatus("");
-    renderVoice();
-  });
+  $("voice-use").addEventListener("change", () => applyVoices());
   $("form-loop").addEventListener("click", () => setForm("loop"));
   $("form-song").addEventListener("click", () => setForm("song"));
   $("bpm-down").addEventListener("click", () => bump(-1));
@@ -1281,7 +1361,8 @@ function boot(data: unknown): void {
   renderResults();
   store.onChange = renderResults;
   void store.init();
-  void restoreVoice();
+  renderStudio();
+  void restoreVoices();
   window.claude?.hot?.snapshot?.(snapshot);
   requestAnimationFrame(tickPlayhead);
 }

@@ -220,7 +220,7 @@ export function analyzeVoice(data: Float32Array, rate: number): VoiceAnalysis {
   const low = resample(data, rate, PITCH_RATE);
   const slices: VoiceSlice[] = [];
   const tracks: number[][] = [];
-  for (const [a, b] of frames.slice(0, 32)) {
+  for (const [a, b] of frames.slice(0, 48)) {
     const start = a * HOP;
     const end = Math.min(duration, b * HOP + HOP);
     const len = end - start;
@@ -274,4 +274,100 @@ export function foldedRate(target: number, f0: number): number {
   while (r > Math.SQRT2) r /= 2;
   while (r < Math.SQRT1_2) r *= 2;
   return r;
+}
+
+/** Semitones that move `f0` to the pitch class of `targetMidi`, folded into ±6 by octaves. */
+export function foldedShift(targetMidi: number, f0: number): number {
+  if (f0 <= 0) return 0;
+  const d = targetMidi - (69 + 12 * Math.log2(f0 / 440));
+  let s = ((d % 12) + 12) % 12;
+  if (s > 6) s -= 12;
+  return s;
+}
+
+/** Indices of the clearest syllables (voiced, loud, 0.1–0.5 s long), best first. */
+export function bestSlices(a: VoiceAnalysis, count = 10): number[] {
+  const score = (s: VoiceSlice) => {
+    const len = s.end - s.start;
+    return (s.f0 > 0 ? 1 : 0.3) + Math.max(-1, s.level / 30) - Math.abs(len - 0.25) * 1.5;
+  };
+  return a.slices
+    .map((s, i) => ({ i, v: score(s) }))
+    .sort((p, q) => q.v - p.v)
+    .slice(0, count)
+    .map((x) => x.i);
+}
+
+/**
+ * Pitch marks of a voiced region (sample indices): one per period on the
+ * waveform's peaks, followed period by period so slow pitch drifts are kept.
+ */
+export function pitchMarks(x: Float32Array, rate: number, start: number, end: number, f0: number): number[] {
+  const period = rate / f0;
+  const a = Math.max(0, Math.round(start * rate));
+  const b = Math.min(x.length, Math.round(end * rate));
+  let first = a;
+  let best = -Infinity;
+  for (let i = a; i < Math.min(b, a + Math.round(period)); i++) {
+    if (x[i] > best) {
+      best = x[i];
+      first = i;
+    }
+  }
+  const marks = [first];
+  const reach = Math.max(1, Math.round(period * 0.2));
+  let m = first;
+  while (m + period < b) {
+    const guess = Math.round(m + period);
+    let peak = guess;
+    let value = -Infinity;
+    for (let i = Math.max(m + 1, guess - reach); i <= Math.min(b - 1, guess + reach); i++) {
+      if (x[i] > value) {
+        value = x[i];
+        peak = i;
+      }
+    }
+    if (peak <= m) break;
+    marks.push(peak);
+    m = peak;
+  }
+  return marks;
+}
+
+/**
+ * TD-PSOLA: the region [start, end) in seconds moved by `semitones`, keeping its
+ * length and its vowel colour (no "chipmunk" voice). Each period is cut out with
+ * a two-period window and laid down again at the new period spacing. Regions
+ * without a pitch come back unchanged.
+ */
+export function psola(x: Float32Array, rate: number, start: number, end: number, f0: number, semitones: number): Float32Array {
+  const a = Math.max(0, Math.round(start * rate));
+  const b = Math.min(x.length, Math.round(end * rate));
+  const n = Math.max(0, b - a);
+  if (f0 <= 0 || Math.abs(semitones) < 0.01 || n < 8) return x.slice(a, b);
+  const marks = pitchMarks(x, rate, start, end, f0);
+  if (marks.length < 3) return x.slice(a, b);
+  const period = rate / f0;
+  const hop = period / Math.pow(2, semitones / 12);
+  const half = Math.max(2, Math.round(period));
+  const out = new Float32Array(n);
+  const norm = new Float32Array(n);
+  let k = 0;
+  for (let t = marks[0] - a; t < n + half; t += hop) {
+    const at = t + a;
+    while (k + 1 < marks.length && Math.abs(marks[k + 1] - at) <= Math.abs(marks[k] - at)) k++;
+    const c = marks[k];
+    const center = Math.round(t);
+    for (let j = -half; j <= half; j++) {
+      const src = c + j;
+      const dst = center + j;
+      if (src < a || src >= b || dst < 0 || dst >= n) continue;
+      const w = 0.5 + 0.5 * Math.cos((Math.PI * j) / half);
+      out[dst] += x[src] * w;
+      norm[dst] += w;
+    }
+  }
+  // Even out the overlap of the windows; the edges keep the original sound.
+  for (let i = 0; i < n; i++) out[i] = norm[i] > 0.25 ? out[i] / norm[i] : x[a + i];
+  return out;
 }

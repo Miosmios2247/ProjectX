@@ -2,6 +2,7 @@
 // synthesized basses and a neutral set for the blind test.
 
 import type * as ToneNS from "tone";
+import type { Note } from "../../engine/src/index";
 import type { PlayerOptions } from "./audio";
 import { SAMPLE_SETS, loadSet } from "./samples";
 
@@ -9,8 +10,10 @@ type T = ToneLib;
 
 export interface Voice {
   output: ToneNS.ToneAudioNode;
-  /** `index` is the note's position in its lane (stable across loops). */
+  /** `index` is the note's position in its lane (stable across loops); negative = a harmony voice. */
   trigger(midi: number, duration: number, time: number, velocity: number, index?: number): void;
+  /** Get ready for these notes (and harmony pitches per note) before the loop plays. */
+  prepare?(notes: readonly Note[], harmony?: readonly (readonly number[])[]): void;
   dispose(): void;
   /** Resolves when samples are loaded (synth voices are ready at once). */
   ready?: Promise<void>;
@@ -158,6 +161,103 @@ function sampledVoice(T: T, sets: string[], opts: SampledOptions, out: ToneNS.Ga
       samplers.forEach((x) => x?.dispose());
       (layer as ToneNS.Sampler | null)?.dispose();
       (layerGain as ToneNS.Gain | null)?.dispose();
+      input.dispose();
+      chain.forEach((c) => c.dispose());
+      out.dispose();
+    },
+  };
+}
+
+const NOTE_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+const midiOfName = (name: string) => {
+  const m = /^([A-G]b?)(-?\d)$/.exec(name);
+  return m ? NOTE_NAMES.indexOf(m[1]) + 12 * (Number(m[2]) + 1) : 60;
+};
+
+/**
+ * A held vowel from a sampled voice set, stretched by grain players (BUNT.'s
+ * "stretched as hell" vowel): one player per pitch runs all the time, an
+ * envelope opens it for each note. Grainy = big grains crawling through the
+ * vowel; smooth = small grains at normal speed.
+ */
+function grainVowel(T: T, set: string, grainy: boolean, chain: ToneNS.ToneAudioNode[], out: ToneNS.Gain): Voice {
+  const input = new T.Gain(1);
+  let node: ToneNS.ToneAudioNode = input;
+  for (const c of chain) {
+    node.connect(c);
+    node = c;
+  }
+  node.connect(out);
+  let buffers: Record<string, ToneNS.ToneAudioBuffer> = {};
+  let disposed = false;
+  const players = new Map<number, { player: ToneNS.GrainPlayer; env: ToneNS.Gain }>();
+  let pending: number[] = [];
+  const playerFor = (midi: number) => {
+    let p = players.get(midi);
+    if (p) return p;
+    const roots = Object.keys(buffers);
+    if (!roots.length) return null;
+    const root = roots.reduce((a, b) => (Math.abs(midiOfName(b) - midi) < Math.abs(midiOfName(a) - midi) ? b : a));
+    const buffer = buffers[root];
+    const env = new T.Gain(0);
+    env.connect(input);
+    const player = new T.GrainPlayer({
+      url: buffer,
+      loop: true,
+      loopStart: Math.min(0.15, buffer.duration * 0.2),
+      loopEnd: buffer.duration * 0.85,
+      grainSize: grainy ? 0.12 : 0.07,
+      overlap: grainy ? 0.05 : 0.035,
+      playbackRate: grainy ? 0.3 : 1,
+      detune: (midi - midiOfName(root)) * 100,
+      volume: SAMPLE_SETS[set]?.gain ?? 0,
+    });
+    player.connect(env);
+    player.start();
+    p = { player, env };
+    players.set(midi, p);
+    return p;
+  };
+  const ready = loadSet(T, set).then((b) => {
+    if (disposed) return;
+    buffers = b;
+    for (const m of pending) playerFor(m);
+    pending = [];
+  });
+  let last: ToneNS.Gain | null = null;
+  return {
+    output: out,
+    ready,
+    prepare(notes) {
+      const pitches = [...new Set(notes.map((n) => n.pitch))];
+      if (!Object.keys(buffers).length) pending = pitches;
+      else for (const m of pitches) playerFor(m);
+    },
+    trigger(midi, duration, time, velocity) {
+      safely(() => {
+        const p = playerFor(midi);
+        if (!p) return;
+        const t = time + 0.001;
+        if (last && last !== p.env) {
+          last.gain.cancelScheduledValues(t);
+          last.gain.setTargetAtTime(0, t, 0.006);
+        }
+        const g = p.env.gain;
+        g.cancelScheduledValues(t);
+        g.setValueAtTime(0, t);
+        g.linearRampToValueAtTime(velocity, t + 0.004);
+        g.setValueAtTime(velocity, t + Math.max(0.004, duration - 0.03));
+        g.linearRampToValueAtTime(0, t + duration);
+        last = p.env;
+      });
+    },
+    dispose() {
+      disposed = true;
+      for (const { player, env } of players.values()) {
+        player.dispose();
+        env.dispose();
+      }
+      players.clear();
       input.dispose();
       chain.forEach((c) => c.dispose());
       out.dispose();
@@ -361,7 +461,14 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
         ],
       }, out);
     case "vox-stretch":
-      // A stretched, distorted vowel; the gate comes from the repeated MIDI notes.
+      // A stretched, distorted vowel; the stutter gate sits on the lead in the player.
+      if (options.soundSet === "v5") {
+        return grainVowel(T, "aahs", options.grain, [
+          new T.Filter(220, "highpass"),
+          new T.Filter({ type: "peaking", frequency: 3000, Q: 0.8, gain: 3 }),
+          new T.Distortion(0.2),
+        ], out);
+      }
       return sampledVoice(T, ["aahs"], {
         attack: 0.002,
         release: 0.02,

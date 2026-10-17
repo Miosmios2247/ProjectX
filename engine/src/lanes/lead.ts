@@ -573,8 +573,9 @@ function chopLead(ctx: Ctx, rhythm: Rhythm, rng: Rng, poolSize: number): Note[] 
       if (vary && how === "octave" && i === hits.length - 1 && pitch + 12 <= ctx.hi + 7) pitch += 12;
       return fitToChord(pitch, h, pool, ctx);
     });
-    // Short, detached syllables.
+    // Short, detached syllables; a reversed answer plays its last syllables backwards.
     const chunk = toNotes(hits, pitches, rng, 0.72, 96);
+    if (vary && how === "reverse" && chunk.length >= 3) for (const n of chunk.slice(-3)) n.fx = "rev";
     const last = chunk[chunk.length - 1];
     if (vary && how === "stutter" && last) {
       // 16th repeats of the last syllable for half a beat to a beat, up to the phrase end.
