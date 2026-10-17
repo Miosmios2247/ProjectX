@@ -80,6 +80,7 @@ export function generateIdea(params: IdeaParams): Idea {
     leadRhythmB,
     totalSteps,
     lr.fork("notes"),
+    leadProfile.targets,
   );
 
   // Pluck, calmer when the lead is busy

@@ -4,6 +4,7 @@ import { Key } from "./theory";
 import { ChordSlot, HarmonyProfile } from "./progression";
 import { DrumInst, LaneId, WeightedRef } from "./rhythm";
 import { VoicingOptions } from "./voicing";
+import { MelodyTargets } from "./critic";
 
 /**
  * vocal-chop: re-sequenced vocal slices (Fred again..)
@@ -37,6 +38,8 @@ export interface LeadLaneProfile extends LaneProfileBase {
   range: [number, number];
   /** Allow 7ths/9ths as target notes on strong beats. */
   tensions?: boolean;
+  /** What the melody critic aims for (overrides the mode's defaults). */
+  targets?: Partial<MelodyTargets>;
 }
 
 export interface PluckLaneProfile extends LaneProfileBase {

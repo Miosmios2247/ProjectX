@@ -195,6 +195,19 @@ export function slotAt(slots: readonly ChordSlot[], step: number): ChordSlot {
   return slots[slots.length - 1];
 }
 
+/**
+ * The chord a note belongs to. A note that starts at most an 8th before a
+ * chord change and rings into it anticipates the next chord ("push").
+ */
+export function chordSlotForNote(slots: readonly ChordSlot[], start: number, len: number): ChordSlot {
+  const idx = slotIndexAt(slots, start);
+  const slot = slots[idx];
+  const end = slot.start + slot.length;
+  const next = slots[idx + 1];
+  if (next && end - start <= 2 && start + len > end + 0.5) return next;
+  return slot;
+}
+
 export function slotIndexAt(slots: readonly ChordSlot[], step: number): number {
   for (let i = 0; i < slots.length; i++) {
     const s = slots[i];
