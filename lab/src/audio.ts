@@ -253,15 +253,34 @@ export class Player {
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
       const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
-      const events = data.notes.map((n, i) => {
+      const sorted = [...data.notes].sort((a, b) => a.start - b.start);
+      const top = Math.max(...sorted.map((n) => n.pitch), 0);
+      const events = sorted.map((n, i) => {
         const start = stepToBeat(n.start, idea.swing);
         const end = stepToBeat(n.start + n.len, idea.swing);
-        return { time: ticks(start), midi: n.pitch, dur: Math.max(0.03, (end - start) * secPerBeat * 0.98), vel: n.vel / 127, i };
+        // Raw vocal: a held note lasts until the next one starts (or the loop ends).
+        const next = sorted.slice(i + 1).find((m) => m.pitch !== n.pitch || m.start - n.start >= 4);
+        const until = stepToBeat(next ? next.start : idea.totalSteps, idea.swing);
+        return {
+          time: ticks(start),
+          midi: n.pitch,
+          dur: Math.max(0.03, (end - start) * secPerBeat * 0.98),
+          raw: Math.max(0.03, (until - start) * secPerBeat * 0.98),
+          // Repeated syllables of a chop are skipped when the vocal sings raw.
+          repeat: i > 0 && sorted[i - 1].pitch === n.pitch && n.start - sorted[i - 1].start < 4,
+          vel: n.vel / 127,
+          i,
+        };
       });
-      const part = new T.Part((time, ev: { midi: number; dur: number; vel: number; i: number }) => {
+      const part = new T.Part((time, ev: { midi: number; dur: number; raw: number; repeat: boolean; vel: number; i: number }) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
-        voice.trigger(ev.midi, ev.dur, time, ev.vel, ev.i);
+        if (lane === "lead" && sec?.leadRaw) {
+          if (!ev.repeat) voice.trigger(ev.midi, ev.raw, time, ev.vel * 0.9, ev.i);
+          return;
+        }
+        const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
+        voice.trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
       }, events);
       loopPart(part);
     }

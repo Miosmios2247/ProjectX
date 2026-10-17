@@ -11,7 +11,8 @@
     "lead",
     "chords"
    ],
-   "filter": 1200
+   "filter": 1200,
+   "leadRaw": true
   },
   {
    "name": "Aufbau",
@@ -43,10 +44,11 @@
     "lead",
     "chords"
    ],
-   "filter": 2000
+   "filter": 2000,
+   "leadRaw": true
   },
   {
-   "name": "Drop",
+   "name": "Drop 2",
    "bars": 8,
    "lanes": [
     "chords",
@@ -54,7 +56,8 @@
     "lead",
     "pluck",
     "drums"
-   ]
+   ],
+   "leadUp": true
   }
  ],
  "variants": [

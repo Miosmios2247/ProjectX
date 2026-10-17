@@ -61,6 +61,10 @@ export interface ArrangementSection {
   noKick?: boolean;
   /** Build-up into the next section: snare roll, noise riser, opening filter. */
   build?: boolean;
+  /** The vocal hook sings "raw": held notes instead of chops (Fred again.. intros). */
+  leadRaw?: boolean;
+  /** The hook goes up an octave here, like a pitched-up vocal at the climax. */
+  leadUp?: boolean;
 }
 
 export interface StyleVariant {
