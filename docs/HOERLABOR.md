@@ -1,9 +1,25 @@
-# Hör-Labor – Runde 2
+# Hör-Labor – Runde 3
 
 Das Hör-Labor ist der Prototyp aus Phase 1 (siehe [PLAN.md](PLAN.md)). Hier prüfen wir, ob das
 Musik-Gehirn wirklich nach den Künstlern klingt, bevor das VST3-Plugin gebaut wird.
 
 **Link (privat, nur für dich):** https://claude.ai/artifact/RURpPL3bJpJN2EnmkPDcWm
+
+## Neu in Runde 3
+
+- **Song-Modus:** Umschalter „Ablauf: Loop | Song“. Im Song-Modus läuft die Idee durch den
+  typischen Aufbau des Künstlers, zum Beispiel bei BUNT. Hook → Aufbau → Drop → Break → Aufbau
+  → Drop. Im Aufbau fällt die Kick weg, ein Trommelwirbel wird schneller (Viertel → Achtel →
+  16tel → 32tel), ein Rausch-Riser steigt und der Filter öffnet sich; der Drop kommt mit Crash.
+  Die Song-Leiste über den Spuren zeigt, wo du gerade bist. Der Blindtest bleibt beim Loop.
+- **Deine Stimme als Hook:** Im Kasten „Deine Stimme als Hook“ eine Sprachmemo oder ein paar
+  gesungene Wörter laden (oder direkt aufnehmen, wenn der Browser das Mikrofon erlaubt). Das
+  Hör-Labor erkennt Silben, Tonhöhen und einen gehaltenen Vokal:
+  - **Fred again..:** deine Silben werden zu Vocal-Chops, jede Note immer dieselbe Silbe.
+  - **BUNT.:** dein gehaltener Vokal wird gedehnt und im 16tel-Gate gestottert.
+  - **AVAION (Pieces, Liquid):** deine Stimme singt die Topline.
+  Die Aufnahme bleibt in deinem Browser und ist nach dem Neuladen noch da. Tipp: Sprich oder
+  sing nah am Handy-Mikrofon, ein langer Vokal („jeeeaah“, „ooooh“) hilft BUNT. und AVAION.
 
 ## Was sich seit Runde 1 geändert hat
 
@@ -52,10 +68,11 @@ Daraus wurden alle Stil-Profile neu gebaut:
 
 Tastatur: Leertaste = Play/Stopp, N = neue Idee, 1–5 = Bewertung.
 
-**Gut für Runde 2:** pro Variante 3–5 Bewertungen und 15–20 Blindtest-Runden.
+**Gut für Runde 3:** pro Variante 3–5 Bewertungen, gern im Song-Modus und einmal mit deiner
+eigenen Stimme, dazu 15–20 Blindtest-Runden.
 Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im Blindtest.
 
-## Was in Runde 2 drinsteckt
+## Was in den Stilen drinsteckt
 
 | Künstler | Variante | Tempo | Akkordfolgen (Moll-Sicht) | Hook | Zum Vergleich |
 |---|---|---|---|---|---|
@@ -69,7 +86,9 @@ Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im 
 | BUNT. | Drum & Bass | 172–176 | ii–IV–I–I (Dur) | gedehnter Vokal mit Gate | TRIPPIN |
 | BUNT. | Folk-House (früh) | 124–127 | vi–IV–I–I (Dur) | Mundharmonika oder Bläser, Gitarre | Old Guitar, Unbreakable, Coming Home, Harmonica |
 
-Bewertungen aus Runde 1 bleiben gespeichert. Runde 2 ist an der Version `0.2.0` erkennbar.
+Bewertungen aus früheren Runden bleiben gespeichert. Runde 2 ist an der Version `0.2.0`
+erkennbar, Runde 3 an `0.3.0`; dort steht auch, ob du im Song-Modus und mit eigener Stimme
+bewertet hast.
 
 ## Was mit den Bewertungen passiert
 
@@ -90,4 +109,5 @@ npm run idea -- --style avaion --variant wacuka --seed 7 --bars 8 --zip /tmp/ide
   Spuren-Generatoren, Musik-TÜV, MIDI- und ZIP-Export
 - `data/` – Stil-Profile und Rhythmus-Bibliothek als JSON
 - `lab/` – die Hör-Labor-Seite (UI, Tone.js-Klänge, Speicher); `lab/samples/` enthält die
-  Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`)
+  Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`);
+  `lab/src/voice-analysis.ts` erkennt Silben und Tonhöhe der eigenen Stimme (Tests in `lab/test/`)
