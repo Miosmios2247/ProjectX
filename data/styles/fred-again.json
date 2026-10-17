@@ -1,0 +1,128 @@
+{
+  "id": "fred-again",
+  "artist": "Fred again..",
+  "blurb": "Emotionale Loops, Piano und Pads mit Sidechain, gechoppte Vocal-Phrasen",
+  "variants": [
+    {
+      "id": "emotional-house",
+      "name": "Emotional House",
+      "blurb": "Gehaltene, pumpende Akkorde, Vocal-Chops, Four-on-the-floor",
+      "tempo": [124, 130],
+      "swing": 0.53,
+      "drums": [{ "id": "house-soft-01", "weight": 2 }, { "id": "house-soft-02", "weight": 1 }],
+      "harmony": {
+        "modes": { "major": 0.55, "minor": 0.45 },
+        "progressions": [
+          { "mode": "major", "degrees": ["IV", "I", "V", "vi"], "weight": 3 },
+          { "mode": "major", "degrees": ["vi", "IV", "I", "V"], "weight": 3 },
+          { "mode": "major", "degrees": ["I", "V", "vi", "IV"], "weight": 2 },
+          { "mode": "major", "degrees": ["IV", "V", "vi", "vi"], "weight": 2 },
+          { "mode": "major", "degrees": ["I", "iii", "vi", "IV"], "weight": 1 },
+          { "mode": "major", "degrees": ["IV", "iv", "I", "I"], "weight": 1 },
+          { "mode": "major", "degrees": ["I", "IV"], "weight": 1 },
+          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 },
+          { "mode": "minor", "degrees": ["VI", "VII", "i", "i"], "weight": 2 },
+          { "mode": "minor", "degrees": ["i", "VII", "VI", "VII"], "weight": 1 }
+        ],
+        "colors": { "triad": 0.15, "seventh": 0.25, "ninth": 0.25, "add9": 0.25, "sus2": 0.05, "six": 0.05 },
+        "colorConsistency": 0.4,
+        "inversions": 0.15,
+        "substitution": 0.1,
+        "lift": 0.45,
+        "stretch": 0.3,
+        "liftMap": { "vi": ["IV"], "V": ["IV"], "IV": ["iv"], "I": ["IV"], "VII": ["V"], "i": ["VI"] }
+      },
+      "lanes": {
+        "chords": {
+          "sound": ["felt-piano"],
+          "rhythms": [{ "id": "hold", "weight": 3 }, { "id": "piano-quarters", "weight": 2 }, { "id": "piano-pushed", "weight": 1 }, { "id": "hold-restrike", "weight": 1 }],
+          "voicing": { "low": 48, "high": 76, "voices": [4, 5], "spread": "piano", "colorTop": 1.0, "rootBottom": 1.5, "topRange": [67, 76] }
+        },
+        "bass": {
+          "sound": ["sub"],
+          "rhythms": [{ "id": "sub-hold", "weight": 2 }, { "id": "sub-hold-push", "weight": 2 }, { "id": "house-offbeat", "weight": 1 }],
+          "range": [28, 43],
+          "pedal": 0.05
+        },
+        "lead": {
+          "sound": ["vox-chop"],
+          "mode": "vocal-chop",
+          "rhythms": [{ "id": "chop-01", "weight": 2 }, { "id": "chop-02", "weight": 2 }, { "id": "chop-03", "weight": 2 }, { "id": "chop-04", "weight": 1 }],
+          "range": [64, 79],
+          "tensions": true
+        },
+        "pluck": {
+          "sound": ["soft-bell"],
+          "mode": "arp",
+          "rhythms": [{ "id": "bell-sparse", "weight": 2 }, { "id": "arp-8ths-sparse", "weight": 2 }, { "id": "arp-16-gated", "weight": 1 }],
+          "range": [72, 91],
+          "orders": ["up", "updown", "pendulum"]
+        }
+      },
+      "mix": { "sidechain": 0.7, "reverb": 0.38, "drumKit": "house" },
+      "soundHints": [
+        "Weiches Piano + Pad darunter, Sidechain stark (Pumpen auf jedem Viertel)",
+        "Vocal-Chops: kurze Silben aus einer Gesangsaufnahme, leicht gepitcht, Hall",
+        "Sub-Bass fast pur (Sinus/Dreieck), nur unter dem Grundton"
+      ]
+    },
+    {
+      "id": "ukg-2step",
+      "name": "UKG / 2-Step",
+      "blurb": "Shuffle-Groove, gechoppte Stabs, synkopierter Bass",
+      "tempo": [132, 138],
+      "swing": 0.6,
+      "drums": [{ "id": "garage-2step-01", "weight": 2 }, { "id": "garage-2step-02", "weight": 1 }],
+      "harmony": {
+        "modes": { "minor": 0.7, "major": 0.3 },
+        "progressions": [
+          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 },
+          { "mode": "minor", "degrees": ["i", "iv", "VII", "III"], "weight": 2 },
+          { "mode": "minor", "degrees": ["VI", "VII", "i", "v"], "weight": 2 },
+          { "mode": "minor", "degrees": ["i", "v", "VI", "iv"], "weight": 1 },
+          { "mode": "minor", "degrees": ["i", "VII"], "weight": 1 },
+          { "mode": "major", "degrees": ["IV", "V", "iii", "vi"], "weight": 2 },
+          { "mode": "major", "degrees": ["ii", "V", "I", "vi"], "weight": 1 }
+        ],
+        "colors": { "triad": 0.1, "seventh": 0.35, "ninth": 0.35, "add9": 0.1, "eleventh": 0.1 },
+        "colorConsistency": 0.6,
+        "inversions": 0.05,
+        "substitution": 0.12,
+        "lift": 0.4,
+        "stretch": 0.1
+      },
+      "lanes": {
+        "chords": {
+          "sound": ["organ-stab"],
+          "rhythms": [{ "id": "ukg-stab-01", "weight": 3 }, { "id": "ukg-stab-02", "weight": 2 }, { "id": "liquid-shuffle", "weight": 1 }],
+          "voicing": { "low": 53, "high": 74, "voices": [3, 4], "spread": "close", "colorTop": 0.8, "rootBottom": 0.5 }
+        },
+        "bass": {
+          "sound": ["reese-sub"],
+          "rhythms": [{ "id": "ukg-bass-01", "weight": 2 }, { "id": "ukg-bass-02", "weight": 2 }],
+          "range": [30, 45]
+        },
+        "lead": {
+          "sound": ["vox-chop"],
+          "mode": "vocal-chop",
+          "rhythms": [{ "id": "chop-ukg-01", "weight": 2 }, { "id": "chop-ukg-02", "weight": 2 }, { "id": "chop-02", "weight": 1 }],
+          "range": [64, 79],
+          "tensions": true
+        },
+        "pluck": {
+          "sound": ["bell-pluck"],
+          "mode": "arp",
+          "rhythms": [{ "id": "arp-16-shuffle", "weight": 2 }, { "id": "pluck-syncopated", "weight": 1 }],
+          "range": [70, 89],
+          "orders": ["up", "skip"]
+        }
+      },
+      "mix": { "sidechain": 0.35, "reverb": 0.25, "drumKit": "garage" },
+      "soundHints": [
+        "Orgel- oder Rhodes-Stabs, kurz, mit Swing (ca. 60 %)",
+        "Reese-/Sub-Bass mit leichter Sättigung",
+        "Vocal-Chops schnell geschnitten, mit Delay"
+      ]
+    }
+  ]
+}

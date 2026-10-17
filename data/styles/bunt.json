@@ -1,0 +1,121 @@
+{
+  "id": "bunt",
+  "artist": "BUNT.",
+  "blurb": "Früher Folk-House mit Gitarre und Mundharmonika, heute Deep- und Stutter-House",
+  "variants": [
+    {
+      "id": "folk-house",
+      "name": "Folk-House",
+      "blurb": "Dur-Hymnen, gestrummte Gitarre, Pentatonik-Riffs",
+      "tempo": [122, 126],
+      "swing": 0.5,
+      "drums": [{ "id": "folk-house-01", "weight": 3 }, { "id": "house-soft-01", "weight": 1 }],
+      "harmony": {
+        "modes": { "major": 0.75, "minor": 0.25 },
+        "progressions": [
+          { "mode": "major", "degrees": ["I", "V", "vi", "IV"], "weight": 3 },
+          { "mode": "major", "degrees": ["vi", "IV", "I", "V"], "weight": 2 },
+          { "mode": "major", "degrees": ["I", "IV", "vi", "V"], "weight": 2 },
+          { "mode": "major", "degrees": ["IV", "I", "V", "vi"], "weight": 1 },
+          { "mode": "major", "degrees": ["I", "V", "IV", "IV"], "weight": 1 },
+          { "mode": "minor", "degrees": ["i", "VI", "III", "VII"], "weight": 2 }
+        ],
+        "colors": { "triad": 0.6, "sus2": 0.15, "sus4": 0.1, "add9": 0.15 },
+        "colorConsistency": 0.3,
+        "inversions": 0.2,
+        "substitution": 0.08,
+        "lift": 0.3,
+        "stretch": 0.15
+      },
+      "lanes": {
+        "chords": {
+          "sound": ["guitar"],
+          "rhythms": [{ "id": "strum-folk-01", "weight": 3 }, { "id": "strum-folk-02", "weight": 2 }, { "id": "strum-house", "weight": 2 }],
+          "voicing": { "low": 40, "high": 69, "voices": [5, 6], "spread": "open", "colorTop": 0.2, "rootBottom": 2.5 }
+        },
+        "bass": {
+          "sound": ["house-bass"],
+          "rhythms": [{ "id": "root-octave-8ths", "weight": 2 }, { "id": "house-offbeat", "weight": 2 }],
+          "range": [30, 45]
+        },
+        "lead": {
+          "sound": ["harmonica", "whistle"],
+          "mode": "folk",
+          "rhythms": [{ "id": "folk-riff-01", "weight": 2 }, { "id": "folk-riff-02", "weight": 2 }, { "id": "folk-riff-03", "weight": 2 }],
+          "range": [67, 86],
+          "tensions": false
+        },
+        "pluck": {
+          "sound": ["guitar-pick"],
+          "mode": "pick",
+          "rhythms": [{ "id": "guitar-pick-01", "weight": 1 }],
+          "range": [52, 76]
+        }
+      },
+      "mix": { "sidechain": 0.35, "reverb": 0.3, "drumKit": "house" },
+      "soundHints": [
+        "Akustikgitarre gestrummt, Tamburin auf den Achteln",
+        "Mundharmonika, Pfeifen oder Banjo für das Riff (Dur-Pentatonik)",
+        "Akkorde eher pur (Dreiklänge, sus), keine Jazz-Farben"
+      ]
+    },
+    {
+      "id": "deep-stutter",
+      "name": "Deep / Stutter House",
+      "blurb": "Moll-7er-Akkorde, Orgel-Stabs, gestotterte Vocal-Chops",
+      "tempo": [120, 124],
+      "swing": 0.55,
+      "drums": [{ "id": "deep-01", "weight": 3 }, { "id": "house-soft-02", "weight": 1 }],
+      "harmony": {
+        "modes": { "minor": 0.8, "major": 0.2 },
+        "progressions": [
+          { "mode": "minor", "degrees": ["i", "IV", "VII", "III"], "weight": 2 },
+          { "mode": "minor", "degrees": ["i", "IV"], "weight": 2 },
+          { "mode": "minor", "degrees": ["i", "VI", "VII", "i"], "weight": 1 },
+          { "mode": "minor", "degrees": ["VI", "VII", "i", "i"], "weight": 1 },
+          { "mode": "minor", "degrees": ["i", "iv", "VII", "III"], "weight": 1 },
+          { "mode": "major", "degrees": ["ii", "V", "I", "vi"], "weight": 1 }
+        ],
+        "colors": { "seventh": 0.35, "ninth": 0.3, "eleventh": 0.15, "add9": 0.1, "triad": 0.1 },
+        "colorConsistency": 0.6,
+        "inversions": 0.05,
+        "substitution": 0.1,
+        "lift": 0.35,
+        "stretch": 0.35
+      },
+      "lanes": {
+        "chords": {
+          "sound": ["deep-stab"],
+          "rhythms": [{ "id": "deep-stab-01", "weight": 3 }, { "id": "deep-stab-02", "weight": 2 }, { "id": "hold", "weight": 1 }],
+          "voicing": { "low": 52, "high": 72, "voices": [3, 4], "spread": "close", "colorTop": 0.8, "rootBottom": 0.5 }
+        },
+        "bass": {
+          "sound": ["deep-bass"],
+          "rhythms": [{ "id": "deep-bass-01", "weight": 2 }, { "id": "deep-bass-02", "weight": 2 }, { "id": "sub-hold", "weight": 1 }],
+          "range": [30, 45],
+          "pedal": 0.1
+        },
+        "lead": {
+          "sound": ["vox-chop"],
+          "mode": "deep-chop",
+          "rhythms": [{ "id": "deep-chop-01", "weight": 2 }, { "id": "deep-chop-02", "weight": 2 }],
+          "range": [62, 77],
+          "tensions": true
+        },
+        "pluck": {
+          "sound": ["soft-bell"],
+          "mode": "arp",
+          "rhythms": [{ "id": "arp-8ths-sparse", "weight": 2 }, { "id": "bell-sparse", "weight": 1 }],
+          "range": [70, 89],
+          "orders": ["up", "pendulum"]
+        }
+      },
+      "mix": { "sidechain": 0.45, "reverb": 0.35, "drumKit": "deep" },
+      "soundHints": [
+        "Orgel- oder Chord-Stab mit Filter-Hüllkurve und Chorus",
+        "Vocal-Chops gestottert (16tel-Wiederholungen vor dem Taktwechsel)",
+        "Deep-Bass mit leichtem Filter-Pluck"
+      ]
+    }
+  ]
+}

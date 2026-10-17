@@ -1,0 +1,22 @@
+{
+  "name": "projectx",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ProjectX: style-based chord/bass/lead/pluck generator (engine + listening lab)",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build:lab": "node lab/build.mjs",
+    "idea": "tsx engine/cli.ts"
+  },
+  "devDependencies": {
+    "@tonejs/midi": "^2.0.28",
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.25.10",
+    "tone": "^15.1.22",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
