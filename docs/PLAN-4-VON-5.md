@@ -1,7 +1,13 @@
 # Plan: Jeder Künstler mindestens 4 von 5
 
 > Stand 17.10.2026 · Gilt für das Hör-Labor (Phase 1). Jeder Baustein unten wird im Hör-Labor gebaut
-> und dort gemessen. Ausgangspunkt ist Runde 4 ([HOERLABOR.md](HOERLABOR.md)).
+> und dort gemessen. Ausgangspunkt war Runde 4 ([HOERLABOR.md](HOERLABOR.md)).
+
+**Stand nach Runde 5:** Alle Bausteine der Runden 5 bis 7 sind auf einmal gebaut (Details in
+[HOERLABOR.md](HOERLABOR.md)). Drei Dinge gingen nicht, weil das Netz der Arbeitsumgebung nur das
+npm-Paketverzeichnis durchlässt: freie Ersatzstimmen, Upright-Piano und Trompete aus VSCO 2 sowie
+Publikumsgeräusche. Statt der 808-Hats aus Oszillatoren gibt es freie One-Shots. Jetzt sind deine
+Aufnahmen, Duelle und Bewertungen dran. Erst sie zeigen, wie nah wir an 4 von 5 sind.
 
 ## 1. Ziel und wie wir es messen
 
@@ -24,7 +30,7 @@ Fred again.. Emotional House, AVAION Pieces und BUNT. Stutter House. Danach folg
 
 ## 2. Wo die Punkte heute fehlen
 
-| Künstler | Heute (meine Schätzung) | Größte Lücke |
+| Künstler | Vor Runde 5 (meine Schätzung) | Größte Lücke |
 |---|---|---|
 | Fred again.. | 2,5–3 | echte Alltags-Stimmen (Sprachmemos), Piano-Charakter |
 | BUNT. | etwa 3 | echte gedehnte Gesangszeile, Flügel, Drums |
@@ -36,48 +42,49 @@ Stimmen, dann Instrumente und Mix. Darum kommen die Stimmen zuerst.
 
 ## 3. Checkliste pro Künstler
 
-„Da“ heißt: im Hör-Labor eingebaut. Ob es überzeugt, zeigen erst deine Bewertungen.
+„Da“ heißt: im Hör-Labor eingebaut. Ob es überzeugt, zeigen erst deine Bewertungen. Die Spalte
+„Gebaut in“ nennt die Runde, in der ein Baustein dazukam.
 
 ### Fred again..
 
-| Erkennungsmerkmal | Heute | Wird gebaut in |
+| Erkennungsmerkmal | Stand nach Runde 5 | Gebaut in |
 |---|---|---|
 | Akkordfolgen wie in seinen Songs (maj7-Schleifen) | da | – |
 | Hook aus 2–5 Tönen, die die Akkorde umfärben | da | – |
-| Echte Alltags-Stimmen: Sprachmemos, gesprochen und gesungen | fehlt (Chor-Platzhalter) | Runde 5 |
-| Weiches Piano mit Band-Charakter (leichtes Leiern, Knistern) | teilweise | Runde 6 |
-| Starkes Pumpen, Garage-Groove | da | Feinschliff Runde 6 |
+| Echte Alltags-Stimmen: Sprachmemos, gesprochen und gesungen | da, mit deiner Aufnahme im Stimmen-Studio (ohne sie: Chor-Platzhalter) | Runde 5 |
+| Weiches Piano mit Band-Charakter (leichtes Leiern, Knistern) | da | Runde 5 |
+| Starkes Pumpen, Garage-Groove | da, Pumpen jetzt pro Künstler | Runde 5 |
 | Song: rohe Stimme im Intro, eine Oktave höher im letzten Drop | da | – |
-| Raum- und Publikumsgeräusche, kurze Stimm-Echos | fehlt | Runde 7 |
+| Raum- und Publikumsgeräusche, kurze Stimm-Echos | Echos und Sprachmemo-Intro da; Publikum fehlt (keine freie Aufnahme erreichbar) | Runde 5 |
 
 ### BUNT.
 
-| Erkennungsmerkmal | Heute | Wird gebaut in |
+| Erkennungsmerkmal | Stand nach Runde 5 | Gebaut in |
 |---|---|---|
 | Kurze Loops wie VI–i | da | – |
 | Ein gedehnter Vokal auf einem Ton, im 16tel-Takt gegatet | da | – |
-| Körniger Klang durch extrem gedehnte Stimme | fehlt | Runde 5 |
-| Echte Gesangszeile als Quelle | fehlt (Chor-Platzhalter) | Runde 5 |
-| Heller Konzertflügel | teilweise (einfaches Sample) | Runde 6 |
-| Gegatete Fläche unter dem Piano | teilweise (nur das Piano) | Runde 6 |
-| Große Kick, hüpfender Bass | teilweise | Runde 6 |
-| Aufbau: Wirbel wird schneller, die Stimme stottert immer schneller | Wirbel da, Stimme fehlt | Runde 7 |
+| Körniger Klang durch extrem gedehnte Stimme | da | Runde 5 |
+| Echte Gesangszeile als Quelle | da, mit deiner Aufnahme im Stimmen-Studio (ohne sie: Chor-Platzhalter) | Runde 5 |
+| Heller Konzertflügel | da (Salamander Grand) | Runde 5 |
+| Gegatete Fläche unter dem Piano | da | Runde 5 |
+| Große Kick, hüpfender Bass | da | Runde 5 |
+| Aufbau: Wirbel wird schneller, die Stimme stottert immer schneller | da | Runde 5 |
 | Break mit pumpender Kick | da | – |
 
 ### AVAION
 
-| Erkennungsmerkmal | Heute | Wird gebaut in |
+| Erkennungsmerkmal | Stand nach Runde 5 | Gebaut in |
 |---|---|---|
 | Akkordfolgen wie „Pieces“ und „When You Go“ | da | – |
 | Singbare Topline mit sauberen Enden und Auftakten | da | – |
-| Seine hohe, luftige Stimme (Falsett) | fehlt (Chor-Platzhalter) | Runde 5 |
+| Seine hohe, luftige Stimme (Falsett) | da, mit deiner Aufnahme im Stimmen-Studio (ohne sie: Chor-Platzhalter) | Runde 5 |
 | Nylon-Gitarre | da | – |
-| Gitarren-Intro im Song | fehlt | Runde 7 |
-| Weiche Synths (Deep-House-Pluck, Pads) | teilweise | Runde 6 |
+| Gitarren-Intro im Song | da | Runde 5 |
+| Weiche Synths (Deep-House-Pluck, Pads) | da | Runde 5 |
 | Stimmen-Satz vor dem Drop | da | – |
-| Lead im Drop spielt die Hook eine Oktave höher nach | fehlt | Runde 7 |
+| Lead im Drop spielt die Hook eine Oktave höher nach | da | Runde 5 |
 | WACUKA: Trompeten-Synth mit pulsierendem Filter, Congas | da | – |
-| WACUKA: Hook-Melodie | teilweise (aus Regeln geschätzt) | Runde 7 |
+| WACUKA: Hook-Melodie | teilweise (aus Regeln geschätzt; der Hook-Summer kann sie jetzt messen) | Runde 5 |
 
 ## 4. Die Bausteine im Hör-Labor
 
@@ -143,6 +150,9 @@ Stimmen, dann Instrumente und Mix. Darum kommen die Stimmen zuerst.
   höher nach.
 
 ## 5. Ablauf in Runden
+
+Ursprünglich auf drei Runden verteilt, ist alles Bauen jetzt in Runde 5 erledigt. Die Spalte „Was
+du tust“ gilt weiter: Aufnahmen, Duelle, Bewertungen, Referenz-Vergleich und Hooks summen.
 
 | Runde | Was ich baue | Was du tust (etwa 30–45 Minuten) | Fertig, wenn |
 |---|---|---|---|

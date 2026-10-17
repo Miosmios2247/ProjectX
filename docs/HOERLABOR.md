@@ -1,11 +1,115 @@
-# Hör-Labor – Runde 4
+# Hör-Labor – Runde 5
 
 Das Hör-Labor ist der Prototyp aus Phase 1 (siehe [PLAN.md](PLAN.md)). Hier prüfen wir, ob das
 Musik-Gehirn wirklich nach den Künstlern klingt, bevor das VST3-Plugin gebaut wird.
 
 **Link (privat, nur für dich):** https://claude.ai/artifact/RURpPL3bJpJN2EnmkPDcWm
 
-## Neu in Runde 4: mehr Musik-Gehirn
+## Neu in Runde 5: alles aus dem Plan „4 von 5“
+
+Der Plan [PLAN-4-VON-5.md](PLAN-4-VON-5.md) beschreibt, was jedem Künstler noch zu 4 von 5 fehlt.
+Er war auf die Runden 5 bis 7 verteilt. In dieser Runde sind alle Bausteine auf einmal gebaut, die
+im Hör-Labor gehen. Jetzt zählt vor allem dein Ohr: Aufnahmen, Duelle und Bewertungen.
+
+### Messen
+
+- **Duell-Modus:** Im neuen Tab **Duell** läuft dieselbe Idee in zwei Versionen. Du schaltest
+  zwischen Version 1 und 2 hin und her und tippst, welche mehr nach dem Künstler klingt, oder
+  „Kein Unterschied“. Welche Version neu ist, bleibt bis zur Abstimmung geheim. In dieser Runde
+  treten an:
+  - Klänge aus Runde 5 gegen Runde 4 (alle Varianten, beide gleich laut)
+  - BUNT.: Vokal bleibt auf einem Ton gegen Vokal folgt den Akkorden
+  - BUNT.: körnig gedehnter Vokal gegen glatten Vokal
+  - AVAION: Topline mit Auftakten gegen ohne
+  - Fred again..: Chops auf festen Tönen gegen Chops, die den Akkorden folgen
+- **Fortschritt:** Die Auswertung zeigt pro Variante einen Balken bis zum Ziel 4,0 (gezählt ab
+  5 Bewertungen), den Blindtest getrennt nach „Stil“ und „Neutral“ und eine Tabelle mit allen
+  Duellen.
+- **Zwei neue Kritik-Knöpfe:** „Stimme“ und „Mix/Klangqualität“.
+
+### Stimmen
+
+- **Stimmen-Studio** (ersetzt „Deine Stimme als Hook“): Für jeden Künstler gibt es ein eigenes
+  Fach mit einer kurzen Anleitung, was du aufnehmen sollst. Pro Künstler gehen bis zu drei
+  Aufnahmen, gern auch von Freunden. Das Hör-Labor nimmt die saubersten Silben. Alles bleibt in
+  deinem Browser.
+  - **Fred again..:** zwei, drei Sätze wie eine Sprachmemo an einen Freund, dann eine kurz
+    gesungene Zeile
+  - **BUNT.:** ein langer Vokal, erst „iiii“, dann „aaaa“, jeweils 3–5 Sekunden auf einem Ton
+  - **AVAION:** ein paar eigene Worte oder „ooh“, eher hoch, gern im Falsett
+- **Bearbeitung pro Künstler:**
+  - **Fred again..:** Handy-Klang, jede Note immer dieselbe Silbe, manche Silben rückwärts
+  - **BUNT.:** körnig gedehnt, leicht verzerrt, mit Gate
+  - **AVAION:** sauber, gedoppelt, leichtes Vibrato und mehrstimmige Harmonien
+- **Natürlich umstimmen:** Wird deine Stimme höher oder tiefer gesetzt, bleibt ihre Klangfarbe
+  erhalten. Das klingt nicht mehr nach Micky Maus.
+- **BUNT.-Körnung:** Auch ohne eigene Aufnahme wird der Platzhalter-Vokal jetzt so körnig gedehnt
+  wie ein gestretchtes Sample.
+
+### Klang und Mix
+
+- **Neuer Konzertflügel** (Salamander Grand, freie Lizenz CC BY), mit einer leisen und einer
+  harten Anschlags-Ebene:
+  - **Fred again..:** weiches Piano mit leichtem Band-Leiern, darunter Knistern wie von Vinyl
+  - **BUNT.:** harter, heller Flügel mit einer gegateten Synth-Fläche darunter, dazu ein
+    hüpfender Sub-Bass mit kurzem Anschlag
+- **Neue Drums:** echte One-Shots (Sonic Pi, frei) für Kick, Snare, Hats und Clap, dazu ein Snap
+  auf dem Clap und Crash mit Einschlag im Drop. Jeder Künstler hat sein eigenes Kit.
+- **AVAION:** bei Pieces ein neuer Deep-House-Pluck (abwechselnd mit der Nylon-Gitarre), dazu eine
+  weiche Fläche unter den Keys und ein Synth-Lead für den Drop
+- **Master:** leichte Sättigung, Bus-Kompressor und Limiter. Die Ideen sind jetzt so laut wie
+  Songs auf Spotify nach dem Lautstärke-Ausgleich (etwa −14 LUFS). Die alten Klänge im Duell sind
+  auf dieselbe Lautstärke gebracht, damit nicht einfach die lautere Version gewinnt. Im Duell
+  spielen die alten Klänge auch dort, wo eine Variante einen neuen Klang bekommen hat.
+- **Pumpen pro Künstler:** bei Fred again.. tief und lang, bei BUNT. hart und kurz, bei AVAION
+  weich.
+
+### Werkzeuge (freiwillig)
+
+- **Vergleich mit einem Vorbild-Song:** Lade einen Song, den du als Datei hast (MP3, M4A, WAV).
+  Er bleibt in deinem Browser. Mit dem Umschalter hörst du Idee und Vorbild gleich laut.
+  „Klang vergleichen“ misst Bass, Höhen, Tempo und Pumpen und sagt in Worten, wo die Idee
+  abweicht. Gespeichert werden nur diese Messwerte.
+- **Hook summen:** Erst kommt ein Takt Klick, dann summst du vier Takte lang die Hook eines
+  Vorbild-Songs. Das Hör-Labor erkennt die Töne und zeigt sie an. Gespeichert wird nur die
+  Statistik: wie weit die Hook reicht, wie oft sie Schritte macht, wie viel sie wiederholt und
+  wie dicht sie ist. Die Melodie selbst wird nie gespeichert.
+
+### Song-Momente (Song-Modus)
+
+- **Fred again..:** Mit deiner Aufnahme im Stimmen-Studio beginnt das Intro mit deiner Sprachmemo
+  über gefiltertem Piano. Danach setzen die Chops ein. Die letzte Silbe einer Phrase hallt als
+  kurzes Echo nach.
+- **BUNT.:** Im Aufbau stottert die Stimme immer schneller, erst in Achteln, dann in 16teln und
+  zuletzt in 32teln.
+- **AVAION:** Der Pieces-Song beginnt mit der Gitarre allein. Im Drop spielt ein Synth-Lead die
+  Hook eine Oktave höher mit.
+
+### Was nicht ging (ehrlich)
+
+- **Ersatzstimmen:** Geplant waren freie Gesangs-Aufnahmen für alle ohne eigene Aufnahme. Das
+  Netz dieser Arbeitsumgebung lässt aber nur das npm-Paketverzeichnis durch, und dort gibt es
+  keine freien Gesangs-Aufnahmen. Deshalb nimmt das Stimmen-Studio jede Audio-Datei an. Wenn du
+  freie Vocal-Samples hast (zum Beispiel mit CC0-Lizenz), lade sie einfach in das Fach des
+  Künstlers.
+- **Upright-Piano und echte Trompete (VSCO 2):** aus demselben Grund nicht erreichbar.
+  WACUKA nutzt weiter den Trompeten-Synth.
+- **Publikums- und Raumgeräusche bei Fred again..:** Auch dafür gab es keine freie Aufnahme. Das
+  Knistern ist drin, und deine Sprachmemo bringt ihren eigenen Raumklang mit.
+- **808-Hats aus sechs Oszillatoren:** Stattdessen gibt es freie One-Shots, die Ausweich-Lösung
+  aus dem Plan.
+
+### Was du jetzt tun kannst (etwa 30–45 Minuten)
+
+1. **Stimmen-Studio:** drei kurze Aufnahmen, eine pro Künstler. Das ist der wichtigste Punkt.
+2. **Duelle:** etwa 20 Stück, gern über alle Künstler verteilt.
+3. **Bewertungen:** je 5 für Fred again.. Emotional House, BUNT. Stutter House und AVAION Pieces,
+   gern im Song-Modus und mit deinen Aufnahmen.
+4. **Freiwillig:** ein Vergleich mit einem Vorbild-Song und 3–5 gesummte Hooks.
+
+Danach lese ich alles aus und entscheide, was als Nächstes am meisten bringt.
+
+## Seit Runde 4 dabei: mehr Musik-Gehirn
 
 Rückmeldung aus Runde 3: „Kannst du machen, dass das noch mehr nach den Künstlern klingt? Das
 Programm braucht mehr Musik-Gehirn.“ Dafür gab es eine zweite Recherche zu Hooks, Basslines,
@@ -36,8 +140,6 @@ Akkord-Griffen und Handwerksregeln aus Tutorials
 - **„Warum klingt das so?“:** Ein neuer Kasten erklärt in einfachen Worten, was eine Idee nach
   dem Künstler klingen lässt, zum Beispiel welcher Song dieselbe Akkordfolge hat.
 
-Wie es weitergeht, bis jeder Künstler mindestens 4 von 5 erreicht: [PLAN-4-VON-5.md](PLAN-4-VON-5.md).
-
 ## Seit Runde 3 dabei
 
 - **Song-Modus:** Umschalter „Ablauf: Loop | Song“. Im Song-Modus läuft die Idee durch den
@@ -45,7 +147,7 @@ Wie es weitergeht, bis jeder Künstler mindestens 4 von 5 erreicht: [PLAN-4-VON-
   → Drop. Im Aufbau fällt die Kick weg, ein Trommelwirbel wird schneller (Viertel → Achtel →
   16tel → 32tel), ein Rausch-Riser steigt und der Filter öffnet sich; der Drop kommt mit Crash.
   Die Song-Leiste über den Spuren zeigt, wo du gerade bist. Der Blindtest bleibt beim Loop.
-- **Deine Stimme als Hook:** Im Kasten „Deine Stimme als Hook“ eine Sprachmemo oder ein paar
+- **Deine Stimme als Hook** (seit Runde 5 im Stimmen-Studio): eine Sprachmemo oder ein paar
   gesungene Wörter laden (oder direkt aufnehmen, wenn der Browser das Mikrofon erlaubt). Das
   Hör-Labor erkennt Silben, Tonhöhen und einen gehaltenen Vokal:
   - **Fred again..:** deine Silben werden zu Vocal-Chops, jede Note immer dieselbe Silbe.
@@ -105,9 +207,11 @@ Daraus wurden alle Stil-Profile neu gebaut:
 
 Tastatur: Leertaste = Play/Stopp, N = neue Idee, 1–5 = Bewertung.
 
-**Gut für Runde 4:** pro Variante 3–5 Bewertungen, gern im Song-Modus, dazu 15–20
-Blindtest-Runden. Achte besonders auf die Hook: Wirkt sie zu starr, zu unruhig oder genau richtig?
-Ein Wort dazu in der Notiz hilft sehr.
+6. **Duell:** Im Tab „Duell“ zwischen Version 1 und 2 umschalten und die bessere wählen.
+
+**Gut für Runde 5:** siehe „Was du jetzt tun kannst“ oben. Achte besonders auf die Stimme und den
+Klang: Wirkt die Hook zu starr, zu unruhig oder genau richtig? Klingt der Mix wie ein fertiger
+Track? Ein Wort dazu in der Notiz hilft sehr.
 Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im Blindtest.
 
 ## Was in den Stilen drinsteckt
@@ -125,8 +229,8 @@ Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im 
 | BUNT. | Folk-House (früh) | 124–127 | vi–IV–I–I (Dur) | Mundharmonika oder Bläser, Gitarre | Old Guitar, Unbreakable, Coming Home, Harmonica |
 
 Bewertungen aus früheren Runden bleiben gespeichert. Runde 2 ist an der Version `0.2.0`
-erkennbar, Runde 3 an `0.3.0` und Runde 4 an `0.4.0`. Seit Runde 3 steht dort auch, ob du im
-Song-Modus und mit eigener Stimme bewertet hast.
+erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0` und Runde 5 an `0.5.0`. Seit Runde 3 steht dort
+auch, ob du im Song-Modus und mit eigener Stimme bewertet hast.
 
 ## Was mit den Bewertungen passiert
 

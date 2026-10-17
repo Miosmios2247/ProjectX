@@ -1,6 +1,6 @@
 # ProjectX – Planung: Stil-Generator-Plugin (VST3)
 
-> **Status:** v0.5 · Phase 1 läuft: Hör-Labor Runde 4 (Musik-Kritiker, Melodie-Phrasen, Hook-Regeln pro Künstler aus der zweiten Recherche; Song-Modus, eigene Stimme als Hook), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 17.10.2026
+> **Status:** v0.5 · Phase 1 läuft: Hör-Labor Runde 5 (alle Bausteine aus dem [Plan „4 von 5“](PLAN-4-VON-5.md): Duelle, Stimmen-Studio, neuer Flügel, Drums, Master, Vorbild-Vergleich, Hook-Summer, Song-Momente), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 17.10.2026
 > Wir planen gemeinsam weiter. Was noch zu entscheiden ist, steht in [Abschnitt 11](#11-offene-entscheidungen).
 
 ## 1. Vision
