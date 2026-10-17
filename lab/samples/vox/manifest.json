@@ -35,12 +35,6 @@
       "fineCents": -46,
       "srcRate": 44100,
       "loop": true
-    },
-    "104": {
-      "file": "oohs-104.wav",
-      "fineCents": -46,
-      "srcRate": 44100,
-      "loop": true
     }
   },
   "aahs": {
@@ -114,44 +108,6 @@
       "file": "aahs-79.wav",
       "fineCents": 26,
       "srcRate": 28000,
-      "loop": true
-    }
-  },
-  "synthvox": {
-    "55": {
-      "file": "synthvox-55.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
-      "loop": true
-    },
-    "58": {
-      "file": "synthvox-58.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
-      "loop": true
-    },
-    "61": {
-      "file": "synthvox-61.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
-      "loop": true
-    },
-    "67": {
-      "file": "synthvox-67.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
-      "loop": true
-    },
-    "73": {
-      "file": "synthvox-73.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
-      "loop": true
-    },
-    "83": {
-      "file": "synthvox-83.wav",
-      "fineCents": 0,
-      "srcRate": 28800,
       "loop": true
     }
   }

@@ -372,7 +372,7 @@
  },
  {
   "id": "marimba-01",
-  "name": "Marimba-Muster",
+  "name": "Blip-Muster",
   "lane": "pluck",
   "tags": [
    "afro",
@@ -424,7 +424,7 @@
  },
  {
   "id": "marimba-02",
-  "name": "Marimba-Ruf (2 Takte)",
+  "name": "Blip-Ruf (2 Takte)",
   "lane": "pluck",
   "tags": [
    "afro",
@@ -665,7 +665,7 @@
  },
  {
   "id": "glass-cross",
-  "name": "Glas-Glocken 3 gegen 4",
+  "name": "Blips 3 gegen 4",
   "lane": "pluck",
   "tags": [
    "afro",

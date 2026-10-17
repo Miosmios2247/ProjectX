@@ -69,16 +69,6 @@
      {
       "mode": "minor",
       "degrees": [
-       "IIImaj7",
-       "VImaj7",
-       "i",
-       "III"
-      ],
-      "weight": 2
-     },
-     {
-      "mode": "minor",
-      "degrees": [
        "VImaj7",
        "i7"
       ],
@@ -90,9 +80,9 @@
      }
     ],
     "colors": {
-     "seventh": 0.45,
-     "ninth": 0.2,
+     "seventh": 0.55,
      "triad": 0.25,
+     "ninth": 0.1,
      "add9": 0.1
     },
     "colorConsistency": 0.3,
@@ -213,7 +203,14 @@
     },
     "pluck": {
      "sound": [
-      "piano-high"
+      {
+       "id": "lofi-sine",
+       "weight": 2
+      },
+      {
+       "id": "piano-high",
+       "weight": 1
+      }
      ],
      "mode": "counter",
      "rhythms": [

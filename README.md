@@ -5,7 +5,8 @@ Lead und Pluck im Stil von Fred again.., AVAION oder BUNT., dazu passende Rhythm
 VST3-Plugin für FL Studio.
 
 - Planung: [docs/PLAN.md](docs/PLAN.md)
-- Aktueller Stand, Hörtest Runde 1: [docs/HOERLABOR.md](docs/HOERLABOR.md)
+- Aktueller Stand, Hörtest Runde 2: [docs/HOERLABOR.md](docs/HOERLABOR.md)
+- Stil-Recherche mit Quellen: [reports/Stilanalyse Fred again AVAION BUNT.md](reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md)
 
 ```bash
 npm install

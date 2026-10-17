@@ -76,10 +76,10 @@
      }
     ],
     "colors": {
-     "triad": 0.35,
-     "add9": 0.3,
-     "seventh": 0.25,
-     "sus2": 0.1
+     "triad": 0.6,
+     "add9": 0.2,
+     "sus2": 0.15,
+     "seventh": 0.05
     },
     "colorConsistency": 0.4,
     "inversions": 0.1,
@@ -256,23 +256,13 @@
        "iv"
       ],
       "weight": 1
-     },
-     {
-      "mode": "minor",
-      "degrees": [
-       "i"
-      ],
-      "weight": 1,
-      "durations": [
-       4
-      ]
      }
     ],
     "colors": {
-     "triad": 0.45,
-     "seventh": 0.3,
+     "triad": 0.65,
+     "seventh": 0.15,
      "sus2": 0.15,
-     "add9": 0.1
+     "add9": 0.05
     },
     "colorConsistency": 0.5,
     "inversions": 0,
@@ -363,33 +353,30 @@
     },
     "pluck": {
      "sound": [
-      {
-       "id": "glass-bells",
-       "weight": 2
-      },
-      {
-       "id": "marimba",
-       "weight": 1
-      }
+      "blips"
      ],
-     "mode": "marimba",
+     "mode": "arp",
      "rhythms": [
       {
        "id": "glass-cross",
        "weight": 2
       },
       {
-       "id": "marimba-01",
+       "id": "arp-16-gated",
        "weight": 1
       },
       {
-       "id": "marimba-02",
+       "id": "marimba-01",
        "weight": 1
       }
      ],
      "range": [
       64,
       86
+     ],
+     "orders": [
+      "up",
+      "pendulum"
      ]
     }
    },
@@ -401,7 +388,8 @@
    },
    "soundHints": [
     "Der Hook ist ein Synth-Lead aus einem Trompeten-Sound + Rauschfilter mit LFO (Serum), nicht die Stimme",
-    "Melancholische Keys am Anfang, dann Live-Percussion (Congas, Shaker, Toms im 3-gegen-4)",
+    "Melancholische Keys am Anfang, dann Live-Percussion: Congas in 3er-Gruppen gegen die 4/4, Shaker, Toms",
+    "Leise „Bleep“-Blips in 16teln als Begleitschicht; Marimba oder Kalimba sind ein Klischee, kein AVAION-Sound",
     "Pink-Noise-Riser vor den Drops; 130 BPM, schneller als typischer Afro House"
    ]
   },

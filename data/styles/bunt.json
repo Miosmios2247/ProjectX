@@ -6,7 +6,7 @@
   {
    "id": "stutter",
    "name": "Stutter House",
-   "blurb": "127–133 BPM, VI–i oder VI–VII–i–VII, gedehnter Vokal mit 1/16-Gate, helles Piano",
+   "blurb": "127–133 BPM, VI–i, VI–VII–i–VII oder VI–iv–i, gedehnter Vokal mit 1/16-Gate, helles Piano",
    "references": [
     "Clouds",
     "Spaces",
@@ -74,12 +74,26 @@
        "VII"
       ],
       "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "iv",
+       "i"
+      ],
+      "weight": 1,
+      "durations": [
+       1,
+       1,
+       2
+      ]
      }
     ],
     "colors": {
-     "triad": 0.6,
-     "seventh": 0.2,
-     "add9": 0.2
+     "triad": 0.7,
+     "seventh": 0.15,
+     "add9": 0.15
     },
     "colorConsistency": 0.5,
     "inversions": 0,
@@ -174,26 +188,22 @@
     },
     "pluck": {
      "sound": [
-      "piano-high"
+      "staccato-synth"
      ],
-     "mode": "arp",
+     "mode": "stab",
      "rhythms": [
       {
-       "id": "keys-8ths-high",
+       "id": "house-pluck-offbeat",
        "weight": 2
       },
       {
-       "id": "counter-sparse",
+       "id": "pluck-syncopated",
        "weight": 1
       }
      ],
      "range": [
-      72,
-      91
-     ],
-     "orders": [
-      "up",
-      "pendulum"
+      60,
+      84
      ]
     }
    },
@@ -281,9 +291,9 @@
      }
     ],
     "colors": {
-     "triad": 0.5,
-     "add9": 0.3,
-     "seventh": 0.2
+     "triad": 0.7,
+     "add9": 0.2,
+     "seventh": 0.1
     },
     "colorConsistency": 0.5,
     "inversions": 0,

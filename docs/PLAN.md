@@ -1,6 +1,6 @@
 # ProjectX – Planung: Stil-Generator-Plugin (VST3)
 
-> **Status:** v0.2 · Phase 1 läuft: Das Hör-Labor (Runde 1) ist online, siehe [HOERLABOR.md](HOERLABOR.md) · Stand 17.10.2026
+> **Status:** v0.3 · Phase 1 läuft: Hör-Labor Runde 2 (Stile nach Recherche neu gebaut, echte Samples), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 17.10.2026
 > Wir planen gemeinsam weiter. Was noch zu entscheiden ist, steht in [Abschnitt 11](#11-offene-entscheidungen).
 
 ## 1. Vision
@@ -91,13 +91,14 @@ wissen, was man sucht. ProjectX dreht das um:
 | Klang-Tipps | z. B. „warmes Piano, Pad mit Sidechain, viel Hall", für die eingebauten Sounds und als Tipp für deine Synths |
 | Varianten | ein Künstler kann mehrere Phasen haben (siehe 3.4) |
 
-### 3.4 Erste Hypothesen zu den drei Künstlern
+### 3.4 Die drei Künstler (Stand nach der Recherche)
 
-> Das sind nur Startpunkte. In Phase 0 prüfen wir sie an echten Tracks.
+> Die ersten Hypothesen klangen im Hörtest nicht nach den Künstlern. Die Recherche mit Quellen
+> steht im [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md); hier die Kurzfassung.
 
-- **Fred again..:** emotionale Loops aus wenigen Akkorden, Piano und Pads mit starkem Sidechain-Pumpen. Der Groove liegt zwischen House, UK Garage/2-Step und Breakbeat. Prägend sind gechoppte, wiederholte, „stotternde" Vocal-Phrasen. Daraus folgt: ein Lead-Modus „Vocal-Chop" (kurze, wiederholte Töne aus wenigen Tonhöhen), Chords meist gehalten und gepumpt.
-- **AVAION:** melodischer, emotionaler House mit Pop-Einschlag. Die Spannweite reicht von Deep House/Electro-Pop („COLORS") über Liquid UKG („NEED ME") bis Afro House („WACUKA" mit Sofiya Nzau). Daraus folgen wahrscheinlich 2–3 Varianten.
-- **BUNT.:** früher Festival- und Folk-House mit akustischen Instrumenten (Gitarre, Mundharmonika), seit ca. 2022 eher Deep/Stutter House (z. B. „Clouds" feat. Nate Traveller). Daraus folgen die Varianten „Folk-House" und „Deep/Stutter".
+- **Fred again..:** Loops aus wenigen Septakkorden, meist ab der VImaj7 der Molltonart (z. B. „Marea“: D♭maj7–E♭–Fm–A♭), nie mit V→I-Schluss. Den Hook tragen gefundene Sprach- und Gesangsaufnahmen, gechoppt und wiederholt. Tempo-Modi: 123–128, 130–135 (Schwerpunkt), 140 und 174 BPM. Piano und Pads pumpen stark, auch der Hall.
+- **AVAION:** ein singender Songwriter-Produzent. Er schreibt diatonische Dreiklang-Loops ohne III. Stufe (I–V–ii–IV wie „Pieces“, VImaj7–i–VII–iv wie „When You Go“). Früher lag er bei 120–126 BPM, seit Ende 2023 bei 130–133. Der Hook ist seine eigene Topline, im Drop ein monophoner Lead; bei „WACUKA“ ist es ein Trompeten-Synth über Live-Percussion. Daraus folgen die Varianten Pieces-Ära, Afro House (WACUKA) und Liquid/UKG.
+- **BUNT.:** seit „Clouds“ (2023) Stutter House: eine geliehene Gesangszeile mit gedehnten Vokalen im 16tel-Gate über zwei bis vier Akkorden auf der VI (VI–i, VI–VII–i–VII) bei 127–133 BPM, dazu Drum & Bass („TRIPPIN“). Das Frühwerk bis 2022 ist Folk-House in Dur (vi–IV–I) mit Gitarre und Mundharmonika.
 
 **Erkenntnis:** Künstler haben Phasen. Das Profil-System unterstützt deshalb von Anfang an mehrere Varianten pro Künstler.
 

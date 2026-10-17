@@ -2,7 +2,7 @@
 
 The audio samples in this folder are used by the Hör-Labor preview sounds.
 
-## FluidR3 GM (piano, epiano, guitar, nylon, marimba, strings, kit)
+## FluidR3 GM (piano, epiano, guitar, nylon, strings, trumpet, harmonica, kit)
 
 MP3 renders from the FluidR3 GM SoundFont, taken from the npm package
 `soundfont-for-samplers` (v0.0.3, MIT).
@@ -19,7 +19,7 @@ Licensed under the MIT License:
 > substantial portions of the Software.
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 
-## GeneralUser GS (vox: "oohs", "aahs", "synthvox")
+## GeneralUser GS (vox: "oohs", "aahs")
 
 Voice samples extracted (loops unrolled, resampled to 24 kHz mono) from GeneralUser GS
 v1.471 by S. Christian Collins (npm package `generaluser`). License v2.0, excerpt:

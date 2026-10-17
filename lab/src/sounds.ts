@@ -24,8 +24,9 @@ export const SOUND_LABELS: Record<string, string> = {
   "guitar-strum": "Akustikgitarre",
   "piano-high": "Piano hoch",
   "guitar-pick": "Nylon-Gitarre",
-  "glass-bells": "Glas-Glocken",
-  marimba: "Marimba",
+  blips: "Synth-Blips",
+  "staccato-synth": "Staccato-Synth",
+  "lofi-sine": "Lo-Fi-Sinus",
   sub: "Sub-Bass",
   reese: "Reese-Bass",
   "deep-bass": "Deep-Bass",
@@ -76,8 +77,8 @@ interface SampledOptions {
 }
 
 // Seconds after which a sustained sample is played again (crossfaded), because the
-// recordings are short: strings and organ last ~3 s, the voice samples ~1.3 s.
-const RETRIGGER: Record<string, number> = { strings: 2, oohs: 0.9, aahs: 0.9, synthvox: 0.9 };
+// recordings are short: strings last ~3 s, the voice samples ~1.3 s.
+const RETRIGGER: Record<string, number> = { strings: 2, oohs: 0.9, aahs: 0.9 };
 
 /** Plays a note; long notes on sustained sets are rebuilt from overlapping segments. */
 function playNote(T: T, smp: ToneNS.Sampler, set: string, midi: number, duration: number, time: number, velocity: number): void {
@@ -267,20 +268,35 @@ export function createVoice(T: T, id: string): Voice {
       }, out);
     case "guitar-pick":
       return sampledVoice(T, ["nylon"], { release: 0.6 }, out);
-    case "marimba":
-      return sampledVoice(T, ["marimba"], { release: 0.4 }, out);
-    case "glass-bells": {
-      const s = new T.PolySynth(T.FMSynth, {
-        harmonicity: 7,
-        modulationIndex: 2,
-        oscillator: { type: "sine" },
-        modulation: { type: "sine" },
-        envelope: { attack: 0.002, decay: 0.9, sustain: 0, release: 0.6 },
-        modulationEnvelope: { attack: 0.002, decay: 0.25, sustain: 0, release: 0.3 },
-        volume: -12,
+    case "blips": {
+      // Short "bleeping" square blips, a quiet 16th layer under the hook (WACUKA).
+      const s = new T.PolySynth(T.Synth, {
+        oscillator: { type: "square" },
+        envelope: { attack: 0.001, decay: 0.09, sustain: 0, release: 0.05 },
+        volume: -16,
+      });
+      s.maxPolyphony = 16;
+      return polyVoice(T, s, [new T.Filter(2600, "lowpass")], out);
+    }
+    case "staccato-synth": {
+      // Short saw stabs on the loop chords (BUNT.: "staccato synth" next to the vocal).
+      const s = new T.PolySynth(T.Synth, {
+        oscillator: { type: "fatsawtooth", count: 2, spread: 18 },
+        envelope: { attack: 0.002, decay: 0.16, sustain: 0, release: 0.08 },
+        volume: -18,
       });
       s.maxPolyphony = 24;
-      return polyVoice(T, s, [], out);
+      return polyVoice(T, s, [new T.Filter({ type: "lowpass", frequency: 2400, Q: 1.2 })], out);
+    }
+    case "lofi-sine": {
+      // Sine one-shot with pitch wobble and saturation: a bubbling bed (Fred again..).
+      const s = new T.PolySynth(T.Synth, {
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.004, decay: 0.5, sustain: 0.1, release: 0.4 },
+        volume: -10,
+      });
+      s.maxPolyphony = 16;
+      return polyVoice(T, s, [new T.Vibrato(0.9, 0.12), new T.Distortion(0.25), new T.Filter(4200, "lowpass")], out);
     }
     // ---- vocals (GeneralUser GS voice samples)
     case "vox-chop":
