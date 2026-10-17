@@ -103,3 +103,25 @@ export function pluckLane(
   }
   return notes;
 }
+
+/**
+ * Call and answer with the lead: the pluck steps back while the hook sings
+ * (quieter, below it, never doubling its onset) and speaks up in the gaps.
+ */
+export function complementLead(pluck: readonly Note[], lead: readonly Note[], range: [number, number], mode: PluckMode): Note[] {
+  const out: Note[] = [];
+  for (const p of pluck) {
+    const sounding = lead.filter((l) => l.start <= p.start + 0.01 && l.start + l.len > p.start + 0.01);
+    if (!sounding.length) {
+      out.push({ ...p, vel: clampVel(p.vel + 6) });
+      continue;
+    }
+    const l = sounding[0];
+    const together = Math.abs(l.start - p.start) < 0.3;
+    if (together && Math.abs(p.pitch - l.pitch) <= 4 && out.length > 0) continue;
+    let pitch = p.pitch;
+    if (pitch >= l.pitch - 2 && mode !== "stab" && pitch - 12 >= range[0] - 5) pitch -= 12;
+    out.push({ ...p, pitch, vel: clampVel(p.vel - (pitch > l.pitch ? 16 : 8)) });
+  }
+  return out;
+}

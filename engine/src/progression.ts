@@ -22,6 +22,10 @@ export interface ProgressionTemplate {
   /** Length of each chord in bars (default 1). */
   durations?: number[];
   weight: number;
+  /** Song this loop is modelled on (shown to the user). */
+  like?: string;
+  /** Degrees as written in the style profile (before moving to the relative mode). */
+  sourceDegrees?: string[];
 }
 
 export interface HarmonyProfile {
@@ -68,6 +72,7 @@ function templatesFor(harmony: HarmonyProfile, mode: Mode): ProgressionTemplate[
     .map((p) => ({
       ...p,
       mode,
+      sourceDegrees: p.degrees,
       degrees: p.degrees.map((d) => romanToRelative(d, p.mode)),
       // Templates written for the other mode count a little less.
       weight: p.weight * (own.length ? 0.5 : 1),

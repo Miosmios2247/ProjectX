@@ -354,6 +354,7 @@ function renderIdea(): void {
     title.textContent = blind ? "Noch kein Loop" : "";
     meta.textContent = blind ? "Starte rechts eine Runde." : "";
     $("idea-refs").replaceChildren();
+    $("why").hidden = true;
     for (const lane of PLAY_LANES) $(`sub-${lane}`).textContent = "";
     drawRolls();
     return;
@@ -384,6 +385,9 @@ function renderIdea(): void {
   const hints = $("hint-list");
   hints.replaceChildren(...idea.soundHints.map((t) => h("li", {}, t)));
   $("hints").hidden = hidden;
+  $("why-list").replaceChildren(...idea.insights.map((t) => h("li", {}, t)));
+  $("why").hidden = hidden;
+  $("why-title").textContent = `Warum klingt das nach ${idea.artist}?`;
   const q = $("rating-q");
   q.replaceChildren(
     document.createTextNode("Wie sehr klingt das nach "),

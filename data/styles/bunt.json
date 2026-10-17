@@ -2,6 +2,7 @@
  "id": "bunt",
  "artist": "BUNT.",
  "blurb": "Seit „Clouds“ Stutter House: gedehnte, gegatete Vocals, kurze Loops, „weniger klingt größer“",
+ "harmonyNote": "Nur zwei bis vier Akkorde, oft ab der VI. Stufe. BUNT.s Regel: „weniger klingt größer“.",
  "arrangement": [
   {
    "name": "Hook",
@@ -110,7 +111,8 @@
       "durations": [
        2,
        2
-      ]
+      ],
+      "like": "„Clouds“"
      },
      {
       "mode": "minor",
@@ -118,7 +120,8 @@
        "VI",
        "i"
       ],
-      "weight": 1
+      "weight": 1,
+      "like": "„Clouds“"
      },
      {
       "mode": "minor",
@@ -128,7 +131,8 @@
        "i",
        "VII"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„Spaces“"
      },
      {
       "mode": "minor",
@@ -138,7 +142,8 @@
        "i",
        "VII"
       ],
-      "weight": 2
+      "weight": 2,
+      "like": "„Moment“"
      },
      {
       "mode": "minor",
@@ -152,7 +157,8 @@
        1,
        1,
        2
-      ]
+      ],
+      "like": "„Lost My Mind“"
      }
     ],
     "colors": {
@@ -342,7 +348,8 @@
        "I",
        "I"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„TRIPPIN“"
      },
      {
       "mode": "minor",
@@ -352,7 +359,8 @@
        "i",
        "VII"
       ],
-      "weight": 1
+      "weight": 1,
+      "like": "„Spaces“"
      }
     ],
     "colors": {
@@ -496,7 +504,8 @@
        "I",
        "I"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„Unbreakable“ und „Old Guitar“"
      },
      {
       "mode": "major",

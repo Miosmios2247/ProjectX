@@ -1,6 +1,6 @@
 // "Musik-TÜV": checks the lanes against each other and fixes clashes.
 
-import { ChordSlot, slotAt } from "./progression";
+import { ChordSlot, chordSlotForNote } from "./progression";
 import { chordPcs, mod12, nearestWithPc, rubsSemitone } from "./theory";
 import { Note } from "./types";
 
@@ -24,7 +24,7 @@ export function checkLanes(
 
   // Lead: no semitone rubs against the chord on strong or long notes.
   for (const n of lead) {
-    const chordPcSet = chordPcs(slotAt(slots, n.start).chord);
+    const chordPcSet = chordPcs(chordSlotForNote(slots, n.start, n.len).chord);
     const strong = Math.round(n.start) % 4 === 0 || n.len >= 3;
     const pc = mod12(n.pitch);
     if (strong && !chordPcSet.includes(pc) && rubsSemitone(pc, chordPcSet)) {
@@ -45,7 +45,8 @@ export function checkLanes(
       if (under.length && n.pitch < Math.max(...under.map((c) => c.pitch)) - 4) buried++;
     }
     const maxPitch = Math.max(...lead.map((n) => n.pitch));
-    if (buried / lead.length > 0.5 && maxPitch + 12 <= leadRange[1] + 7) {
+    // Only within the lead's range: a sung topline may sit among the keys.
+    if (buried / lead.length > 0.5 && maxPitch + 12 <= leadRange[1] + 2) {
       for (const n of lead) n.pitch += 12;
       fixes++;
     }

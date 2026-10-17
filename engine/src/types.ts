@@ -31,6 +31,8 @@ export interface BassLaneProfile extends LaneProfileBase {
   range: [number, number];
   /** Chance to hold the tonic under all chords (pedal). */
   pedal?: number;
+  /** Approach notes may come a semitone from below, outside the scale (garage, house). */
+  chromatic?: boolean;
 }
 
 export interface LeadLaneProfile extends LaneProfileBase {
@@ -98,6 +100,8 @@ export interface StyleProfile {
   id: string;
   artist: string;
   blurb: string;
+  /** Why the artist's chords sound the way they do (shown to the user). */
+  harmonyNote: string;
   /** Typical song shape of the artist (intro, build, drop ...). */
   arrangement: ArrangementSection[];
   variants: StyleVariant[];
@@ -160,5 +164,7 @@ export interface Idea {
   mix: StyleVariant["mix"];
   soundHints: string[];
   arrangement: ArrangementSection[];
+  /** Plain-language reasons why this idea sounds like the artist. */
+  insights: string[];
   fixes: number;
 }

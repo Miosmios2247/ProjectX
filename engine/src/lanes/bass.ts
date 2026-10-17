@@ -1,4 +1,4 @@
-import { ChordSlot, slotIndexAt } from "../progression";
+import { ChordSlot, chordSlotForNote, slotIndexAt } from "../progression";
 import { Rhythm, expandBarRhythm, expandChordRhythm } from "../rhythm";
 import { accent, clampVel } from "../groove";
 import { Rng } from "../rng";
@@ -21,7 +21,7 @@ export function bassLane(
   const notes: Note[] = [];
   let anchor = lo + 7;
   for (const h of hits) {
-    const idx = slotIndexAt(slots, h.step);
+    const idx = slots.indexOf(chordSlotForNote(slots, h.step, h.len));
     const slot = slots[idx];
     const chord = slot.chord;
     const end = slot.start + slot.length;
@@ -46,8 +46,13 @@ export function bassLane(
           const nextPc = pedal ? key.tonic : slots[nextIdx].chord.bass;
           const target = nearestWithPc(root, [nextPc], lo, hi) ?? root;
           if (target !== root) {
+            // A scale step either side, or (garage, house) a semitone from below.
             const options = [target - 2, target - 1, target + 2, target + 1].filter(
-              (n) => n >= lo - 2 && n <= hi + 2 && inScale(n, key) && n !== root,
+              (n) =>
+                n >= lo - 2 &&
+                n <= hi + 2 &&
+                n !== root &&
+                (inScale(n, key) || (profile.chromatic === true && n === target - 1)),
             );
             if (options.length) {
               options.sort((a, b) => Math.abs(a - root) - Math.abs(b - root));

@@ -241,6 +241,8 @@ const FORMS: Record<MotifMode, string[][]> = {
   folk: [["A", "A", "B", "A'"], ["A", "B", "A", "B'"]],
 };
 
+let lastForm = "";
+
 /** Motif melody built from a phrase form (call and answer), adapted to the chords. */
 function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm | null, rng: Rng): Note[] {
   const allowed = mode === "topline" ? scalePcs(ctx.key) : pentatonicPcs(ctx.key);
@@ -253,6 +255,7 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
   const letters = Array.from({ length: count }, (_, k) => form[k % form.length]);
   if (count === 2) letters[1] = rng.chance(0.5) ? "B" : "A'";
   if (count > 1 && letters[count - 1] === "A") letters[count - 1] = "A'";
+  lastForm = letters.slice(0, 4).join(" ");
   const sameBars = rhythmB && rhythmB.bars === rhythmA.bars;
 
   const baseHits = rhythmA.hits.filter((h) => h.step < spanA);
@@ -551,17 +554,27 @@ export const LEAD_TARGETS: Record<LeadMode, MelodyTargets> = {
 
 const CANDIDATES = 10;
 
-function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm | null, rng: Rng, k: number): Note[] {
+export interface LeadResult {
+  notes: Note[];
+  /** How the hook was built: "fixed" pitches, "chords" (follows them), "vowel", or the phrase form. */
+  build: string;
+}
+
+function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm | null, rng: Rng, k: number): LeadResult {
   switch (mode) {
     case "vocal-chop":
       // Half the candidates keep a few fixed pitches, half follow the chords.
-      return k % 2 === 0 ? chopLead(ctx, rhythm, rng, rng.chance(0.5) ? 3 : 4) : chordChopLead(ctx, rhythm, rng);
+      return k % 2 === 0
+        ? { notes: chopLead(ctx, rhythm, rng, rng.chance(0.5) ? 3 : 4), build: "fixed" }
+        : { notes: chordChopLead(ctx, rhythm, rng), build: "chords" };
     case "gated-vowel":
-      return gatedVowelLead(ctx, rhythm, rng);
+      return { notes: gatedVowelLead(ctx, rhythm, rng), build: "vowel" };
     case "topline":
     case "folk":
-    case "brass-hook":
-      return motifLead(ctx, mode, rhythm, rhythmB, rng);
+    case "brass-hook": {
+      const notes = motifLead(ctx, mode, rhythm, rhythmB, rng);
+      return { notes, build: lastForm };
+    }
   }
 }
 
@@ -576,18 +589,18 @@ export function leadLane(
   totalSteps: number,
   rng: Rng,
   targets: Partial<MelodyTargets> = {},
-): Note[] {
+): LeadResult {
   const ctx: Ctx = { slots, key, lo: range[0], hi: range[1], totalSteps, tensions };
   const want: MelodyTargets = { ...LEAD_TARGETS[mode], ...targets };
   const phrase = phraseStepsFor(rhythm.bars, totalSteps);
-  let best: Note[] = [];
+  let best: LeadResult = { notes: [], build: "" };
   let bestPenalty = Infinity;
   for (let k = 0; k < CANDIDATES; k++) {
-    const notes = generateOnce(ctx, mode, rhythm, rhythmB, rng.fork(`cand${k}`), k);
-    const { penalty } = scoreMelody(notes, slots, want, phrase, totalSteps);
+    const cand = generateOnce(ctx, mode, rhythm, rhythmB, rng.fork(`cand${k}`), k);
+    const { penalty } = scoreMelody(cand.notes, slots, want, phrase, totalSteps);
     if (penalty < bestPenalty) {
       bestPenalty = penalty;
-      best = notes;
+      best = cand;
     }
   }
   return best;

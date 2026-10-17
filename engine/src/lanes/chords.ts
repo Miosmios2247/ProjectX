@@ -1,4 +1,4 @@
-import { ChordSlot, slotIndexAt } from "../progression";
+import { ChordSlot, chordSlotForNote, slotIndexAt } from "../progression";
 import { Rhythm, expandBarRhythm, expandChordRhythm } from "../rhythm";
 import { accent, clampVel } from "../groove";
 import { Rng } from "../rng";
@@ -17,8 +17,15 @@ export function chordsLane(
     ? slots.flatMap((s) => expandChordRhythm(rhythm, s.start, s.length))
     : expandBarRhythm(rhythm, totalSteps);
   const notes: Note[] = [];
+  let pushedInto = -1;
   for (const h of hits) {
-    const idx = slotIndexAt(slots, h.step);
+    const own = slotIndexAt(slots, h.step);
+    // A hit just before a change that rings into it plays the next chord early (a "push").
+    const target = chordSlotForNote(slots, h.step, h.len);
+    const idx = slots.indexOf(target);
+    const pushed = idx !== own;
+    if (!pushed && idx === pushedInto && h.step === target.start) continue; // already sounding
+    if (pushed) pushedInto = idx;
     const slot = slots[idx];
     const voicing = voicings[idx];
     const end = slot.start + slot.length;

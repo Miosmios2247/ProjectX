@@ -2,6 +2,7 @@
  "id": "avaion",
  "artist": "AVAION",
  "blurb": "Singt selbst, schreibt von der Gitarre aus; warme Akkord-Stapel, später 130+ BPM und Afro House",
+ "harmonyNote": "AVAION nimmt Akkorde aus der Tonleiter ohne die III. Stufe, meist schlichte Dreiklänge. Das klingt hoffnungsvoll statt düster.",
  "arrangement": [
   {
    "name": "Intro",
@@ -87,7 +88,8 @@
        "ii",
        "IV"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„Pieces“"
      },
      {
       "mode": "major",
@@ -107,7 +109,8 @@
        "VII",
        "iv"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„When You Go“"
      },
      {
       "mode": "minor",
@@ -158,18 +161,26 @@
       {
        "id": "pulse-8ths",
        "weight": 1
+      },
+      {
+       "id": "hold-push",
+       "weight": 1
       }
      ],
      "voicing": {
       "low": 50,
-      "high": 76,
+      "high": 74,
       "voices": [
        4,
        5
       ],
       "spread": "open",
       "colorTop": 0.7,
-      "rootBottom": 1.2
+      "rootBottom": 1.2,
+      "topRange": [
+       62,
+       71
+      ]
      }
     },
     "bass": {
@@ -290,7 +301,8 @@
        "iv",
        "i"
       ],
-      "weight": 4
+      "weight": 4,
+      "like": "„WACUKA“"
      },
      {
       "mode": "minor",
@@ -557,7 +569,8 @@
        "ii",
        "IV"
       ],
-      "weight": 2
+      "weight": 2,
+      "like": "„Pieces“"
      }
     ],
     "colors": {
@@ -598,18 +611,26 @@
       {
        "id": "ukg-stab-02",
        "weight": 1
+      },
+      {
+       "id": "stabs-push",
+       "weight": 1
       }
      ],
      "voicing": {
       "low": 50,
-      "high": 77,
+      "high": 74,
       "voices": [
        4,
        5
       ],
       "spread": "piano",
       "colorTop": 1.0,
-      "rootBottom": 1.0
+      "rootBottom": 1.0,
+      "topRange": [
+       62,
+       71
+      ]
      }
     },
     "bass": {
@@ -633,7 +654,8 @@
      "range": [
       30,
       45
-     ]
+     ],
+     "chromatic": true
     },
     "lead": {
      "sound": [

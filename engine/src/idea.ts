@@ -8,9 +8,10 @@ import { getDrumPattern, getRhythm, getStyle, getVariant } from "./styles";
 import { chordsLane } from "./lanes/chords";
 import { bassLane } from "./lanes/bass";
 import { leadLane } from "./lanes/lead";
-import { pluckLane } from "./lanes/pluck";
+import { complementLead, pluckLane } from "./lanes/pluck";
 import { drumsLane } from "./lanes/drums";
 import { checkLanes } from "./check";
+import { explainIdea } from "./explain";
 import { Key } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
@@ -50,7 +51,7 @@ export function generateIdea(params: IdeaParams): Idea {
 
   // Harmony and chords
   const hr = createRng(seeds.chords);
-  const { slots } = buildProgression(variant.harmony, key, bars, hr.fork("progression"));
+  const { slots, template } = buildProgression(variant.harmony, key, bars, hr.fork("progression"));
   const voicings = voiceProgression(
     slots.map((s) => s.chord),
     variant.lanes.chords.voicing,
@@ -70,7 +71,7 @@ export function generateIdea(params: IdeaParams): Idea {
   const leadRhythmId = pickRef(leadProfile.rhythms, lr.fork("rhythm"));
   const others = leadProfile.rhythms.filter((r) => refId(r) !== leadRhythmId);
   const leadRhythmB = others.length ? getRhythm(pickRef(others, lr.fork("rhythmB"))) : null;
-  const leadNotes = leadLane(
+  const lead = leadLane(
     slots,
     key,
     leadProfile.mode,
@@ -82,6 +83,7 @@ export function generateIdea(params: IdeaParams): Idea {
     lr.fork("notes"),
     leadProfile.targets,
   );
+  const leadNotes = lead.notes;
 
   // Pluck, calmer when the lead is busy
   const pr = createRng(seeds.pluck);
@@ -113,6 +115,8 @@ export function generateIdea(params: IdeaParams): Idea {
   const drumHits = drumsLane(drumPattern, bars, dr.fork("hits"));
 
   const { fixes } = checkLanes(slots, chordsNotes, bass.notes, leadNotes, pluckNotes, leadProfile.range);
+  // The pluck answers the hook: it steps back while the lead sings and fills the gaps.
+  const pluckFinal = complementLead(pluckNotes, leadNotes, pluckProfile.range, pluckProfile.mode);
 
   const sound = (lane: LaneId, refs: (WeightedRef | string)[]) =>
     pickRef(refs, createRng(seeds[lane]).fork("sound"));
@@ -151,7 +155,7 @@ export function generateIdea(params: IdeaParams): Idea {
         detail: leadProfile.mode,
       },
       pluck: {
-        notes: pluckNotes,
+        notes: pluckFinal,
         rhythmId: pluckRhythmId,
         sound: sound("pluck", pluckProfile.sound),
         detail: pluckProfile.mode === "arp" ? `arp ${order}` : pluckProfile.mode,
@@ -161,6 +165,19 @@ export function generateIdea(params: IdeaParams): Idea {
     mix: variant.mix,
     soundHints: variant.soundHints,
     arrangement: variant.arrangement ?? style.arrangement,
+    insights: explainIdea({
+      style,
+      variant,
+      template,
+      templateText: slots.map((s) => s.chord.degree).join(" – "),
+      chordNames: [...new Set(slots.map((s) => s.chord.name))].join(" – "),
+      chordRhythm: getRhythm(chordRhythmId),
+      leadMode: leadProfile.mode,
+      leadBuild: lead.build,
+      leadNotes,
+      bassRhythm: getRhythm(bassRhythmId),
+      pluckAnswers: pluckFinal.length > 0,
+    }),
     fixes,
   };
 }

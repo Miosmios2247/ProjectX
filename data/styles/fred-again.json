@@ -2,6 +2,7 @@
  "id": "fred-again",
  "artist": "Fred again..",
  "blurb": "Loops auf maj7-Akkorden, gechoppte Sprach- und Gesangsaufnahmen als Hook, alles pumpt",
+ "harmonyNote": "Fred again..s Loops kreisen um den maj7-Akkord der VI. Stufe und lösen nie klassisch auf (keine Dominante). Darum klingen sie offen und sehnsüchtig.",
  "arrangement": [
   {
    "name": "Intro",
@@ -98,7 +99,8 @@
        "i",
        "III"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„Marea“"
      },
      {
       "mode": "minor",
@@ -108,7 +110,8 @@
        "i7",
        "iv7"
       ],
-      "weight": 3
+      "weight": 3,
+      "like": "„adore u“"
      },
      {
       "mode": "minor",
@@ -118,7 +121,8 @@
        "v7",
        "IIImaj7"
       ],
-      "weight": 2
+      "weight": 2,
+      "like": "„Delilah“ und „ten“"
      },
      {
       "mode": "minor",
@@ -180,6 +184,14 @@
       },
       {
        "id": "hold-half",
+       "weight": 1
+      },
+      {
+       "id": "hold-push",
+       "weight": 2
+      },
+      {
+       "id": "stabs-push",
        "weight": 1
       }
      ],
@@ -340,7 +352,8 @@
        1,
        1,
        2
-      ]
+      ],
+      "like": "„Delilah“"
      },
      {
       "mode": "minor",
@@ -354,7 +367,8 @@
        1,
        1,
        2
-      ]
+      ],
+      "like": "„leavemealone“"
      },
      {
       "mode": "minor",
@@ -364,7 +378,8 @@
       "weight": 2,
       "durations": [
        4
-      ]
+      ],
+      "like": "„Kammy“"
      },
      {
       "mode": "minor",
@@ -423,6 +438,10 @@
       {
        "id": "hold",
        "weight": 1
+      },
+      {
+       "id": "stabs-push",
+       "weight": 1
       }
      ],
      "voicing": {
@@ -465,7 +484,8 @@
      "range": [
       28,
       43
-     ]
+     ],
+     "chromatic": true
     },
     "lead": {
      "sound": [
@@ -567,7 +587,8 @@
        1,
        1,
        2
-      ]
+      ],
+      "like": "„leavemealone“"
      },
      {
       "mode": "minor",

@@ -710,5 +710,62 @@
     "vel": 88
    }
   ]
+ },
+ {
+  "id": "hold-push",
+  "name": "Gehalten mit Push",
+  "lane": "chords",
+  "tags": [
+   "hold",
+   "push",
+   "house"
+  ],
+  "bars": 1,
+  "perChord": true,
+  "hits": [
+   {
+    "step": 0,
+    "len": -3,
+    "vel": 92
+   },
+   {
+    "step": -2,
+    "len": 8,
+    "vel": 100
+   }
+  ]
+ },
+ {
+  "id": "stabs-push",
+  "name": "Piano-Stabs mit Push",
+  "lane": "chords",
+  "tags": [
+   "stab",
+   "push",
+   "house"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3,
+    "vel": 100
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 88
+   },
+   {
+    "step": 10,
+    "len": 3,
+    "vel": 94
+   },
+   {
+    "step": 14,
+    "len": 4,
+    "vel": 98
+   }
+  ]
  }
 ]
