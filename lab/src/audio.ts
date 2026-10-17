@@ -6,6 +6,7 @@
 import type * as ToneNS from "tone";
 import { ArrangementSection, Idea, LaneId, stepToBeat } from "../../engine/src/index";
 import { Voice, createVoice } from "./sounds";
+import { OWN_VOICE_KIND, OwnVoice, ownVoice } from "./voice";
 import { DrumKit } from "./drumkit";
 
 export type PlayLane = LaneId | "drums";
@@ -82,6 +83,9 @@ export class Player {
   idea: Idea | null = null;
   soundMode: SoundMode = "style";
   form: PlayForm = "loop";
+  /** The rater's own recording, used for vocal leads when `useOwnVoice` is on. */
+  ownVoice: OwnVoice | null = null;
+  useOwnVoice = true;
 
   constructor(tone: ToneLib) {
     this.T = tone;
@@ -161,13 +165,27 @@ export class Player {
   }
 
   private voiceFor(lane: LaneId, id: string): Voice {
+    const own = lane === "lead" && this.useOwnVoice ? this.ownVoice : null;
+    const kind = own ? OWN_VOICE_KIND[id] : undefined;
+    const key = own && kind ? `${id}:own:${own.id}` : id;
     const cur = this.voices[lane];
-    if (cur && cur.id === id) return cur.voice;
+    if (cur && cur.id === key) return cur.voice;
     cur?.voice.dispose();
-    const voice = createVoice(this.T, id);
+    const voice = own && kind ? ownVoice(this.T, own, kind) : createVoice(this.T, id);
     voice.output.connect(this.laneGain[lane]);
-    this.voices[lane] = { id, voice };
+    this.voices[lane] = { id: key, voice };
     return voice;
+  }
+
+  /** Whether the lead of this idea is sung by the own recording. */
+  usesOwnVoice(idea: Idea): boolean {
+    return !!this.ownVoice && this.useOwnVoice && this.soundMode !== "neutral" && !!OWN_VOICE_KIND[idea.lanes.lead.sound];
+  }
+
+  setOwnVoice(voice: OwnVoice | null, use = this.useOwnVoice): void {
+    this.ownVoice = voice;
+    this.useOwnVoice = use;
+    if (this.built && this.idea) this.load(this.idea, this.soundMode);
   }
 
   private kitFor(id: string): DrumKit {
@@ -235,15 +253,15 @@ export class Player {
     for (const lane of ["chords", "bass", "lead", "pluck"] as LaneId[]) {
       const data = idea.lanes[lane];
       const voice = this.voiceFor(lane, neutral ? NEUTRAL[lane] : data.sound);
-      const events = data.notes.map((n) => {
+      const events = data.notes.map((n, i) => {
         const start = stepToBeat(n.start, idea.swing);
         const end = stepToBeat(n.start + n.len, idea.swing);
-        return { time: ticks(start), midi: n.pitch, dur: Math.max(0.03, (end - start) * secPerBeat * 0.98), vel: n.vel / 127 };
+        return { time: ticks(start), midi: n.pitch, dur: Math.max(0.03, (end - start) * secPerBeat * 0.98), vel: n.vel / 127, i };
       });
-      const part = new T.Part((time, ev: { midi: number; dur: number; vel: number }) => {
+      const part = new T.Part((time, ev: { midi: number; dur: number; vel: number; i: number }) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
-        voice.trigger(ev.midi, ev.dur, time, ev.vel);
+        voice.trigger(ev.midi, ev.dur, time, ev.vel, ev.i);
       }, events);
       loopPart(part);
     }

@@ -8,7 +8,8 @@ type T = ToneLib;
 
 export interface Voice {
   output: ToneNS.ToneAudioNode;
-  trigger(midi: number, duration: number, time: number, velocity: number): void;
+  /** `index` is the note's position in its lane (stable across loops). */
+  trigger(midi: number, duration: number, time: number, velocity: number, index?: number): void;
   dispose(): void;
   /** Resolves when samples are loaded (synth voices are ready at once). */
   ready?: Promise<void>;

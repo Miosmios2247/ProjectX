@@ -14,7 +14,7 @@ import { checkLanes } from "./check";
 import { Key } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
-export const ENGINE_VERSION = "0.2.0";
+export const ENGINE_VERSION = "0.3.0";
 
 export type SeedLane = LaneId | "drums";
 export const SEED_LANES: SeedLane[] = ["chords", "bass", "lead", "pluck", "drums"];

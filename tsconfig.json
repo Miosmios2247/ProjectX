@@ -13,5 +13,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["engine/**/*.ts", "lab/src/**/*.ts", "lab/*.d.ts"]
+  "include": ["engine/**/*.ts", "lab/src/**/*.ts", "lab/test/**/*.ts", "lab/*.d.ts"]
 }

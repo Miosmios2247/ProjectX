@@ -22,6 +22,7 @@ import {
 } from "../../engine/src/index";
 import { PlayForm, Player, PlayLane, SoundMode } from "./audio";
 import { SOUND_LABELS } from "./sounds";
+import { OwnVoice, clearVoiceBytes, describeVoice, loadOwnVoice, loadVoiceBytes, saveVoiceBytes } from "./voice";
 import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 
@@ -266,7 +267,8 @@ function laneSub(lane: PlayLane, idea: Idea): string {
   if (lane === "drums") return `Begleitung · ${getDrumPattern(idea.drums.patternId).name}`;
   const data = idea.lanes[lane];
   const rhythm = getRhythm(data.rhythmId).name;
-  const sound = SOUND_LABELS[data.sound] ?? data.sound;
+  const own = lane === "lead" && state.mode === "explore" && !!player?.usesOwnVoice(idea);
+  const sound = own ? "Deine Stimme" : (SOUND_LABELS[data.sound] ?? data.sound);
   const modeLabel = lane === "lead" && data.detail ? LEAD_MODE[data.detail] ?? data.detail : "";
   const mode = modeLabel && modeLabel !== sound ? ` · ${modeLabel}` : "";
   return `${sound} · ${rhythm}${mode}`;
@@ -617,6 +619,7 @@ function buildDoc(idea: Idea, mode: RatingDoc["mode"], extra: Partial<RatingDoc>
     soundMode: mode === "blindtest" ? state.blind.soundMode : "style",
     muted: [...state.muted],
     form: mode === "blindtest" ? "loop" : state.form,
+    ownVoice: !!player?.usesOwnVoice(idea),
     rating: null,
     issues: [],
     comment: "",
@@ -841,6 +844,98 @@ function setMode(mode: "explore" | "blind"): void {
 }
 
 // ---------------------------------------------------------------------------
+// Own voice
+
+const NO_MIC =
+  "Aufnehmen geht in diesem Fenster nicht. Nimm eine Sprachmemo mit dem Handy auf und lade sie mit „Datei wählen“.";
+let ownVoice: OwnVoice | null = null;
+let recorder: MediaRecorder | null = null;
+
+function voiceStatus(text: string): void {
+  $("voice-status").textContent = text;
+}
+
+function renderVoice(): void {
+  $("voice-on").hidden = !ownVoice;
+  ($("voice-use") as HTMLInputElement).checked = player?.useOwnVoice ?? true;
+  const rec = $("voice-record");
+  rec.classList.toggle("is-recording", !!recorder);
+  if (!recorder) rec.textContent = "Aufnehmen";
+  if (state.idea) renderIdea();
+}
+
+async function useVoiceBytes(bytes: ArrayBuffer, name: string, persist: boolean): Promise<void> {
+  const T = window.Tone;
+  if (!T || !player) return;
+  voiceStatus("Analysiere die Aufnahme …");
+  try {
+    const v = await loadOwnVoice(T, bytes, name);
+    if (!v.analysis.slices.length) {
+      voiceStatus("Keine Stimme erkannt. Versuch es lauter oder näher am Mikrofon.");
+      return;
+    }
+    ownVoice = v;
+    player.setOwnVoice(v);
+    if (persist) await saveVoiceBytes(name, bytes);
+    voiceStatus(`${name}: ${describeVoice(v)}. Hörbar bei Fred again.., BUNT. und AVAION (Pieces, Liquid).`);
+  } catch {
+    voiceStatus("Diese Datei kann der Browser nicht lesen. Probier MP3, M4A oder WAV.");
+  }
+  renderVoice();
+}
+
+async function toggleRecord(): Promise<void> {
+  if (recorder) {
+    recorder.stop();
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    voiceStatus(NO_MIC);
+    return;
+  }
+  let stream: MediaStream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: true },
+    });
+  } catch {
+    voiceStatus(NO_MIC);
+    return;
+  }
+  const chunks: Blob[] = [];
+  const rec = new MediaRecorder(stream);
+  recorder = rec;
+  const started = Date.now();
+  const btn = $("voice-record");
+  const timer = window.setInterval(() => {
+    const s = Math.floor((Date.now() - started) / 1000);
+    btn.textContent = `Stopp (0:${String(s).padStart(2, "0")})`;
+    if (s >= 15 && rec.state === "recording") rec.stop();
+  }, 250);
+  rec.ondataavailable = (e) => {
+    if (e.data.size) chunks.push(e.data);
+  };
+  rec.onstop = () => {
+    window.clearInterval(timer);
+    stream.getTracks().forEach((t) => t.stop());
+    recorder = null;
+    renderVoice();
+    void new Blob(chunks, { type: rec.mimeType })
+      .arrayBuffer()
+      .then((bytes) => useVoiceBytes(bytes, "Aufnahme", true));
+  };
+  rec.start();
+  voiceStatus("Aufnahme läuft: sing oder sprich ein paar Wörter, dann auf Stopp tippen.");
+  renderVoice();
+  btn.textContent = "Stopp (0:00)";
+}
+
+async function restoreVoice(): Promise<void> {
+  const row = await loadVoiceBytes();
+  if (row) await useVoiceBytes(row.bytes, row.name, false);
+}
+
+// ---------------------------------------------------------------------------
 // Wiring
 
 function wire(): void {
@@ -868,6 +963,25 @@ function wire(): void {
     state.explore.bpm = Math.max(60, Math.min(180, state.idea.bpm + d));
     regenerate(false);
   };
+  $("voice-record").addEventListener("click", () => void toggleRecord());
+  $("voice-pick").addEventListener("click", () => ($("voice-file") as HTMLInputElement).click());
+  $("voice-file").addEventListener("change", (e) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = "";
+    if (file) void file.arrayBuffer().then((bytes) => useVoiceBytes(bytes, file.name, true));
+  });
+  $("voice-use").addEventListener("change", (e) => {
+    player?.setOwnVoice(ownVoice, (e.target as HTMLInputElement).checked);
+    renderVoice();
+  });
+  $("voice-clear").addEventListener("click", () => {
+    ownVoice = null;
+    player?.setOwnVoice(null);
+    void clearVoiceBytes();
+    voiceStatus("");
+    renderVoice();
+  });
   $("form-loop").addEventListener("click", () => setForm("loop"));
   $("form-song").addEventListener("click", () => setForm("song"));
   $("bpm-down").addEventListener("click", () => bump(-1));
@@ -963,6 +1077,7 @@ function boot(data: unknown): void {
   renderResults();
   store.onChange = renderResults;
   void store.init();
+  void restoreVoice();
   window.claude?.hot?.snapshot?.(snapshot);
   requestAnimationFrame(tickPlayhead);
 }

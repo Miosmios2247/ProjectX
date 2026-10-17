@@ -10,7 +10,7 @@
 <div class="app">
   <header class="masthead">
     <div class="brand">
-      <p class="eyebrow">ProjectX · Hörtest Runde 2 · Stil-Profile v0.2</p>
+      <p class="eyebrow">ProjectX · Hörtest Runde 3 · Stil-Profile v0.3</p>
       <h1>Hör-Labor</h1>
       <p class="lede">Wähle einen Künstler, hör dir die Idee an und sag mir, wie sehr sie nach ihm klingt. Im Blindtest rätst du, von wem ein Loop sein soll.</p>
     </div>
@@ -118,6 +118,21 @@
         </div>
         <p class="muted small">Neutral heißt: gleiche Klänge für alle. Dann zählen nur Akkorde, Melodie und Rhythmus.</p>
         <p class="score" id="blind-score"></p>
+      </section>
+
+      <section class="card voice" id="voice-card" aria-labelledby="voice-title">
+        <h2 class="card-title" id="voice-title">Deine Stimme als Hook</h2>
+        <p class="muted small">Sing oder sprich ein paar Wörter, 5 bis 15 Sekunden. Daraus werden Vocal-Chops (Fred again..), ein gedehnter Vokal mit Gate (BUNT.) oder die Topline (AVAION). Die Aufnahme bleibt in deinem Browser.</p>
+        <div class="actions">
+          <button type="button" class="btn" id="voice-record">Aufnehmen</button>
+          <button type="button" class="btn" id="voice-pick">Datei wählen</button>
+          <input type="file" id="voice-file" accept="audio/*" hidden>
+        </div>
+        <p class="voice-status" id="voice-status" aria-live="polite"></p>
+        <div class="voice-on" id="voice-on" hidden>
+          <label class="check"><input type="checkbox" id="voice-use" checked> Im Lead verwenden</label>
+          <button type="button" class="btn" id="voice-clear">Entfernen</button>
+        </div>
       </section>
 
       <details class="card hints" id="hints">
