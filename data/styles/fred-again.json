@@ -262,6 +262,10 @@
       {
        "id": "chop-02",
        "weight": 1
+      },
+      {
+       "id": "chop-332",
+       "weight": 1
       }
      ],
      "range": [
@@ -510,6 +514,10 @@
       },
       {
        "id": "chop-02",
+       "weight": 1
+      },
+      {
+       "id": "chop-332",
        "weight": 1
       }
      ],

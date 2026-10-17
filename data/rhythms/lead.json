@@ -1472,5 +1472,48 @@
     "vel": 96
    }
   ]
+ },
+ {
+  "id": "chop-332",
+  "name": "Vocal-Chop 3+3+2",
+  "lane": "lead",
+  "tags": [
+   "chop",
+   "syncopated",
+   "fred"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 104
+   },
+   {
+    "step": 3,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 11,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 96
+   }
+  ]
  }
 ]
