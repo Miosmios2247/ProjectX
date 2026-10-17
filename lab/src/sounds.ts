@@ -250,7 +250,7 @@ const SOUND_TRIM: Record<string, number> = {
   "lush-keys": -4.5,
   "bright-piano": -1.5,
   "guitar-strum": -8.5,
-  "piano-high": -4.5,
+  "piano-high": -1.5,
   "guitar-pick": -8.5,
   "lofi-sine": -1.5,
   sub: -6,

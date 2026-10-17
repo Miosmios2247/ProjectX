@@ -76,9 +76,9 @@
      }
     ],
     "colors": {
-     "triad": 0.6,
+     "triad": 0.7,
      "add9": 0.2,
-     "sus2": 0.15,
+     "sus2": 0.05,
      "seventh": 0.05
     },
     "colorConsistency": 0.4,
@@ -259,10 +259,9 @@
      }
     ],
     "colors": {
-     "triad": 0.65,
+     "triad": 0.75,
      "seventh": 0.15,
-     "sus2": 0.15,
-     "add9": 0.05
+     "add9": 0.1
     },
     "colorConsistency": 0.5,
     "inversions": 0,

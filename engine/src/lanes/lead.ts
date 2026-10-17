@@ -374,18 +374,20 @@ function gatedVowelLead(ctx: Ctx, gate: Rhythm, rng: Rng): Note[] {
     const slot = slotAt(ctx.slots, step);
     return segmentPitch.get(slot.start) ?? ordered[0];
   };
-  for (const h of hits) {
-    if (h.step >= rollStart) break;
+  hits.forEach((h, i) => {
+    if (h.step >= rollStart) return;
     const end = Math.min(h.step + h.len, rollStart);
-    // Short hits are the gate: about half of each 16th is silent, held vowels stay legato.
-    const len = end - h.step <= 1 ? 0.55 : Math.max(0.4, (end - h.step) * 0.92);
+    // Short hits are the gate: open for about half the time until the next hit
+    // (half a 16th, or half an 8th in sparser patterns); held vowels stay legato.
+    const gap = Math.min(2, (hits[i + 1]?.step ?? rollStart) - h.step);
+    const len = end - h.step <= 1 ? 0.55 * Math.max(1, gap) : Math.max(0.4, (end - h.step) * 0.92);
     notes.push({
       pitch: pitchAt(h.step),
       start: h.step,
       len,
       vel: clampVel((h.vel ?? 96) + accent(h.step) + rng.int(-4, 4)),
     });
-  }
+  });
   // Accelerating roll: 16ths, then 32nds, getting louder.
   const rollPitch = pitchAt(rollStart);
   const roll = [0, 1, 2, 2.5, 3, 3.5];

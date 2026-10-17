@@ -71,7 +71,7 @@ export class Player {
     const T = this.T;
     const comp = new T.Compressor({ threshold: -16, ratio: 3, attack: 0.01, release: 0.2 });
     const limiter = new T.Limiter(-1);
-    this.master = new T.Gain(T.dbToGain(-4));
+    this.master = new T.Gain(T.dbToGain(-5.5));
     this.master.chain(comp, limiter, T.getDestination());
     this.duck = new T.Gain(1);
     this.duck.connect(this.master);

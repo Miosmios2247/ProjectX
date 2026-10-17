@@ -445,9 +445,9 @@
      }
     ],
     "colors": {
-     "triad": 0.7,
-     "sus2": 0.15,
-     "add9": 0.15
+     "triad": 0.8,
+     "add9": 0.15,
+     "sus2": 0.05
     },
     "colorConsistency": 0.3,
     "inversions": 0.15,
