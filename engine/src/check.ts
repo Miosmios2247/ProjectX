@@ -1,7 +1,7 @@
 // "Musik-TÜV": checks the lanes against each other and fixes clashes.
 
 import { ChordSlot, chordSlotForNote } from "./progression";
-import { chordPcs, mod12, nearestWithPc, rubsSemitone } from "./theory";
+import { chordPcs, isAvoidNote, mod12, nearestWithPc, rubsSemitone } from "./theory";
 import { Note } from "./types";
 
 function soundingAt(notes: readonly Note[], step: number): Note[] {
@@ -22,12 +22,12 @@ export function checkLanes(
 ): CheckResult {
   let fixes = 0;
 
-  // Lead: no semitone rubs against the chord on strong or long notes.
+  // Lead: no avoid notes (a semitone above a chord tone) on strong or long notes.
   for (const n of lead) {
     const chordPcSet = chordPcs(chordSlotForNote(slots, n.start, n.len).chord);
     const strong = Math.round(n.start) % 4 === 0 || n.len >= 3;
     const pc = mod12(n.pitch);
-    if (strong && !chordPcSet.includes(pc) && rubsSemitone(pc, chordPcSet)) {
+    if (strong && isAvoidNote(pc, chordPcSet)) {
       const fixed = nearestWithPc(n.pitch, chordPcSet, n.pitch - 3, n.pitch + 3);
       if (fixed !== null) {
         n.pitch = fixed;

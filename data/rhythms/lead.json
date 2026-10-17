@@ -977,6 +977,142 @@
   ]
  },
  {
+  "id": "gate-16-332",
+  "name": "Gate 1/16, Akzente 3+3+2",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 76
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 104
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 76
+   }
+  ]
+ },
+ {
+  "id": "gate-332",
+  "name": "Vokal neu angeschlagen 3+3+2",
+  "lane": "lead",
+  "tags": [
+   "gate",
+   "stutter",
+   "retrigger"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3,
+    "vel": 104
+   },
+   {
+    "step": 3,
+    "len": 3,
+    "vel": 92
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 8,
+    "len": 3,
+    "vel": 102
+   },
+   {
+    "step": 11,
+    "len": 3,
+    "vel": 90
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 94
+   }
+  ]
+ },
+ {
   "id": "gate-held-stutter",
   "name": "Gehalten, dann Stotter",
   "lane": "lead",

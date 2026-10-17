@@ -3,7 +3,7 @@
 // Phrases come in calls and answers; every mode makes several candidates
 // and the critic keeps the one that fits the style best.
 
-import { ChordSlot, STEPS_PER_BAR, chordSlotForNote, slotAt } from "../progression";
+import { ChordSlot, STEPS_PER_BAR, chordSlotForNote, loopTones, slotAt, universalPcs } from "../progression";
 import { MelodyTargets, phraseStepsFor, scoreMelody } from "../critic";
 import { Rhythm, RhythmHit } from "../rhythm";
 import { accent, clampVel } from "../groove";
@@ -17,7 +17,7 @@ import {
   mod12,
   nearestWithPc,
   pentatonicPcs,
-  rubsSemitone,
+  isAvoidNote,
   scalePcs,
 } from "../theory";
 import { LeadMode, Note } from "../types";
@@ -25,6 +25,10 @@ import { LeadMode, Note } from "../types";
 interface Ctx {
   slots: readonly ChordSlot[];
   key: Key;
+  /** Tonal centre of the loop: the key's tonic, or the relative one for a borrowed template. */
+  home: PitchClass;
+  /** Scale tones that fit every chord of the loop (never an avoid note). */
+  universal: PitchClass[];
   lo: number;
   hi: number;
   totalSteps: number;
@@ -128,11 +132,11 @@ function isStrong(h: RhythmHit): boolean {
 function avoidRub(d: number, chord: Chord, space: DegreeSpace): number {
   const all = chordPcs(chord);
   const pc = space.pc(d);
-  if (all.includes(pc) || !rubsSemitone(pc, all)) return d;
+  if (!isAvoidNote(pc, all)) return d;
   for (const c of [d + 1, d - 1]) {
     if (c < space.dMin || c > space.dMax) continue;
     const p = space.pc(c);
-    if (all.includes(p) || !rubsSemitone(p, all)) return c;
+    if (!isAvoidNote(p, all)) return c;
   }
   return d;
 }
@@ -144,9 +148,23 @@ function chordOf(ctx: Ctx, h: RhythmHit): Chord {
   return chordSlotForNote(ctx.slots, h.step, h.len).chord;
 }
 
-/** Phrase endings: a call stays open (3rd/5th, upwards), an answer comes home (root/3rd, downwards). */
-function endingPcs(chord: Chord, ending: Ending, allowed: readonly PitchClass[]): PitchClass[] {
+/**
+ * Phrase endings: a call stays open, an answer comes home. Both land on a chord
+ * tone that fits every chord of the loop, because a last note rings on. Answers
+ * prefer the loop's tonic or 5th, calls its 5th, 3rd or 2nd. In a major loop
+ * with V (AVAION's "Pieces") the tonic would clash over V, so it drops out.
+ */
+function endingPcs(ctx: Ctx, chord: Chord, ending: Ending, allowed: readonly PitchClass[]): PitchClass[] {
   const r = chordRoles(chord);
+  const tones = corePcs(chord).filter((pc) => allowed.includes(pc) && ctx.universal.includes(pc));
+  const homeMinor = (ctx.home === ctx.key.tonic) === (ctx.key.mode === "minor");
+  const fifth = mod12(ctx.home + 7);
+  const third = mod12(ctx.home + (homeMinor ? 3 : 4));
+  const pick = (pcs: (PitchClass | null)[]) => pcs.filter((pc): pc is number => pc !== null && tones.includes(pc));
+  const home = ending === "closed" ? pick([ctx.home, fifth]) : pick([fifth, third, mod12(ctx.home + 2)]);
+  if (home.length) return home;
+  const near = pick(ending === "open" ? [r.fifth, r.third] : [r.root, r.third]);
+  if (near.length) return near;
   const want = (ending === "open" ? [r.fifth, r.third] : [r.root, r.third]).filter((x): x is number => x !== null);
   const inter = want.filter((pc) => allowed.includes(pc));
   return inter.length ? inter : stablePcs(chord, allowed);
@@ -170,16 +188,23 @@ function makeContour(
       const pos = hits.length > 1 ? i / (hits.length - 1) : 0;
       let size = sampleIndex(rng, opts.weights);
       let up = rng.chance(pos < 0.55 ? opts.upEarly : opts.upLate);
-      if (Math.abs(lastMove) >= 3) {
-        size = 1;
-        up = lastMove < 0;
+      // Leap recovery as a pull back to the phrase's middle: after a leap of a 4th
+      // or more, or when the line has wandered more than a 4th away, it usually
+      // turns back, mostly by step.
+      const cur = space.toMidi(d);
+      const sorted = out.map((x) => space.toMidi(x)).sort((a, b) => a - b);
+      const med = sorted[Math.floor(sorted.length / 2)];
+      const leapt = Math.abs(cur - space.toMidi(d - lastMove)) >= 5;
+      if ((leapt || Math.abs(cur - med) > 5) && rng.chance(0.78)) {
+        up = cur < med;
+        if (rng.chance(0.6)) size = Math.min(size, 1);
       }
       const move = size === 0 ? 0 : up ? size : -size;
       d = space.clamp(d + move);
       lastMove = move;
     }
     const last = i === hits.length - 1;
-    if (last && ending) d = space.snap(d, endingPcs(chord, ending, space.allowed), ending === "open");
+    if (last && ending) d = space.snap(d, endingPcs(ctx, chord, ending, space.allowed), ending === "open");
     else if (last) d = space.snap(d, stablePcs(chord, space.allowed), lastMove >= 0);
     else if (isStrong(h) || i === 0) d = space.snap(d, targetPcs(chord, ctx, space.allowed), lastMove >= 0);
     else if (h.len >= 2) d = avoidRub(d, chord, space);
@@ -226,9 +251,9 @@ function toNotes(
 type MotifMode = "topline" | "folk" | "brass-hook";
 
 const MODE_OPTS: Record<MotifMode, ContourOpts> = {
-  // Sung: mostly steps and repeated notes, phrases fall at the end.
-  topline: { weights: [0.2, 0.52, 0.18, 0.06, 0.04], upEarly: 0.6, upLate: 0.3, startBias: 0.4 },
-  folk: { weights: [0.22, 0.45, 0.25, 0.08], upEarly: 0.6, upLate: 0.4, startBias: 0.45 },
+  // Sung: mostly steps and repeated notes, phrases fall at the end. AVAION sings high.
+  topline: { weights: [0.2, 0.52, 0.18, 0.06, 0.04], upEarly: 0.6, upLate: 0.3, startBias: 0.5 },
+  folk: { weights: [0.24, 0.5, 0.2, 0.06], upEarly: 0.6, upLate: 0.4, startBias: 0.45 },
   // Short, punchy hook: repeats and small steps around the middle of the range.
   "brass-hook": { weights: [0.32, 0.42, 0.2, 0.06], upEarly: 0.5, upLate: 0.3, startBias: 0.55 },
 };
@@ -237,15 +262,46 @@ const MODE_OPTS: Record<MotifMode, ContourOpts> = {
 // phrases (answers). Calls end open, answers come home.
 const FORMS: Record<MotifMode, string[][]> = {
   topline: [["A", "B", "A", "B'"], ["A", "A'", "A", "B"], ["A", "B", "A", "C"]],
-  "brass-hook": [["A", "A'", "A", "B"], ["A", "B", "A", "B'"], ["A", "A", "A", "A'"]],
+  // A drop riff that loops and changes only its ending ("WACUKA").
+  "brass-hook": [["A", "A'", "A", "A'"], ["A", "A", "A", "A'"], ["A", "A'", "A", "B"]],
   folk: [["A", "A", "B", "A'"], ["A", "B", "A", "B'"]],
 };
 
+// How often a phrase gets 1–3 pickup notes into its first downbeat.
+const PICKUP: Record<MotifMode, number> = { topline: 0.4, folk: 0.3, "brass-hook": 0.25 };
+
 let lastForm = "";
+let lastPickups = 0;
+
+/**
+ * Pickup notes before a phrase: one 8th, two 8ths or three 16ths that walk by
+ * step into the phrase's first note (from below more often than from above).
+ */
+function pickupInto(target: number, at: number, ctx: Ctx, space: DegreeSpace, rng: Rng): { hits: RhythmHit[]; degrees: number[] } {
+  const n = rng.weighted([{ n: 1, w: 0.45 }, { n: 2, w: 0.35 }, { n: 3, w: 0.2 }], (x) => x.w).n;
+  const steps = n === 1 ? [at - 2] : n === 2 ? [at - 4, at - 2] : [at - 3, at - 2, at - 1];
+  const len = n === 3 ? 1 : 2;
+  const dir = rng.chance(0.65) ? -1 : 1;
+  const hits = steps.map((step) => ({ step, len, vel: 82 }));
+  const degrees = steps.map((_, i) => {
+    const d = space.clamp(target + dir * (n - i));
+    return avoidRub(d, chordOf(ctx, hits[i]), space);
+  });
+  return { hits, degrees };
+}
 
 /** Motif melody built from a phrase form (call and answer), adapted to the chords. */
 function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm | null, rng: Rng): Note[] {
-  const allowed = mode === "topline" ? scalePcs(ctx.key) : pentatonicPcs(ctx.key);
+  // WACUKA's lead lives on the tones that fit every chord (A B D E G over F–G–Dm–Am);
+  // folk riffs keep the major pentatonic, minus a tone that would clash.
+  const pent = pentatonicPcs(ctx.key);
+  const pentU = pent.filter((pc) => ctx.universal.includes(pc));
+  const allowed =
+    mode === "topline"
+      ? scalePcs(ctx.key)
+      : mode === "brass-hook"
+        ? ctx.universal.length >= 4 ? ctx.universal : pent
+        : pentU.length >= 4 ? pentU : pent;
   const space = new DegreeSpace(ctx.key, allowed, ctx.lo, ctx.hi);
   const opts = MODE_OPTS[mode];
   const spanA = rhythmA.bars * STEPS_PER_BAR;
@@ -253,15 +309,19 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
   const form = rng.pick(FORMS[mode]);
   // Long loops repeat the form; the very last phrase always answers.
   const letters = Array.from({ length: count }, (_, k) => form[k % form.length]);
-  if (count === 2) letters[1] = rng.chance(0.5) ? "B" : "A'";
+  if (count === 2) letters[1] = rng.chance(mode === "brass-hook" ? 0.25 : 0.5) ? "B" : "A'";
   if (count > 1 && letters[count - 1] === "A") letters[count - 1] = "A'";
   lastForm = letters.slice(0, 4).join(" ");
   const sameBars = rhythmB && rhythmB.bars === rhythmA.bars;
 
   const baseHits = rhythmA.hits.filter((h) => h.step < spanA);
-  const motif = makeContour(baseHits, ctx, space, rng, opts, undefined, count > 1 ? "open" : "closed");
+  // The drop riff starts at home (the tonic, sometimes the 5th).
+  const mid = (ctx.lo + ctx.hi) / 2;
+  const homePc = rng.chance(0.7) ? ctx.home : mod12(ctx.home + 7);
+  const homeStart = mode === "brass-hook" && allowed.includes(homePc) ? nearestWithPc(mid, [homePc], ctx.lo, ctx.hi) : null;
+  const motif = makeContour(baseHits, ctx, space, rng, opts, homeStart === null ? undefined : space.nearest(homeStart), count > 1 ? "open" : "closed");
   const made = new Map<string, number[]>();
-  const notes: Note[] = [];
+  const phrases: { hits: RhythmHit[]; degrees: number[] }[] = [];
   let lastDegree = motif[motif.length - 1];
   const gate = mode === "folk" ? 0.9 : mode === "brass-hook" ? 0.85 : 1;
   letters.forEach((letter, k) => {
@@ -291,8 +351,29 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
       }
     }
     lastDegree = degrees[degrees.length - 1];
-    notes.push(...toNotes(hits, degrees.map((d) => space.toMidi(d)), rng, gate));
+    phrases.push({ hits, degrees });
   });
+
+  // Pickups into later phrases, where the previous phrase leaves room.
+  lastPickups = 0;
+  for (let k = 1; k < phrases.length; k++) {
+    const next = phrases[k];
+    const at = k * spanA;
+    if (!next.hits.length || next.hits[0].step !== at || !rng.chance(PICKUP[mode])) continue;
+    const pick = pickupInto(next.degrees[0], at, ctx, space, rng);
+    const prev = phrases[k - 1];
+    const from = pick.hits[0].step;
+    const keep = prev.hits.findIndex((h) => h.step >= from);
+    const kept = keep < 0 ? prev.hits.length : keep;
+    // The previous phrase must keep its shape: at most its last (held) note gets shorter.
+    if (kept < prev.hits.length || kept === 0 || from - prev.hits[kept - 1].step < 2) continue;
+    prev.hits = [...prev.hits, ...pick.hits];
+    prev.degrees = [...prev.degrees, ...pick.degrees];
+    lastPickups++;
+  }
+
+  const notes: Note[] = [];
+  for (const ph of phrases) notes.push(...toNotes(ph.hits, ph.degrees.map((d) => space.toMidi(d)), rng, gate));
   return notes;
 }
 
@@ -308,7 +389,7 @@ function vocalPool(ctx: Ctx, rng: Rng, size: number): number[] {
         const pcs = ctx.tensions ? chordPcs(slot.chord) : corePcs(slot.chord);
         const w = slot.length / STEPS_PER_BAR;
         if (pcs.includes(pc)) s += w;
-        else if (rubsSemitone(pc, chordPcs(slot.chord))) s -= 1.4 * w;
+        else if (isAvoidNote(pc, chordPcs(slot.chord))) s -= 1.4 * w;
         else s += 0.3 * w;
       }
       s /= ctx.totalSteps / STEPS_PER_BAR;
@@ -328,8 +409,8 @@ function vocalPool(ctx: Ctx, rng: Rng, size: number): number[] {
 /** Pick a pool pitch that does not rub against the chord of this hit. */
 function fitToChord(pitch: number, h: RhythmHit, pool: readonly number[], ctx: Ctx): number {
   const pcs = chordPcs(chordOf(ctx, h));
-  if (pcs.includes(mod12(pitch)) || !rubsSemitone(mod12(pitch), pcs)) return pitch;
-  const fits = pool.filter((p) => pcs.includes(mod12(p)) || !rubsSemitone(mod12(p), pcs));
+  if (!isAvoidNote(mod12(pitch), pcs)) return pitch;
+  const fits = pool.filter((p) => !isAvoidNote(mod12(p), pcs));
   if (fits.length) return fits.reduce((a, b) => (Math.abs(b - pitch) < Math.abs(a - pitch) ? b : a));
   return nearestWithPc(pitch, pcs, ctx.lo, ctx.hi) ?? pitch;
 }
@@ -420,7 +501,7 @@ function hookWindow(ctx: Ctx, rng: Rng, size: number): number[] {
       const pcs = chordPcs(slot.chord);
       const w = slot.length / STEPS_PER_BAR;
       const tones = win.filter((p) => pcs.includes(mod12(p))).length;
-      const rubs = win.filter((p) => !pcs.includes(mod12(p)) && rubsSemitone(mod12(p), pcs)).length;
+      const rubs = win.filter((p) => isAvoidNote(mod12(p), pcs)).length;
       score += w * ((tones >= 1 ? 1 : -1) - (tones === size && size > 1 ? 0.3 : 0) - rubs * 0.6);
     }
     if (win.some((p) => mod12(p) === minorTonic)) score -= 0.6 * bars;
@@ -507,16 +588,10 @@ function chopLead(ctx: Ctx, rhythm: Rhythm, rng: Rng, poolSize: number): Note[] 
 }
 
 /**
- * Stutter-house vocal: a stretched, held vowel per chord, chopped by a rhythmic
- * 1/16 gate (the "stutter"), with an accelerating 32nd roll into the loop restart.
- * In MIDI the gate becomes repeated notes, which is how a vocal sampler plays it.
+ * Fallback for loops without a tone that fits every chord: a smooth path
+ * through the chord tones that keeps common tones and moves by small steps.
  */
-/**
- * The held vowel's pitch for each chord: a smooth path through the chord tones
- * that keeps common tones (like one stretched word over the whole loop) and
- * moves by small steps otherwise.
- */
-function vowelPath(ctx: Ctx, rng: Rng): number[] {
+function smoothVowelPath(ctx: Ctx, rng: Rng): number[] {
   const target = ctx.lo + (ctx.hi - ctx.lo) * (0.55 + rng.next() * 0.25);
   const options = ctx.slots.map((slot) => {
     const r = chordRoles(slot.chord);
@@ -562,8 +637,50 @@ function vowelPath(ctx: Ctx, rng: Rng): number[] {
   return path;
 }
 
-function gatedVowelLead(ctx: Ctx, gate: Rhythm, rng: Rng): Note[] {
-  const path = vowelPath(ctx, rng);
+/**
+ * The held vowel's pitch for each chord. BUNT.'s loops have tones that fit
+ * every chord (in VI–i, VI–iv–i and VI–VII–i–VII the tonic: a chord tone, or
+ * the 9th over VII), so one stretched vowel can sit over the whole loop like
+ * "eeee" in "Clouds". Sometimes the word's second syllable moves to another
+ * such tone for the second half ("ea – sy").
+ */
+function vowelPath(ctx: Ctx, rng: Rng): { path: number[]; build: string } {
+  const tones = loopTones(ctx.slots, ctx.key).filter((t) => t.universal);
+  if (!tones.length) return { path: smoothVowelPath(ctx, rng), build: "vowel" };
+  const fifth = mod12(ctx.home + 7);
+  // Mostly the tonic, sometimes the 5th, now and then another tone most chords contain.
+  const weight = (pc: number, share: number) => (pc === ctx.home ? 7 : pc === fifth ? 2 : share);
+  const main = rng.weighted(tones, (t) => weight(t.pc, t.chordShare)).pc;
+  const target = ctx.lo + (ctx.hi - ctx.lo) * (0.45 + rng.next() * 0.3);
+  const first = nearestWithPc(target, [main], ctx.lo, ctx.hi) ?? Math.round(target);
+  const half = ctx.totalSteps / 2;
+  const early = ctx.slots.map((s) => s.start < half);
+  const pedal = ctx.slots.map(() => first);
+  if (rng.chance(0.55) || early.every((e) => e === early[0])) return { path: pedal, build: "pedal" };
+
+  // Two syllables: the other one starts on a chord that contains it, close to the first.
+  const lateFirst = rng.chance(0.5);
+  const half2 = ctx.slots.filter((_, i) => early[i] === lateFirst);
+  const onset = chordPcs(half2[0].chord);
+  let second: number | null = null;
+  let bestScore = -Infinity;
+  for (const t of tones) {
+    if (t.pc === main || !onset.includes(t.pc)) continue;
+    const p = nearestWithPc(first, [t.pc], Math.max(ctx.lo, first - 5), Math.min(ctx.hi, first + 5));
+    if (p === null) continue;
+    const owned = half2.filter((s) => chordPcs(s.chord).includes(t.pc)).length / half2.length;
+    const score = owned + (t.pc === ctx.home || t.pc === fifth ? 0.2 : 0) - Math.abs(p - first) * 0.05 + rng.next() * 0.1;
+    if (score > bestScore) {
+      bestScore = score;
+      second = p;
+    }
+  }
+  if (second === null) return { path: pedal, build: "pedal" };
+  const path = ctx.slots.map((_, i) => (early[i] === lateFirst ? second! : first));
+  return { path, build: "two" };
+}
+
+function gatedVowelLead(ctx: Ctx, gate: Rhythm, rng: Rng, path: readonly number[]): Note[] {
   const span = gate.bars * STEPS_PER_BAR;
   const hits: RhythmHit[] = [];
   for (let off = 0; off < ctx.totalSteps; off += span) hits.push(...shift(gate.hits, off));
@@ -582,7 +699,7 @@ function gatedVowelLead(ctx: Ctx, gate: Rhythm, rng: Rng): Note[] {
     // Short hits are the gate: open for about half the time until the next hit
     // (half a 16th, or half an 8th in sparser patterns); held vowels stay legato.
     const gap = Math.min(2, (hits[i + 1]?.step ?? rollStart) - h.step);
-    const len = end - h.step <= 1 ? 0.55 * Math.max(1, gap) : Math.max(0.4, (end - h.step) * 0.92);
+    const len = end - h.step <= 1 ? Math.min(end - h.step, 0.55 * Math.max(1, gap)) : Math.max(0.4, (end - h.step) * 0.92);
     notes.push({
       pitch: pitchAt(h.step, len),
       start: h.step,
@@ -610,12 +727,15 @@ export const LEAD_TARGETS: Record<LeadMode, MelodyTargets> = {
   // Fred again.. (Hooktheory stats): 2–5 pitches, 5–7 semitones, steps and repeats,
   // simple rhythm, a fixed pitch set the chords recolour (35–55 % chord tones).
   "vocal-chop": { pitches: [2, 5], range: 7, rangeMin: 4, steps: 0.85, sync: 0.35, repeat: 0.85, chordTones: 0.3, chordShare: [0.35, 0.65] },
-  // BUNT.: one held vowel per chord, gated; almost no melody.
-  "gated-vowel": { pitches: [1, 3], range: 7, steps: 0.95, sync: 0.35, repeat: 0.85, chordTones: 0.95 },
+  // BUNT.: one or two held vowels on tones that fit every chord, gated; almost no melody.
+  // Over VII the tonic is the 9th, so not every strong note is a chord tone.
+  "gated-vowel": { pitches: [1, 2], range: 5, steps: 0.95, sync: 0.35, repeat: 0.85, chordTones: 0.45, pedalEnd: true },
   // AVAION: a singable line, mostly steps, phrases that answer each other.
-  topline: { pitches: [4, 8], range: 12, steps: 0.65, sync: 0.3, repeat: 0.55, chordTones: 0.75 },
-  "brass-hook": { pitches: [3, 6], range: 10, steps: 0.55, sync: 0.4, repeat: 0.7, chordTones: 0.8 },
-  folk: { pitches: [4, 7], range: 12, steps: 0.55, sync: 0.25, repeat: 0.65, chordTones: 0.8 },
+  topline: { pitches: [4, 8], range: 12, steps: 0.6, sync: 0.3, repeat: 0.55, chordTones: 0.75 },
+  // WACUKA: a looping drop riff that changes only its ending.
+  "brass-hook": { pitches: [3, 6], range: 10, steps: 0.55, sync: 0.4, repeat: 0.85, chordTones: 0.8 },
+  // Early BUNT. (and Avicii, whom the press compares them to): stepwise, a 6th wide, ~65 % chord tones.
+  folk: { pitches: [4, 7], range: 9, steps: 0.6, sync: 0.25, repeat: 0.65, chordTones: 0.65 },
 };
 
 const CANDIDATES = 10;
@@ -633,13 +753,15 @@ function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm 
       return k % 5 === 4
         ? { notes: chordChopLead(ctx, rhythm, rng), build: "chords" }
         : { notes: chopLead(ctx, rhythm, rng, rng.weighted([2, 3, 3, 4, 4, 5].map((n) => ({ n })), () => 1).n), build: "fixed" };
-    case "gated-vowel":
-      return { notes: gatedVowelLead(ctx, rhythm, rng), build: "vowel" };
+    case "gated-vowel": {
+      const { path, build } = vowelPath(ctx, rng);
+      return { notes: gatedVowelLead(ctx, rhythm, rng, path), build };
+    }
     case "topline":
     case "folk":
     case "brass-hook": {
       const notes = motifLead(ctx, mode, rhythm, rhythmB, rng);
-      return { notes, build: lastForm };
+      return { notes, build: lastPickups ? `${lastForm} +Auftakt` : lastForm };
     }
   }
 }
@@ -655,8 +777,9 @@ export function leadLane(
   totalSteps: number,
   rng: Rng,
   targets: Partial<MelodyTargets> = {},
+  home: PitchClass = key.tonic,
 ): LeadResult {
-  const ctx: Ctx = { slots, key, lo: range[0], hi: range[1], totalSteps, tensions };
+  const ctx: Ctx = { slots, key, home, universal: universalPcs(slots, key), lo: range[0], hi: range[1], totalSteps, tensions };
   const want: MelodyTargets = { ...LEAD_TARGETS[mode], ...targets };
   const phrase = phraseStepsFor(rhythm.bars, totalSteps);
   let best: LeadResult = { notes: [], build: "" };

@@ -276,6 +276,49 @@
   ]
  },
  {
+  "id": "synco-147",
+  "name": "Synkopen-Bass (1-4-7)",
+  "lane": "bass",
+  "tags": [
+   "house",
+   "syncopated",
+   "bounce"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 104,
+    "role": "R"
+   },
+   {
+    "step": 3,
+    "len": 2,
+    "vel": 92,
+    "role": "R"
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 98,
+    "role": "R"
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 96,
+    "role": "O"
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 88,
+    "role": "A"
+   }
+  ]
+ },
+ {
   "id": "ukg-bass-01",
   "name": "2-Step-Bass",
   "lane": "bass",

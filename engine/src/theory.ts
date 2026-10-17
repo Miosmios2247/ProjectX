@@ -362,6 +362,16 @@ export function rubsSemitone(pc: PitchClass, others: readonly PitchClass[]): boo
   return others.some((o) => intervalClass(pc, o) === 1);
 }
 
+/**
+ * An avoid note over a chord: a tone a semitone above one of its tones (a ♭9
+ * against it), like the 11th over a major chord or the ♭6 over a minor chord.
+ * A semitone below (maj7, the 9th over a minor chord) is a colour, not a clash.
+ */
+export function isAvoidNote(pc: PitchClass, chord: readonly PitchClass[]): boolean {
+  const p = mod12(pc);
+  return !chord.includes(p) && chord.includes(mod12(p - 1));
+}
+
 /** Nearest MIDI note >= lo and <= hi with one of the pitch classes. */
 export function nearestWithPc(
   target: number,

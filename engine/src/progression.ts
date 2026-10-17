@@ -7,9 +7,12 @@ import {
   Key,
   Mode,
   buildChord,
+  chordPcs,
   chordRoles,
+  isAvoidNote,
   mod12,
   romanToRelative,
+  scalePcs,
   withBass,
 } from "./theory";
 import { Rng } from "./rng";
@@ -211,6 +214,40 @@ export function chordSlotForNote(slots: readonly ChordSlot[], start: number, len
   const next = slots[idx + 1];
   if (next && end - start <= 2 && start + len > end + 0.5) return next;
   return slot;
+}
+
+/** How one scale tone sits over a loop. */
+export interface LoopTone {
+  pc: number;
+  /** Share of the loop's time on which it is a chord tone. */
+  chordShare: number;
+  /** Never an avoid note: over every chord it is a chord tone or a colour (9th, 6th, maj7). */
+  universal: boolean;
+}
+
+/**
+ * Every scale tone of the key and how it fits the loop's chords. A universal
+ * tone can be held over the whole loop: BUNT. holds one vowel there, and the
+ * WACUKA lead lives on these tones.
+ */
+export function loopTones(slots: readonly ChordSlot[], key: Key): LoopTone[] {
+  const total = slots.reduce((a, s) => a + s.length, 0) || 1;
+  return scalePcs(key).map((pc) => {
+    let share = 0;
+    let universal = true;
+    for (const s of slots) {
+      const pcs = chordPcs(s.chord);
+      if (pcs.includes(pc)) share += s.length;
+      else if (isAvoidNote(pc, pcs)) universal = false;
+    }
+    return { pc, chordShare: share / total, universal };
+  });
+}
+
+export function universalPcs(slots: readonly ChordSlot[], key: Key): number[] {
+  return loopTones(slots, key)
+    .filter((t) => t.universal)
+    .map((t) => t.pc);
 }
 
 export function slotIndexAt(slots: readonly ChordSlot[], step: number): number {

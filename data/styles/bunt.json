@@ -216,7 +216,15 @@
      "rhythms": [
       {
        "id": "sub-kick",
-       "weight": 3
+       "weight": 2
+      },
+      {
+       "id": "house-offbeat-octave",
+       "weight": 2
+      },
+      {
+       "id": "synco-147",
+       "weight": 1
       },
       {
        "id": "sub-hold",
@@ -243,11 +251,19 @@
        "weight": 2
       },
       {
+       "id": "gate-16-332",
+       "weight": 2
+      },
+      {
        "id": "gate-synco",
        "weight": 1
       },
       {
        "id": "gate-16-full",
+       "weight": 1
+      },
+      {
+       "id": "gate-332",
        "weight": 1
       }
      ],
@@ -430,6 +446,10 @@
       {
        "id": "gate-held-stutter",
        "weight": 2
+      },
+      {
+       "id": "gate-16-332",
+       "weight": 1
       }
      ],
      "range": [

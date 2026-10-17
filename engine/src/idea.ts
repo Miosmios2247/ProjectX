@@ -1,18 +1,18 @@
 // Builds a complete idea (all lanes) from a style variant, key and seeds.
 
 import { Rng, createRng, deriveSeed } from "./rng";
-import { STEPS_PER_BAR, buildProgression, chooseMode } from "./progression";
+import { ProgressionTemplate, STEPS_PER_BAR, buildProgression, chooseMode } from "./progression";
 import { voiceProgression } from "./voicing";
 import { LaneId, WeightedRef, pickRef, rhythmDensity } from "./rhythm";
 import { getDrumPattern, getRhythm, getStyle, getVariant } from "./styles";
-import { chordsLane } from "./lanes/chords";
+import { chordsLane, yieldToLead } from "./lanes/chords";
 import { bassLane } from "./lanes/bass";
 import { leadLane } from "./lanes/lead";
 import { complementLead, pluckLane } from "./lanes/pluck";
 import { drumsLane } from "./lanes/drums";
 import { checkLanes } from "./check";
 import { explainIdea } from "./explain";
-import { Key } from "./theory";
+import { Key, mod12 } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
 export const ENGINE_VERSION = "0.3.0";
@@ -32,6 +32,12 @@ export function defaultLaneSeeds(seed: number): Record<SeedLane, number> {
 
 function refId(r: WeightedRef | string): string {
   return typeof r === "string" ? r : r.id;
+}
+
+/** Tonal centre of the loop: a template borrowed from the other mode keeps its own tonic (vi in major, III in minor). */
+export function loopHome(key: Key, template: ProgressionTemplate): number {
+  if (!template.sourceDegrees) return key.tonic;
+  return mod12(key.tonic + (key.mode === "major" ? 9 : 3));
 }
 
 export function autoKey(variant: StyleVariant, rng: Rng): Key {
@@ -82,6 +88,7 @@ export function generateIdea(params: IdeaParams): Idea {
     totalSteps,
     lr.fork("notes"),
     leadProfile.targets,
+    loopHome(key, template),
   );
   const leadNotes = lead.notes;
 
@@ -115,7 +122,12 @@ export function generateIdea(params: IdeaParams): Idea {
   const drumPattern = getDrumPattern(drumId);
   const drumHits = drumsLane(drumPattern, bars, dr.fork("hits"));
 
-  const { fixes } = checkLanes(slots, chordsNotes, bass.notes, leadNotes, pluckNotes, leadProfile.range);
+  // Held vowels and sung toplines get their own pitch; the keys do not double it.
+  const keys =
+    leadProfile.mode === "gated-vowel" || leadProfile.mode === "topline"
+      ? yieldToLead(chordsNotes, leadNotes, variant.lanes.chords.voicing.low)
+      : chordsNotes;
+  const { fixes } = checkLanes(slots, keys, bass.notes, leadNotes, pluckNotes, leadProfile.range);
   // The pluck answers the hook: it steps back while the lead sings and fills the gaps.
   const pluckFinal = complementLead(pluckNotes, leadNotes, pluckProfile.range, pluckProfile.mode);
 
@@ -142,7 +154,7 @@ export function generateIdea(params: IdeaParams): Idea {
     templateText: slots.map((s) => s.chord.degree).join(" – "),
     voicings,
     lanes: {
-      chords: { notes: chordsNotes, rhythmId: chordRhythmId, sound: sound("chords", variant.lanes.chords.sound) },
+      chords: { notes: keys, rhythmId: chordRhythmId, sound: sound("chords", variant.lanes.chords.sound) },
       bass: {
         notes: bass.notes,
         rhythmId: bassRhythmId,
@@ -178,6 +190,9 @@ export function generateIdea(params: IdeaParams): Idea {
       leadNotes,
       bassRhythm: getRhythm(bassRhythmId),
       pluckAnswers: pluckFinal.length > 0,
+      key,
+      slots,
+      keysYield: keys.length !== chordsNotes.length || keys.some((n, i) => n.pitch !== chordsNotes[i].pitch),
     }),
     fixes,
   };

@@ -4,10 +4,10 @@ import {
   LANES,
   STYLES,
   chordPcs,
+  chordSlotForNote,
   generateIdea,
+  isAvoidNote,
   mod12,
-  rubsSemitone,
-  slotAt,
 } from "../src/index";
 
 const variants = STYLES.flatMap((s) => s.variants.map((v) => ({ styleId: s.id, variantId: v.id })));
@@ -60,7 +60,7 @@ describe("generateIdea", () => {
     expect(c.bpm).toBe(a.bpm);
   });
 
-  it("keeps the lead monophonic and free of semitone rubs on strong beats", () => {
+  it("keeps the lead monophonic and free of avoid notes on strong beats", () => {
     for (const { styleId, variantId } of variants) {
       for (let seed = 1; seed <= 40; seed++) {
         const idea = generateIdea({ styleId, variantId, key: null, bars: 8, seed });
@@ -71,10 +71,10 @@ describe("generateIdea", () => {
         for (const n of lead) {
           const strong = Math.round(n.start) % 4 === 0 || n.len >= 3;
           if (!strong) continue;
-          const pcs = chordPcs(slotAt(idea.progression, n.start).chord);
-          const pc = mod12(n.pitch);
-          const rub = !pcs.includes(pc) && rubsSemitone(pc, pcs);
-          expect(rub, `${styleId}/${variantId} seed ${seed} ${idea.progressionText}`).toBe(false);
+          // An avoid note sits a semitone above a chord tone; a maj7 or a 9th over minor is a colour.
+          const pcs = chordPcs(chordSlotForNote(idea.progression, n.start, n.len).chord);
+          const avoid = isAvoidNote(mod12(n.pitch), pcs);
+          expect(avoid, `${styleId}/${variantId} seed ${seed} ${idea.progressionText}`).toBe(false);
         }
       }
     }

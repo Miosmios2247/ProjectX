@@ -3,7 +3,7 @@
 // beats). Lanes generate several candidates and keep the best one.
 
 import { ChordSlot, STEPS_PER_BAR, chordSlotForNote } from "./progression";
-import { chordPcs, chordRoles, mod12, rubsSemitone } from "./theory";
+import { chordPcs, chordRoles, isAvoidNote, mod12 } from "./theory";
 import { Note } from "./types";
 
 export interface MelodyTargets {
@@ -26,6 +26,11 @@ export interface MelodyTargets {
    * fixed pitch set that the chords recolour: only 35–55 % chord tones.
    */
   chordShare?: [number, number];
+  /**
+   * A held pedal (BUNT.'s vowel) may end the loop on a colour such as the 9th
+   * over VII: it is a chord tone again when the loop starts over.
+   */
+  pedalEnd?: boolean;
 }
 
 export interface MelodyReport {
@@ -111,7 +116,7 @@ export function scoreMelody(
       const core = [roles.root, roles.third, roles.fifth, ...roles.colors].filter((x) => x !== null);
       if (core.includes(pc)) strongChord++;
     }
-    if (n.len >= 2 && !pcs.includes(pc) && rubsSemitone(pc, pcs)) rubs++;
+    if (n.len >= 2 && isAvoidNote(pc, pcs)) rubs++;
   }
   const chordTones = strong ? strongChord / strong : 1;
   const chordShare = inChord / sorted.length;
@@ -131,7 +136,10 @@ export function scoreMelody(
   // The loop should end on a stable tone (root, 3rd or 5th of its chord).
   const last = sorted[sorted.length - 1];
   const lastRoles = chordRoles(chordSlotForNote(slots, last.start, last.len).chord);
-  const stableEnd = [lastRoles.root, lastRoles.third, lastRoles.fifth].includes(mod12(last.pitch));
+  const lastPcs = chordPcs(chordSlotForNote(slots, last.start, last.len).chord);
+  const stableEnd =
+    [lastRoles.root, lastRoles.third, lastRoles.fifth].includes(mod12(last.pitch)) ||
+    (!!targets.pedalEnd && !isAvoidNote(mod12(last.pitch), lastPcs));
 
   const [pMin, pMax] = targets.pitches;
   let penalty = 0;

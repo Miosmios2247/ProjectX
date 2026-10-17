@@ -56,3 +56,28 @@ export function chordsLane(
   }
   return notes;
 }
+
+/**
+ * Room for the voice: a keys note that doubles a held lead note in the same
+ * octave moves an octave down (or drops out when the chord keeps three other
+ * notes), so the vocal stays clear. "It sounds bigger when there's less" (BUNT.).
+ */
+export function yieldToLead(chords: Note[], lead: readonly Note[], low: number): Note[] {
+  const out: Note[] = [];
+  for (const c of chords) {
+    let covered = 0;
+    for (const l of lead) {
+      if (l.pitch !== c.pitch) continue;
+      covered += Math.max(0, Math.min(l.start + l.len, c.start + c.len) - Math.max(l.start, c.start));
+    }
+    if (covered < 0.4 * c.len || covered < 1.5) {
+      out.push(c);
+      continue;
+    }
+    const together = chords.filter((o) => o !== c && Math.abs(o.start - c.start) < 0.3);
+    const down = c.pitch - 12;
+    if (down >= low && !together.some((o) => o.pitch === down)) out.push({ ...c, pitch: down });
+    else if (together.length < 3) out.push(c);
+  }
+  return out;
+}
