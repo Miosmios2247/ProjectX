@@ -22,8 +22,9 @@ Akkord-Griffen und Handwerksregeln aus Tutorials
   singt die Stimme in Intro und Breakdown „roh“ statt gechoppt, im letzten Drop eine Oktave höher.
 - **BUNT.:** Der gedehnte Vokal bleibt auf einem Ton, der über jeden Akkord der Folge passt, meist
   auf dem Grundton. So kann die Stimme wie in „Clouds“ den ganzen Loop über stehen bleiben.
-  Manchmal sind es zwei Silben wie „ea-sy“. Dazu kommt ein neues Gate im 3+3+2-Rhythmus. Im
-  Song-Modus beginnt der Vokal gehalten und ohne Stottern, und im Break pumpt die Kick weiter.
+  Manchmal sind es zwei Silben wie „ea-sy“. Das Stottern ist jetzt ein Lautstärke-Gate auf einem
+  durchklingenden Vokal, wie mit ShaperBox oder LFO Tool, dazu ein neues Gate im 3+3+2-Rhythmus.
+  Im Song-Modus beginnt der Vokal gehalten und ohne Stottern, und im Break pumpt die Kick weiter.
 - **AVAION:** Jede Phrase der Topline endet auf einem Ton, der zu allen Akkorden passt. Manchmal
   führen ein bis drei Auftakt-Töne in die nächste Phrase. Der WACUKA-Hook besteht nur aus den fünf
   Tönen, die über alle Akkorde passen, und wiederholt sich mit neuem Ende. Im Song-Modus singt vor
