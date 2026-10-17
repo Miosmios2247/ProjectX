@@ -366,21 +366,22 @@
     },
     "pluck": {
      "sound": [
-      "piano-high"
+      "staccato-synth"
      ],
-     "mode": "arp",
+     "mode": "stab",
      "rhythms": [
       {
-       "id": "keys-8ths-high",
+       "id": "pluck-syncopated",
+       "weight": 2
+      },
+      {
+       "id": "house-pluck-offbeat",
        "weight": 1
       }
      ],
      "range": [
-      72,
-      91
-     ],
-     "orders": [
-      "up"
+      60,
+      84
      ]
     }
    },

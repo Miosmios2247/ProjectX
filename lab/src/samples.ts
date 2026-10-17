@@ -71,9 +71,12 @@ export async function loadSet(T: T, id: string): Promise<Record<string, ToneNS.T
   return out;
 }
 
-export async function loadKit(T: T): Promise<Partial<Record<KitSample, ToneNS.ToneAudioBuffer>>> {
+export async function loadKit(
+  T: T,
+  names: readonly KitSample[] = KIT_SAMPLES,
+): Promise<Partial<Record<KitSample, ToneNS.ToneAudioBuffer>>> {
   const entries = await Promise.all(
-    KIT_SAMPLES.map(async (k) => [k, await loadBuffer(T, `samples/kit/${k}.mp3`)] as const),
+    names.map(async (k) => [k, await loadBuffer(T, `samples/kit/${k}.mp3`)] as const),
   );
   const out: Partial<Record<KitSample, ToneNS.ToneAudioBuffer>> = {};
   for (const [k, buf] of entries) if (buf) out[k] = buf;

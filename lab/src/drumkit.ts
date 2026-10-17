@@ -122,7 +122,7 @@ export class DrumKit {
     const wanted = Object.entries(k.samples) as [DrumInst, [KitSample, number]][];
     this.ready = !wanted.length
       ? Promise.resolve()
-      : loadKit(T).then((buffers) => {
+      : loadKit(T, wanted.map(([, [sample]]) => sample)).then((buffers) => {
           if (this.disposed) return;
           for (const [inst, [sample, db]] of wanted) {
             const buf = buffers[sample];
