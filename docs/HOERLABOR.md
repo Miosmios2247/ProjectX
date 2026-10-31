@@ -1,11 +1,65 @@
-# Hör-Labor – Runde 5
+# Hör-Labor – Runde 6
 
 Das Hör-Labor ist der Prototyp aus Phase 1 (siehe [PLAN.md](PLAN.md)). Hier prüfen wir, ob das
 Musik-Gehirn wirklich nach den Künstlern klingt, bevor das VST3-Plugin gebaut wird.
 
 **Link (privat, nur für dich):** https://claude.ai/artifact/RURpPL3bJpJN2EnmkPDcWm
 
-## Neu in Runde 5: alles aus dem Plan „4 von 5“
+## Neu in Runde 6: Stimmungen
+
+Deine Frage: „Kannst du auch Stimmungen in die Akkordfolgen machen, neben den Künstlern? Also
+Euphorie, Energie, Episch …“ Jetzt gibt es unter den Künstlern eine zweite Auswahl: **Stimmung**.
+Du wählst zum Beispiel BUNT. und dazu „Euphorie“. Die Idee bleibt BUNT. (Klang, Hook, Groove),
+klingt aber euphorisch. Mit „Wie der Künstler“ bleibt alles wie bisher.
+
+### Die sechs Stimmungen
+
+| Stimmung | Typische Akkordfolgen | Was sich sonst ändert |
+|---|---|---|
+| Euphorie | VI–VII–i (steigt zum Grundton auf), I–V–vi–IV, IV–V–vi, I–♭VI–♭VII–I | mehr Dur, Akkorde und Hook höher, Tempo eher oben, offene Hi-Hats; im Song-Modus die Hook im letzten Drop eine Oktave höher |
+| Energie | i–VII–VI–VII, i und VII im schnellen Wechsel, zwei schnelle Akkorde in den Grundton | Tempo am oberen Rand, Hi-Hats laufen durch, kurze Akkord-Schläge, treibender Bass |
+| Episch | i–VI–III–VII („die epische Folge“), VI–III–VII–i, offene sus-Akkorde | lange Akkorde, weite Griffe, oft ein langer Grundton im Bass, Toms vor jedem Neustart; im Song-Modus ein doppelt so langer Aufbau |
+| Melancholie | i–iv–VI–v (ohne Auflösung), i–VI–iv, weiche Septakkorde, in Dur IV–iv–I | tiefer, leiser, Melodie in kleinen Schritten, Tempo eher unten, keine 16tel-Hats |
+| Verträumt | Imaj7–IVmaj7, Imaj7–II (lydisch), VImaj7–IIImaj7 | maj7-Klänge, lang gehaltene Akkorde, leise Drums, ruhiges Tempo |
+| Dunkel | i–♭II (phrygisch), nur Moll-Akkorde wie i–iv–v–iv, i–VI–iv–v | alles tiefer, kein Tamburin, der Shaker leiser |
+
+### So funktioniert es
+
+- **Die Akkordfolgen des Künstlers zuerst:** Jede Stimmung prüft, welche Folgen des Künstlers schon zu
+  ihr passen, zum Beispiel ob die Akkorde zum Grundton aufsteigen oder ob Moll-Akkorde überwiegen.
+  Passende Folgen kommen öfter dran, unpassende fast nie. Dazu mischt die Stimmung ihre eigenen
+  typischen Folgen. Passen die Folgen des Künstlers schlecht, übernehmen die Stimmungs-Folgen.
+- **Der Punkt an einer Stimmung** zeigt, welche Stimmungen schon in den Akkorden des Künstlers
+  stecken. Bei BUNT. ist das Euphorie, wie du vermutet hast.
+- **Gleiche Idee, andere Stimmung:** Beim Umschalten behält die Idee ihren Grundton, aber jede
+  Stimmung wählt ihre eigene Akkordfolge, manchmal auch Dur statt Moll. So hörst du den Unterschied
+  direkt.
+- **„Warum klingt das so?“** erklärt in einer eigenen Zeile, was die Stimmung ausmacht.
+- **Zweite Bewertung:** Mit Stimmung fragt das Hör-Labor zusätzlich „Trifft es die Stimmung?“ (1–5,
+  freiwillig).
+- **Stimmungs-Blindtest:** Im Blindtest gibt es den Umschalter „Raten: Künstler | Stimmung“. Bei
+  „Stimmung“ läuft ein Loop mit einer zufälligen Stimmung, und du tippst, welche es ist. Raten wäre
+  17 %.
+- **Auswertung:** Eine neue Tabelle zeigt pro Stimmung die Bewertungen, wie gut die Stimmung
+  getroffen ist und wie oft sie im Blindtest erkannt wurde.
+- **MIDI:** Der Dateiname enthält die Stimmung, zum Beispiel `ProjectX_Bunt-StutterHouse-Euphorie_…`.
+
+### Ehrlich gesagt
+
+Die Stimmungs-Regeln stammen aus allgemeinem Musikwissen: Dur klingt heller als Moll, schnell und
+hoch klingt energischer als langsam und tief, und es gibt typische Folgen aus Pop, Trance und
+Filmmusik. Eine eigene Recherche zu Stimmungen bei Fred again.., AVAION und BUNT. gibt es dafür
+noch nicht. Deshalb sind deine Bewertungen hier besonders wichtig. Sie zeigen, welche Stimmungen
+wirklich wirken und wo ich nachschärfen muss.
+
+### Was du jetzt tun kannst (etwa 20–30 Minuten)
+
+1. Wähle für jeden Künstler eine Hauptvariante und hör dir 2–3 Stimmungen an. Bewerte jeweils den
+   Stil und „Trifft es die Stimmung?“.
+2. Spiel 10–15 Runden Stimmungs-Blindtest.
+3. Die Aufgaben aus Runde 5 (Aufnahmen im Stimmen-Studio, Duelle) bleiben offen und helfen weiter.
+
+## Seit Runde 5 dabei: alles aus dem Plan „4 von 5“
 
 Der Plan [PLAN-4-VON-5.md](PLAN-4-VON-5.md) beschreibt, was jedem Künstler noch zu 4 von 5 fehlt.
 Er war auf die Runden 5 bis 7 verteilt. In dieser Runde sind alle Bausteine auf einmal gebaut, die
@@ -229,8 +283,9 @@ Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im 
 | BUNT. | Folk-House (früh) | 124–127 | vi–IV–I–I (Dur) | Mundharmonika oder Bläser, Gitarre | Old Guitar, Unbreakable, Coming Home, Harmonica |
 
 Bewertungen aus früheren Runden bleiben gespeichert. Runde 2 ist an der Version `0.2.0`
-erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0` und Runde 5 an `0.5.0`. Seit Runde 3 steht dort
-auch, ob du im Song-Modus und mit eigener Stimme bewertet hast.
+erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0`, Runde 5 an `0.5.0` und Runde 6 an `0.6.0`. Seit
+Runde 3 steht dort auch, ob du im Song-Modus und mit eigener Stimme bewertet hast, seit Runde 6
+auch die Stimmung.
 
 ## Was mit den Bewertungen passiert
 
@@ -245,12 +300,15 @@ npm install
 npm test              # Theorie, Voicings, Ideen, MIDI/ZIP
 npm run build:lab     # baut lab/dist/hoer-labor.html (eine Datei)
 npm run idea -- --style avaion --variant wacuka --seed 7 --bars 8 --zip /tmp/idee.zip
+npm run idea -- --style bunt --variant stutter --mood euphorie
 ```
 
 - `engine/` – Musik-Gehirn (TypeScript, ohne Abhängigkeiten): Theorie, Voicings, Akkordfolgen,
   Spuren-Generatoren, Musik-Kritiker (`critic.ts`), Musik-TÜV, Erklärungen (`explain.ts`),
   MIDI- und ZIP-Export
-- `data/` – Stil-Profile und Rhythmus-Bibliothek als JSON
+- `data/` – Stil-Profile und Rhythmus-Bibliothek als JSON; `data/moods.json` enthält die Stimmungen
+  (eigene Akkordfolgen, Farben, Tempo-Bereich, Tonlage, Rhythmus-Vorlieben, Drums), angewendet von
+  `engine/src/mood.ts`
 - `lab/` – die Hör-Labor-Seite (UI, Tone.js-Klänge, Speicher); `lab/samples/` enthält die
   Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`);
   `lab/src/voice-analysis.ts` erkennt Silben und Tonhöhe der eigenen Stimme,
