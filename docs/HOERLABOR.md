@@ -298,7 +298,7 @@ die Stil-Profile in `data/styles/` und die Rhythmen in `data/rhythms/` an.
 ```bash
 npm install
 npm test              # Theorie, Voicings, Ideen, MIDI/ZIP
-npm run build:lab     # baut lab/dist/hoer-labor.html (eine Datei)
+npm run build:lab     # baut lab/dist/hoer-labor.html (eine Datei) und lab/dist/index.html (vollständiges Dokument)
 npm run idea -- --style avaion --variant wacuka --seed 7 --bars 8 --zip /tmp/idee.zip
 npm run idea -- --style bunt --variant stutter --mood euphorie
 ```
