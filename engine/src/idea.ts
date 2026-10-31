@@ -12,10 +12,11 @@ import { complementLead, pluckLane } from "./lanes/pluck";
 import { drumsLane } from "./lanes/drums";
 import { checkLanes } from "./check";
 import { explainIdea } from "./explain";
+import { applyMood, getMood, moodArrangement, moodDrums, moodDynamics, moodTempo } from "./mood";
 import { Key, mod12 } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
-export const ENGINE_VERSION = "0.5.0";
+export const ENGINE_VERSION = "0.6.0";
 
 export type SeedLane = LaneId | "drums";
 export const SEED_LANES: SeedLane[] = ["chords", "bass", "lead", "pluck", "drums"];
@@ -47,24 +48,30 @@ export function autoKey(variant: StyleVariant, rng: Rng): Key {
 
 export function generateIdea(params: IdeaParams): Idea {
   const style = getStyle(params.styleId);
-  const variant = getVariant(params.styleId, params.variantId);
+  // A mood reshapes the variant (loops, colours, ranges, rhythms); without one nothing changes.
+  const mood = params.mood ? getMood(params.mood) : null;
+  const own = getVariant(params.styleId, params.variantId);
+  const variant = mood ? applyMood(own, mood) : own;
   const base = createRng(params.seed);
   const seeds = { ...defaultLaneSeeds(params.seed), ...(params.laneSeeds ?? {}) };
   const key = params.key ?? autoKey(variant, base.fork("key"));
-  const bpm = params.bpm ?? base.fork("bpm").int(variant.tempo[0], variant.tempo[1]);
+  const bpm =
+    params.bpm ?? (mood ? moodTempo(variant.tempo, mood, base.fork("bpm")) : base.fork("bpm").int(variant.tempo[0], variant.tempo[1]));
   const bars = params.bars;
   const totalSteps = bars * STEPS_PER_BAR;
 
   // Harmony and chords
   const hr = createRng(seeds.chords);
-  const { slots, template } = buildProgression(variant.harmony, key, bars, hr.fork("progression"));
+  // Each mood draws its own loop: switching the mood of one idea really changes the chords.
+  const { slots, template } = buildProgression(variant.harmony, key, bars, hr.fork(mood ? `progression:${mood.id}` : "progression"));
   const voicings = voiceProgression(
     slots.map((s) => s.chord),
     variant.lanes.chords.voicing,
     hr.fork("voicing"),
   );
   const chordRhythmId = pickRef(variant.lanes.chords.rhythms, hr.fork("rhythm"));
-  const chordsNotes = chordsLane(slots, voicings, getRhythm(chordRhythmId), totalSteps, hr.fork("notes"));
+  const chordsPlayed = chordsLane(slots, voicings, getRhythm(chordRhythmId), totalSteps, hr.fork("notes"));
+  const chordsNotes = mood ? moodDynamics(chordsPlayed, mood) : chordsPlayed;
 
   // Bass
   const br = createRng(seeds.bass);
@@ -121,7 +128,8 @@ export function generateIdea(params: IdeaParams): Idea {
   const dr = createRng(seeds.drums);
   const drumId = pickRef(variant.drums, dr.fork("pattern"));
   const drumPattern = getDrumPattern(drumId);
-  const drumHits = drumsLane(drumPattern, bars, dr.fork("hits"));
+  const drumsPlayed = drumsLane(drumPattern, bars, dr.fork("hits"));
+  const drumHits = mood ? moodDrums(drumsPlayed, mood, bars, bpm, dr.fork("mood")) : drumsPlayed;
 
   // Held vowels and sung toplines get their own pitch; the keys do not double it.
   const keys =
@@ -130,7 +138,9 @@ export function generateIdea(params: IdeaParams): Idea {
       : chordsNotes;
   const { fixes } = checkLanes(slots, keys, bass.notes, leadNotes, pluckNotes, leadProfile.range);
   // The pluck answers the hook: it steps back while the lead sings and fills the gaps.
-  const pluckFinal = complementLead(pluckNotes, leadNotes, pluckProfile.range, pluckProfile.mode);
+  const pluckAnswer = complementLead(pluckNotes, leadNotes, pluckProfile.range, pluckProfile.mode);
+  const pluckFinal = mood ? moodDynamics(pluckAnswer, mood) : pluckAnswer;
+  const arrangement = variant.arrangement ?? style.arrangement;
 
   const sound = (lane: LaneId, refs: (WeightedRef | string)[]) =>
     pickRef(refs, createRng(seeds[lane]).fork("sound"));
@@ -143,6 +153,8 @@ export function generateIdea(params: IdeaParams): Idea {
     variantId: variant.id,
     artist: style.artist,
     variantName: variant.name,
+    mood: mood?.id ?? null,
+    moodName: mood?.name ?? null,
     key,
     bpm,
     swing: variant.swing,
@@ -178,7 +190,7 @@ export function generateIdea(params: IdeaParams): Idea {
     drums: { patternId: drumId, kit: variant.mix.drumKit, hits: drumHits },
     mix: variant.mix,
     soundHints: variant.soundHints,
-    arrangement: variant.arrangement ?? style.arrangement,
+    arrangement: mood ? moodArrangement(arrangement, mood) : arrangement,
     insights: explainIdea({
       style,
       variant,
@@ -194,6 +206,7 @@ export function generateIdea(params: IdeaParams): Idea {
       key,
       slots,
       keysYield: keys.length !== chordsNotes.length || keys.some((n, i) => n.pitch !== chordsNotes[i].pitch),
+      mood,
     }),
     fixes,
   };

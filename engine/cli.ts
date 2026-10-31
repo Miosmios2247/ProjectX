@@ -1,8 +1,11 @@
 // Generate one idea on the command line, e.g.
 //   npm run idea -- --style fred-again --variant emotional-house --seed 42 --key 9-minor --bars 4 --zip out.zip
+//   npm run idea -- --style bunt --variant stutter --mood euphorie
 
 import { writeFileSync } from "node:fs";
 import {
+  MOODS,
+  MoodId,
   STYLES,
   generateIdea,
   ideaToMidiFiles,
@@ -25,15 +28,21 @@ if (!style) {
 }
 const variantId = arg("variant") ?? style.variants[0].id;
 const keyArg = arg("key");
+const moodArg = arg("mood");
+if (moodArg && !MOODS.some((m) => m.id === moodArg)) {
+  console.error(`Stimmungen: ${MOODS.map((m) => m.id).join(", ")}`);
+  process.exit(1);
+}
 const idea = generateIdea({
   styleId,
   variantId,
   key: keyArg ? parseKeyId(keyArg) : null,
   bars: arg("bars") === "8" ? 8 : 4,
   seed: Number(arg("seed") ?? 1),
+  mood: (moodArg as MoodId | undefined) ?? null,
 });
 
-console.log(`${idea.artist} · ${idea.variantName} · ${keyName(idea.key)} · ${idea.bpm} BPM · Seed ${idea.params.seed}`);
+console.log(`${idea.artist} · ${idea.variantName}${idea.moodName ? ` · Stimmung ${idea.moodName}` : ""} · ${keyName(idea.key)} · ${idea.bpm} BPM · Seed ${idea.params.seed}`);
 console.log(`Akkorde: ${idea.progressionText}  (${idea.templateText})`);
 for (const [lane, data] of Object.entries(idea.lanes)) {
   const pitches = data.notes.map((n) => n.pitch);

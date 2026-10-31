@@ -29,6 +29,9 @@ export interface ProgressionTemplate {
   like?: string;
   /** Degrees as written in the style profile (before moving to the relative mode). */
   sourceDegrees?: string[];
+  /** A loop a mood brings along (not one of the artist's), with what it does in plain words. */
+  mood?: string;
+  note?: string;
 }
 
 export interface HarmonyProfile {

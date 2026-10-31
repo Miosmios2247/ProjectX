@@ -6,18 +6,23 @@ import {
   IdeaParams,
   KEYS,
   LaneId,
+  MOODS,
+  MoodId,
   STYLES,
   SeedLane,
   fileStem,
   generateIdea,
   getDrumPattern,
+  getMood,
   getRhythm,
+  getVariant,
   ideaToMidiFiles,
   keyId,
   keyName,
   keyShortName,
   parseKeyId,
   randomSeed,
+  typicalMoods,
   zip,
 } from "../../engine/src/index";
 import { DEFAULT_OPTIONS, PlayForm, Player, PlayLane, SoundMode, renderOffline } from "./audio";
@@ -41,7 +46,7 @@ import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 import type * as ToneNS from "tone";
 
-const LAB_VERSION = "0.5.0";
+const LAB_VERSION = "0.6.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",
@@ -81,6 +86,8 @@ interface ExploreState {
   seed: number;
   laneSeeds: Partial<Record<SeedLane, number>>;
   bpm: number | null;
+  /** A mood next to the artist (round 6); null = the artist's own mix. */
+  mood?: MoodId | null;
 }
 
 interface HistoryEntry {
@@ -100,17 +107,22 @@ const state = {
     seed: randomSeed(),
     laneSeeds: {},
     bpm: null,
+    mood: null,
   } as ExploreState,
   idea: null as Idea | null,
   exploreIdea: null as Idea | null,
   muted: new Set<PlayLane>(),
   form: "loop" as PlayForm,
   rating: null as number | null,
+  /** "Trifft es die Stimmung?" (only with a mood). */
+  moodRating: null as number | null,
   issues: new Set<string>(),
   history: [] as HistoryEntry[],
   rated: new Set<string>(),
   blind: {
     round: 0,
+    /** Guess the artist, or the mood (round 6). */
+    kind: "artist" as "artist" | "mood",
     idea: null as Idea | null,
     guessed: null as string | null,
     docId: null as string | null,
@@ -166,7 +178,7 @@ function fmt(n: number, digits = 1): string {
 }
 
 function ideaKey(idea: Idea): string {
-  return `${idea.styleId}/${idea.variantId}/${keyId(idea.key)}/${idea.bars}/${JSON.stringify(idea.seeds)}`;
+  return `${idea.styleId}/${idea.variantId}/${idea.mood ?? "-"}/${keyId(idea.key)}/${idea.bars}/${JSON.stringify(idea.seeds)}`;
 }
 
 function cssVar(name: string): string {
@@ -181,7 +193,9 @@ function savePrefs(): void {
         styleId: state.explore.styleId,
         variantId: state.explore.variantId,
         bars: state.explore.bars,
+        mood: state.explore.mood ?? null,
         blindSound: state.blind.soundMode,
+        blindKind: state.blind.kind,
         form: state.form,
       }),
     );
@@ -201,6 +215,8 @@ function loadPrefs(): void {
       state.explore.variantId = p.variantId;
     }
     if (p.bars === 4 || p.bars === 8) state.explore.bars = p.bars;
+    if (p.mood === null || MOODS.some((m) => m.id === p.mood)) state.explore.mood = p.mood ?? null;
+    if (p.blindKind === "artist" || p.blindKind === "mood") state.blind.kind = p.blindKind;
     if (p.blindSound === "style" || p.blindSound === "neutral") state.blind.soundMode = p.blindSound;
     if (p.form === "loop" || p.form === "song") state.form = p.form;
   } catch {
@@ -220,6 +236,7 @@ function paramsOf(s: ExploreState): IdeaParams {
     seed: s.seed,
     laneSeeds: { ...s.laneSeeds },
     bpm: s.bpm,
+    mood: s.mood ?? null,
   };
 }
 
@@ -228,7 +245,7 @@ function regenerate(pushHistory = true): void {
   state.exploreIdea = idea;
   if (pushHistory) {
     const tag = (idea.seeds.chords ^ idea.seeds.bass ^ idea.seeds.lead ^ idea.seeds.pluck ^ idea.seeds.drums) >>> 0;
-    const label = `${idea.artist} · ${idea.variantName} · ${keyShortName(idea.key)} · ${idea.bpm} BPM · ${idea.bars}T · #${tag.toString(36).slice(-4)}`;
+    const label = `${idea.artist} · ${idea.variantName}${idea.moodName ? ` · ${idea.moodName}` : ""} · ${keyShortName(idea.key)} · ${idea.bpm} BPM · ${idea.bars}T · #${tag.toString(36).slice(-4)}`;
     state.history = [{ label, params: structuredClone(state.explore) }, ...state.history].slice(0, 12);
   }
   if (state.mode === "explore") show(idea);
@@ -274,6 +291,7 @@ function renderArtists(): void {
         state.explore.bpm = null;
         resetRating();
         renderArtists();
+        renderMoods();
         regenerate();
       });
       chips.append(b);
@@ -281,6 +299,40 @@ function renderArtists(): void {
     card.append(chips);
     wrap.append(card);
   }
+}
+
+/** Mood chips: "Wie der Künstler" or one of the moods; a dot marks the moods the artist's own chords carry. */
+function renderMoods(): void {
+  const wrap = $("mood-chips");
+  wrap.replaceChildren();
+  const variant = getVariant(state.explore.styleId, state.explore.variantId);
+  const style = STYLES.find((s) => s.id === state.explore.styleId)!;
+  const typical = typicalMoods(variant);
+  const current = state.explore.mood ?? null;
+  const pick = (mood: MoodId | null) => {
+    if (current === mood) return;
+    state.explore.mood = mood;
+    // The mood sets its own tempo inside the style's range.
+    state.explore.bpm = null;
+    resetRating();
+    renderMoods();
+    regenerate();
+  };
+  const own = h("button", { type: "button", class: "variant mood-chip", "aria-pressed": String(current === null), title: "Die übliche Mischung des Künstlers" }, "Wie der Künstler");
+  own.addEventListener("click", () => pick(null));
+  wrap.append(own);
+  for (const m of MOODS) {
+    const isTypical = typical.includes(m.id);
+    const b = h(
+      "button",
+      { type: "button", class: `variant mood-chip${isTypical ? " is-typical" : ""}`, "aria-pressed": String(current === m.id), title: m.blurb },
+      m.name,
+    );
+    b.addEventListener("click", () => pick(m.id));
+    wrap.append(b);
+  }
+  const names = typical.map((id) => getMood(id).name).join(" und ");
+  $("mood-hint").textContent = `Der Punkt zeigt, welche Stimmungen schon in den Akkorden von ${style.artist} (${variant.name}) stecken: ${names}. Jede Stimmung verändert vor allem die Akkordfolge, dazu Tempo, Tonlage, Rhythmus und Drums. Klang und Hook bleiben die des Künstlers.`;
 }
 
 function renderKeySelect(): void {
@@ -394,7 +446,11 @@ function renderIdea(): void {
     return;
   }
   title.textContent =
-    state.mode === "duel" ? `${idea.artist} · ${idea.variantName} · Version ${state.duel.current + 1}` : hidden ? "Unbekannter Loop" : `${idea.artist} · ${idea.variantName}`;
+    state.mode === "duel"
+      ? `${idea.artist} · ${idea.variantName} · Version ${state.duel.current + 1}`
+      : hidden
+        ? "Unbekannter Loop"
+        : `${idea.artist} · ${idea.variantName}${idea.moodName ? ` · ${idea.moodName}` : ""}`;
   meta.textContent = `${keyName(idea.key)} · ${idea.bpm} BPM · ${idea.bars} Takte`;
   const refs = $("idea-refs");
   refs.replaceChildren();
@@ -424,13 +480,23 @@ function renderIdea(): void {
   $("hints").hidden = hidden;
   $("why-list").replaceChildren(...idea.insights.map((t) => h("li", {}, t)));
   $("why").hidden = hidden;
-  $("why-title").textContent = `Warum klingt das nach ${idea.artist}?`;
+  $("why-title").textContent = idea.moodName ? `Warum klingt das so? (${idea.artist}, ${idea.moodName})` : `Warum klingt das nach ${idea.artist}?`;
   const q = $("rating-q");
   q.replaceChildren(
     document.createTextNode("Wie sehr klingt das nach "),
     h("strong", {}, idea.artist),
     document.createTextNode(` (${idea.variantName})?`),
   );
+  const moodRating = $("mood-rating");
+  moodRating.hidden = !idea.mood;
+  if (idea.moodName) {
+    $("mood-q").replaceChildren(
+      document.createTextNode("Trifft es die Stimmung "),
+      h("strong", {}, `„${idea.moodName}“`),
+      document.createTextNode("? "),
+      h("span", { class: "opt" }, "optional"),
+    );
+  }
   ($("download") as HTMLButtonElement).disabled = hidden;
   ($("key") as HTMLSelectElement).disabled = blind;
 }
@@ -455,6 +521,7 @@ function buildStars(containerId: string, onPick: (v: number) => void): void {
 
 function renderRatingControls(): void {
   renderStars("stars", state.rating);
+  renderStars("mood-stars", state.moodRating);
   for (const b of $("issues").querySelectorAll<HTMLButtonElement>("button")) {
     b.setAttribute("aria-pressed", String(state.issues.has(b.dataset.id ?? "")));
   }
@@ -465,6 +532,7 @@ function renderRatingControls(): void {
 
 function resetRating(): void {
   state.rating = null;
+  state.moodRating = null;
   state.issues.clear();
   const c = document.getElementById("comment") as HTMLTextAreaElement | null;
   if (c) c.value = "";
@@ -503,6 +571,7 @@ function renderHistory(): void {
       renderLength();
       resetRating();
       renderArtists();
+      renderMoods();
       if (state.mode !== "explore") setMode("explore");
       regenerate(false);
     });
@@ -606,9 +675,10 @@ function blindCell(list: StoredRating[]): HTMLElement {
 function renderResults(): void {
   const all = store.ratings;
   const explore = all.filter((r) => r.mode === "entdecken" && typeof r.rating === "number");
-  const blind = all.filter((r) => r.mode === "blindtest" && typeof r.correct === "boolean");
+  const blind = all.filter((r) => r.mode === "blindtest" && typeof r.correct === "boolean" && r.guessKind !== "mood");
+  const moodBlind = all.filter((r) => r.mode === "blindtest" && typeof r.correct === "boolean" && r.guessKind === "mood");
   const duels = all.filter((r) => r.mode === "duell" && !!r.winner && !!r.duelId);
-  $("kpi-count").textContent = String(explore.length + blind.length + duels.length);
+  $("kpi-count").textContent = String(explore.length + blind.length + moodBlind.length + duels.length);
   $("kpi-avg").textContent = explore.length ? fmt(avg(explore.map((r) => r.rating ?? 0))) : "–";
   const correct = blind.filter((r) => r.correct).length;
   $("kpi-blind").textContent = blind.length ? `${Math.round((correct / blind.length) * 100)} %` : "–";
@@ -645,6 +715,24 @@ function renderResults(): void {
   }
   $("kpi-goal").textContent = `${atGoal}/${variants}`;
 
+  // Moods: does each one sound like itself, and does the artist survive it?
+  const mbody = $("mood-body");
+  mbody.replaceChildren();
+  const moodRow = (label: string, ex: StoredRating[], bl: StoredRating[] | null) => {
+    const hits = ex.filter((r) => typeof r.moodRating === "number").map((r) => r.moodRating ?? 0);
+    const tr = h("tr");
+    tr.append(
+      h("td", {}, label),
+      h("td", { class: "num" }, String(ex.length)),
+      h("td", { class: "num" }, ex.length ? fmt(avg(ex.map((r) => r.rating ?? 0))) : "–"),
+      h("td", { class: "num" }, hits.length ? `${fmt(avg(hits))} (${hits.length})` : "–"),
+      bl ? blindCell(bl) : h("td", { class: "num" }, "–"),
+    );
+    mbody.append(tr);
+  };
+  moodRow("Wie der Künstler", explore.filter((r) => !r.mood), null);
+  for (const m of MOODS) moodRow(m.name, explore.filter((r) => r.mood === m.id), moodBlind.filter((r) => r.mood === m.id));
+
   const dbody = $("duel-body");
   dbody.replaceChildren();
   for (const d of DUELS) {
@@ -671,13 +759,19 @@ function renderResults(): void {
 }
 
 function renderBlindScore(): void {
+  const moods = state.blind.kind === "mood";
   const mine = store.ratings.filter(
-    (r) => r.mode === "blindtest" && typeof r.correct === "boolean" && (!store.raterId || r.raterId === store.raterId),
+    (r) =>
+      r.mode === "blindtest" &&
+      typeof r.correct === "boolean" &&
+      (r.guessKind === "mood") === moods &&
+      (!store.raterId || r.raterId === store.raterId),
   );
   const correct = mine.filter((r) => r.correct).length;
+  const chance = moods ? `Raten wäre ${Math.round(100 / MOODS.length)} %.` : "Raten wäre 33 %.";
   $("blind-score").textContent = mine.length
-    ? `Deine Trefferquote: ${correct} von ${mine.length} (${Math.round((correct / mine.length) * 100)} %). Raten wäre 33 %.`
-    : "Noch keine Runde gespielt. Raten wäre 33 %.";
+    ? `Deine Trefferquote: ${correct} von ${mine.length} (${Math.round((correct / mine.length) * 100)} %). ${chance}`
+    : `Noch keine Runde gespielt. ${chance}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -714,6 +808,7 @@ function buildDoc(idea: Idea, mode: RatingDoc["mode"], extra: Partial<RatingDoc>
     muted: [...state.muted],
     form: mode === "entdecken" ? state.form : "loop",
     ownVoice: !!player?.usesOwnVoice(idea),
+    mood: idea.mood,
     rating: null,
     issues: [],
     comment: "",
@@ -732,7 +827,9 @@ async function saveRating(next: boolean): Promise<void> {
   ($("save-only") as HTMLButtonElement).disabled = true;
   const comment = ($("comment") as HTMLTextAreaElement).value.trim().slice(0, 2000);
   try {
-    await store.add(buildDoc(idea, "entdecken", { rating: state.rating, issues: [...state.issues], comment }));
+    await store.add(
+      buildDoc(idea, "entdecken", { rating: state.rating, moodRating: idea.mood ? state.moodRating : null, issues: [...state.issues], comment }),
+    );
     state.rated.add(ideaKey(idea));
     toast(store.status === "online" ? "Bewertung gespeichert" : "Bewertung in diesem Browser gespeichert");
     resetRating();
@@ -845,12 +942,15 @@ async function download(): Promise<void> {
 async function startRound(): Promise<void> {
   const style = STYLES[Math.floor(Math.random() * STYLES.length)];
   const variant = style.variants[Math.floor(Math.random() * style.variants.length)];
+  // Guessing the mood: any artist, a random mood.
+  const mood = state.blind.kind === "mood" ? MOODS[Math.floor(Math.random() * MOODS.length)].id : null;
   const idea = generateIdea({
     styleId: style.id,
     variantId: variant.id,
     key: null,
     bars: state.explore.bars,
     seed: randomSeed(),
+    mood,
   });
   state.blind.round++;
   state.blind.idea = idea;
@@ -872,15 +972,16 @@ async function startRound(): Promise<void> {
   }
 }
 
-async function guess(styleId: string): Promise<void> {
+async function guess(id: string): Promise<void> {
   const idea = state.blind.idea;
   if (!idea || state.blind.guessed) return;
-  state.blind.guessed = styleId;
-  const correct = styleId === idea.styleId;
+  state.blind.guessed = id;
+  const kind = state.blind.kind;
+  const correct = kind === "mood" ? id === idea.mood : id === idea.styleId;
   renderBlind();
   renderIdea();
   try {
-    state.blind.docId = await store.add(buildDoc(idea, "blindtest", { guess: styleId, correct }));
+    state.blind.docId = await store.add(buildDoc(idea, "blindtest", { guess: id, correct, guessKind: kind }));
   } catch (e) {
     toast(errorText(e));
   }
@@ -898,6 +999,19 @@ async function rateBlind(v: number): Promise<void> {
   }
 }
 
+/** Three artists, or the six moods. */
+function renderGuessButtons(): void {
+  const grid = $("guess-buttons");
+  grid.replaceChildren();
+  grid.classList.toggle("is-moods", state.blind.kind === "mood");
+  const options = state.blind.kind === "mood" ? MOODS.map((m) => ({ id: m.id, label: m.name })) : STYLES.map((s) => ({ id: s.id, label: s.artist }));
+  for (const o of options) {
+    const b = h("button", { type: "button", class: "btn guess-btn" }, o.label);
+    b.addEventListener("click", () => void guess(o.id));
+    grid.append(b);
+  }
+}
+
 function renderBlind(): void {
   const b = state.blind;
   $("blind-round").textContent = b.idea ? `Runde ${b.round}` : "Bereit, wenn du es bist.";
@@ -905,16 +1019,22 @@ function renderBlind(): void {
   $("guess-buttons").hidden = !b.idea || !!b.guessed;
   $("reveal").hidden = !b.guessed;
   if (b.guessed && b.idea) {
-    const ok = b.guessed === b.idea.styleId;
+    const moods = b.kind === "mood";
+    const ok = moods ? b.guessed === b.idea.mood : b.guessed === b.idea.styleId;
     const verdict = $("verdict");
     verdict.dataset.ok = String(ok);
     verdict.replaceChildren(
       h("span", { class: "verdict-icon", "aria-hidden": "true" }, ok ? "✓" : "✕"),
       h("span", {}, ok ? "Richtig. " : "Nicht ganz. "),
-      document.createTextNode(`Das war ${b.idea.artist} · ${b.idea.variantName}.`),
+      document.createTextNode(
+        moods ? `Das war „${b.idea.moodName}“ (${b.idea.artist} · ${b.idea.variantName}).` : `Das war ${b.idea.artist} · ${b.idea.variantName}.`,
+      ),
     );
     renderStars("blind-stars", b.quality);
   }
+  $("guess-title").textContent = b.kind === "mood" ? "Welche Stimmung ist das?" : "Wer ist das?";
+  $("kind-artist").setAttribute("aria-pressed", String(b.kind === "artist"));
+  $("kind-mood").setAttribute("aria-pressed", String(b.kind === "mood"));
   $("snd-style").setAttribute("aria-pressed", String(b.soundMode === "style"));
   $("snd-neutral").setAttribute("aria-pressed", String(b.soundMode === "neutral"));
   renderBlindScore();
@@ -927,6 +1047,7 @@ function setMode(mode: Mode): void {
   $("tab-blind").setAttribute("aria-selected", String(mode === "blind"));
   $("tab-duel").setAttribute("aria-selected", String(mode === "duel"));
   $("artists").hidden = mode !== "explore";
+  $("moods").hidden = mode !== "explore";
   $("blind-intro").hidden = mode !== "blind";
   $("duel-intro").hidden = mode !== "duel";
   $("rating-form").hidden = mode !== "explore";
@@ -1541,6 +1662,10 @@ function wire(): void {
     state.rating = v;
     renderRatingControls();
   });
+  buildStars("mood-stars", (v) => {
+    state.moodRating = v;
+    renderRatingControls();
+  });
   const issues = $("issues");
   for (const i of ISSUES) {
     const b = h("button", { type: "button", class: "chip", "data-id": i.id, "aria-pressed": "false" }, i.label);
@@ -1559,12 +1684,22 @@ function wire(): void {
 
   $("blind-start").addEventListener("click", () => void startRound());
   $("blind-next").addEventListener("click", () => void startRound());
-  const guesses = $("guess-buttons");
-  for (const style of STYLES) {
-    const b = h("button", { type: "button", class: "btn guess-btn" }, style.artist);
-    b.addEventListener("click", () => void guess(style.id));
-    guesses.append(b);
-  }
+  renderGuessButtons();
+  const setKind = (kind: "artist" | "mood") => {
+    if (state.blind.kind === kind) return;
+    state.blind.kind = kind;
+    // A new kind of question starts a new round.
+    state.blind.idea = null;
+    state.blind.guessed = null;
+    if (player?.playing) player.stop();
+    savePrefs();
+    renderGuessButtons();
+    if (state.mode === "blind") show(null);
+    renderPlay();
+    renderBlind();
+  };
+  $("kind-artist").addEventListener("click", () => setKind("artist"));
+  $("kind-mood").addEventListener("click", () => setKind("mood"));
   buildStars("blind-stars", (v) => void rateBlind(v));
   const setSound = (m: SoundMode) => {
     state.blind.soundMode = m;
@@ -1615,6 +1750,7 @@ function boot(data: unknown): void {
   if (d.blindSound === "style" || d.blindSound === "neutral") state.blind.soundMode = d.blindSound;
   buildLanes();
   renderArtists();
+  renderMoods();
   renderKeySelect();
   renderLength();
   renderForm();

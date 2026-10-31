@@ -131,7 +131,8 @@ export function fileStem(idea: Idea): string {
       .map((w) => w[0].toUpperCase() + w.slice(1))
       .join("");
   const key = keyShortName(idea.key);
-  return `ProjectX_${clean(idea.artist)}-${clean(idea.variantName)}_${key}_${idea.bpm}bpm_${idea.params.seed}`;
+  const mood = idea.moodName ? `-${clean(idea.moodName)}` : "";
+  return `ProjectX_${clean(idea.artist)}-${clean(idea.variantName)}${mood}_${key}_${idea.bpm}bpm_${idea.params.seed}`;
 }
 
 export interface MidiFile {

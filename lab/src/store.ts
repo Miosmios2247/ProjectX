@@ -40,6 +40,12 @@ export interface RatingDoc {
   reference?: { name: string; from: number; ref: unknown; idea: unknown };
   /** Hook-Summer (from lab 0.5): statistics of a hummed hook, never the melody. */
   hum?: { song: string; bpm: number; stats: unknown };
+  /** Mood next to the artist (from lab 0.6), null = the artist's own mix. */
+  mood?: string | null;
+  /** "Trifft es die Stimmung?" 1–5 (from lab 0.6). */
+  moodRating?: number | null;
+  /** Blind test (from lab 0.6): guessing the artist (default) or the mood. */
+  guessKind?: "artist" | "mood";
 }
 
 export type StoredRating = RatingDoc & { id: string };

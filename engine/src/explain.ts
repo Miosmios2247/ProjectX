@@ -5,6 +5,7 @@ import { ChordSlot, ProgressionTemplate, universalPcs } from "./progression";
 import { Rhythm } from "./rhythm";
 import { Key, mod12, pcName } from "./theory";
 import { LeadMode, Note, StyleProfile, StyleVariant } from "./types";
+import { Mood, explainMood } from "./mood";
 
 const FORM_TEXT: Record<string, string> = {
   "A B": "Frage und Antwort",
@@ -37,6 +38,7 @@ export function explainIdea(input: {
   slots: readonly ChordSlot[];
   /** The keys left the held vocal note to the voice. */
   keysYield: boolean;
+  mood?: Mood | null;
 }): string[] {
   const { style, variant, template, key } = input;
   const out: string[] = [];
@@ -47,8 +49,16 @@ export function explainIdea(input: {
   }
 
   const degrees = (template.sourceDegrees ?? template.degrees).join(" – ");
-  const like = template.like ? `, dasselbe Muster wie in ${template.like}` : "";
-  out.push(`Akkorde ${input.chordNames} (Stufen ${degrees})${like}. ${style.harmonyNote}`);
+  if (template.mood && template.note) {
+    // A loop the mood brought along: say what it does instead of the artist's usual harmony.
+    const note = template.note.charAt(0).toUpperCase() + template.note.slice(1);
+    const owner = style.artist.endsWith("s") ? `${style.artist}’` : `${style.artist}s`;
+    out.push(`Akkorde ${input.chordNames} (Stufen ${degrees}): ${note}. Die Folge bringt die Stimmung mit, ${owner} Klang und Hook bleiben.`);
+  } else {
+    const like = template.like ? `, dasselbe Muster wie in ${template.like}` : "";
+    out.push(`Akkorde ${input.chordNames} (Stufen ${degrees})${like}. ${style.harmonyNote}`);
+  }
+  if (input.mood) out.push(explainMood(input.mood, template));
   if (input.chordRhythm.tags.includes("push")) {
     out.push("Die Akkorde kommen eine Achtel vor dem Taktanfang (Push). Das gibt den typischen House-Schwung.");
   }

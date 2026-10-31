@@ -10,9 +10,9 @@
 <div class="app">
   <header class="masthead">
     <div class="brand">
-      <p class="eyebrow">ProjectX · Hörtest Runde 5 · Stil-Profile v0.5</p>
+      <p class="eyebrow">ProjectX · Hörtest Runde 6 · Stil-Profile v0.6</p>
       <h1>Hör-Labor</h1>
-      <p class="lede">Wähle einen Künstler, hör dir die Idee an und sag mir, wie sehr sie nach ihm klingt. Im Blindtest rätst du, von wem ein Loop sein soll.</p>
+      <p class="lede">Wähle einen Künstler und, wenn du willst, eine Stimmung. Hör dir die Idee an und sag mir, wie sehr sie nach dem Künstler klingt. Im Blindtest rätst du den Künstler oder die Stimmung.</p>
     </div>
     <div class="modes" role="tablist" aria-label="Modus">
       <button type="button" role="tab" id="tab-explore" aria-selected="true" aria-controls="panel-main">Entdecken</button>
@@ -23,9 +23,15 @@
 
   <section class="artists" id="artists" aria-label="Künstler"></section>
 
+  <section class="moods" id="moods" aria-labelledby="mood-label">
+    <span class="label" id="mood-label">Stimmung</span>
+    <div class="mood-chips" id="mood-chips" role="group" aria-labelledby="mood-label"></div>
+    <p class="mood-hint" id="mood-hint"></p>
+  </section>
+
   <section class="blind-intro" id="blind-intro" hidden>
     <h2>Blindtest</h2>
-    <p>Ein Loop läuft ohne Namen. Tippe, von wem er sein soll. So sehen wir, ob die Stile wirklich erkennbar sind.</p>
+    <p>Ein Loop läuft ohne Namen. Tippe, von wem er sein soll oder welche Stimmung er hat. So sehen wir, ob Stile und Stimmungen wirklich erkennbar sind.</p>
   </section>
 
   <section class="blind-intro" id="duel-intro" hidden>
@@ -91,6 +97,10 @@
         <h2 class="card-title">Bewertung</h2>
         <p class="question" id="rating-q">Wie sehr klingt das nach dem Künstler?</p>
         <div class="stars" role="radiogroup" aria-labelledby="rating-q" id="stars"></div>
+        <div class="mood-rating" id="mood-rating" hidden>
+          <p class="question" id="mood-q">Trifft es die Stimmung? <span class="opt">optional</span></p>
+          <div class="stars small" role="radiogroup" aria-labelledby="mood-q" id="mood-stars"></div>
+        </div>
         <fieldset>
           <legend>Was passt nicht? <span class="opt">optional</span></legend>
           <div class="chips" id="issues"></div>
@@ -106,6 +116,13 @@
 
       <section class="card guess" id="guess" hidden aria-labelledby="guess-title">
         <h2 class="card-title" id="guess-title">Wer ist das?</h2>
+        <div class="seg-field">
+          <span class="label" id="guess-kind-label">Raten</span>
+          <div class="seg" role="group" aria-labelledby="guess-kind-label">
+            <button type="button" id="kind-artist" aria-pressed="true">Künstler</button>
+            <button type="button" id="kind-mood" aria-pressed="false">Stimmung</button>
+          </div>
+        </div>
         <p class="muted" id="blind-round">Bereit, wenn du es bist.</p>
         <button type="button" class="btn primary wide" id="blind-start">Runde starten</button>
         <div class="guess-grid" id="guess-buttons" hidden></div>
@@ -225,6 +242,15 @@
           <tr><th>Stil</th><th class="num">Bewertungen</th><th class="num">Ø</th><th>Ziel 4,0</th><th class="num">Blind Stil</th><th class="num">Blind Neutral</th><th>Häufigste Kritik</th></tr>
         </thead>
         <tbody id="res-body"></tbody>
+      </table>
+    </div>
+    <h3 class="res-sub">Stimmungen</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Stimmung</th><th class="num">Bewertungen</th><th class="num">Ø Stil</th><th class="num">Ø Stimmung getroffen</th><th class="num">Blind erkannt</th></tr>
+        </thead>
+        <tbody id="mood-body"></tbody>
       </table>
     </div>
     <h3 class="res-sub">Duelle</h3>

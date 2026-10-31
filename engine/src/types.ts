@@ -149,6 +149,9 @@ export interface LaneData {
   detail?: string;
 }
 
+/** Moods ("Stimmungen") that can be chosen next to the artist (see data/moods.json). */
+export type MoodId = "euphorie" | "energie" | "episch" | "melancholie" | "vertraeumt" | "dunkel";
+
 /** Switches for duels: an older and a newer rule side by side. Omitted = the current rule. */
 export interface IdeaFlags {
   /** BUNT.: vowel on a tone that fits every chord ("pedal") or the older smooth path through the chords ("path"). */
@@ -169,6 +172,8 @@ export interface IdeaParams {
   laneSeeds?: Partial<Record<LaneId | "drums", number>>;
   bpm?: number | null;
   flags?: IdeaFlags;
+  /** A mood next to the artist; null or omitted = the artist's own mix. */
+  mood?: MoodId | null;
 }
 
 export interface Idea {
@@ -179,6 +184,8 @@ export interface Idea {
   variantId: string;
   artist: string;
   variantName: string;
+  mood: MoodId | null;
+  moodName: string | null;
   key: Key;
   bpm: number;
   swing: number;
