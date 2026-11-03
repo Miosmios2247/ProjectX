@@ -1,7 +1,7 @@
 // Drum accompaniment for listening (exported as GM drums in the MIDI).
 
 import { STEPS_PER_BAR } from "../progression";
-import { DrumInst, DrumPattern, DrumTrack } from "../rhythm";
+import { DrumInst, DrumPattern, DrumTrack, RollKind } from "../rhythm";
 import { clampVel } from "../groove";
 import { Rng } from "../rng";
 import { DrumHit } from "../types";
@@ -18,6 +18,40 @@ function entries(track: DrumTrack | undefined, inst: DrumInst, pattern: DrumPatt
   if (!track) return [];
   const base = pattern.vel?.[inst] ?? DEFAULT_VEL[inst];
   return track.map((e) => (Array.isArray(e) ? e : [e, base]));
+}
+
+/** Hits of one roll: offsets inside the span it covers. */
+const ROLL: Record<RollKind, { span: number; at: number[] }> = {
+  "32": { span: 2, at: [0, 0.5, 1, 1.5] },
+  "16t": { span: 2, at: [0, 2 / 3, 4 / 3] },
+  "64": { span: 2, at: [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75] },
+  "8t": { span: 4, at: [0, 4 / 3, 8 / 3] },
+};
+
+/**
+ * Trap hi-hat rolls: at some positions a burst of 1/32, 1/16 triplets or 1/64
+ * replaces the hats it covers, rising in velocity into the next beat.
+ */
+function addRolls(hits: DrumHit[], pattern: DrumPattern, bars: number, rng: Rng): DrumHit[] {
+  const r = pattern.rolls;
+  if (!r) return hits;
+  const kinds = r.kinds.map((k) => (typeof k === "string" ? { kind: k, weight: 1 } : k));
+  let out = hits;
+  for (let bar = 0; bar < bars; bar++) {
+    for (const at of r.at) {
+      if (!rng.chance(r.chance)) continue;
+      const { kind } = rng.weighted(kinds, (k) => k.weight);
+      const roll = ROLL[kind];
+      const from = bar * STEPS_PER_BAR + at;
+      const base = out.find((x) => x.inst === r.inst && x.step >= from - 0.01 && x.step < from + roll.span)?.vel ?? 70;
+      out = out.filter((x) => !(x.inst === r.inst && x.step >= from - 0.01 && x.step < from + roll.span - 0.01));
+      roll.at.forEach((o, i) => {
+        const rise = roll.at.length > 1 ? i / (roll.at.length - 1) : 0;
+        out.push({ inst: r.inst, step: from + o, vel: clampVel(base * (0.62 + 0.38 * rise) + rng.int(-3, 3)) });
+      });
+    }
+  }
+  return out.sort((a, b) => a.step - b.step);
 }
 
 export function drumsLane(pattern: DrumPattern, bars: number, rng: Rng): DrumHit[] {
@@ -47,5 +81,7 @@ export function drumsLane(pattern: DrumPattern, bars: number, rng: Rng): DrumHit
       }
     }
   }
-  return hits.sort((a, b) => a.step - b.step);
+  const sorted = hits.sort((a, b) => a.step - b.step);
+  // Rolls draw from their own stream: patterns without rolls keep exactly the hits they had.
+  return pattern.rolls ? addRolls(sorted, pattern, bars, rng.fork("rolls")) : sorted;
 }

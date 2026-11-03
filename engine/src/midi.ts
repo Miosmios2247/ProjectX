@@ -99,11 +99,20 @@ export function writeMidi(tracks: MidiTrack[], bpm: number, title = "ProjectX"):
 }
 
 function laneToMidi(idea: Idea, lane: LaneId): MidiNote[] {
-  return idea.lanes[lane].notes.map((n) => {
+  const notes = idea.lanes[lane].notes;
+  const out = notes.map((n) => {
     const start = stepToBeat(n.start, idea.swing);
     const end = stepToBeat(n.start + n.len, idea.swing);
     return { pitch: n.pitch, startBeat: start, durBeat: Math.max(1 / 32, end - start), vel: n.vel };
   });
+  // An 808 glide: the previous note overlaps into the sliding one by a 32nd, so a mono
+  // synth with portamento (FL Studio: channel "Mono" + "Porta") slides between them.
+  notes.forEach((n, i) => {
+    if (!n.glide || i === 0) return;
+    const prev = out[i - 1];
+    prev.durBeat = Math.max(prev.durBeat, out[i].startBeat + 0.125 - prev.startBeat);
+  });
+  return out;
 }
 
 /** Kick stays straight; hats and percussion get the drum swing. */

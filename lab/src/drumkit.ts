@@ -51,6 +51,11 @@ const KITS: Record<string, KitShape> = {
     trim: 4.5, kickDecay: 0.28, kickVol: -3, kickPunch: 6.5, hatHp: 8600, hatVol: -17, clapVol: -12, snareVol: -6,
     samples: { snare: ["snare", -5], shaker: ["shaker", -16], tamb: ["ride", -18], rim: ["sidestick", -12], percHi: ["bongohi", -14], percLo: ["bongolo", -14], tom: ["tommid", -11] },
   },
+  // Trap (round 7): a short, punchy kick (the 808 carries the low end), crisp clap and hats.
+  trap: {
+    trim: 3, kickDecay: 0.22, kickVol: -4, kickPunch: 7, hatHp: 9500, hatVol: -17, clapVol: -7, snareVol: -8,
+    samples: { rim: ["sidestick", -10], percHi: ["bongohi", -14], percLo: ["congalo", -14], tom: ["tomlo", -10], shaker: ["shaker", -16], tamb: ["tambourine", -18] },
+  },
   neutral: {
     trim: 3, kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
     samples: {},
@@ -78,6 +83,8 @@ const KITS5: Record<string, Kit5Shape> = {
   afro: { samples: { kick: ["kick-pure", -8], hatC: ["hat-acoustic", -21], hatO: ["hat-open-acoustic", -24], snare: ["snare-elec", -15] }, snap: -18 },
   // Drum & bass: short kick, sharp hats, a snare with body.
   dnb: { samples: { kick: ["kick-gas", -1.5], hatC: ["hat-zap", -17], hatO: ["hat-gump", -19], snare: ["snare-generic", -4.5] } },
+  // Trap: tight kick, bright snare, short crisp hats for fast rolls, a snap on the clap.
+  trap: { samples: { kick: ["kick-tek", -6], hatC: ["hat-cab", -18], hatO: ["hat-gump", -21], snare: ["snare-dolf", -10] }, snap: -14 },
 };
 
 export class DrumKit {

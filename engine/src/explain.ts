@@ -4,7 +4,7 @@
 import { ChordSlot, ProgressionTemplate, universalPcs } from "./progression";
 import { Rhythm } from "./rhythm";
 import { Key, mod12, pcName } from "./theory";
-import { LeadMode, Note, StyleProfile, StyleVariant } from "./types";
+import { LeadMode, MelodyScale, Note, StyleProfile, StyleVariant } from "./types";
 import { Mood, explainMood } from "./mood";
 
 const FORM_TEXT: Record<string, string> = {
@@ -33,6 +33,9 @@ export function explainIdea(input: {
   leadBuild: string;
   leadNotes: readonly Note[];
   bassRhythm: Rhythm;
+  bassNotes?: readonly Note[];
+  leadScale?: MelodyScale;
+  drumRolls?: boolean;
   pluckAnswers: boolean;
   key: Key;
   slots: readonly ChordSlot[];
@@ -104,12 +107,29 @@ export function explainIdea(input: {
     case "folk":
       out.push(`Riff: fünftönige (pentatonische) Melodie mit Wiederholung (${formText(input.leadBuild)}), wie BUNT.s frühe Folk-Hooks.`);
       break;
+    case "loop": {
+      // Name the colour only when the loop really uses its tone.
+      const colour: Partial<Record<MelodyScale, [number, string]>> = {
+        harmonic: [11, ", mit dem Leitton aus harmonisch Moll, der dunkel und dramatisch klingt"],
+        phrygian: [1, ", mit der kleinen Sekunde (phrygisch), die bedrohlich klingt"],
+        dorian: [9, ", mit der großen Sexte (dorisch), die weicher klingt"],
+      };
+      const c = colour[input.leadScale ?? "natural"];
+      const uses = !!c && key.mode === "minor" && leadPcs.includes(mod12(key.tonic + c[0]));
+      out.push(`Melodie-Loop: ein kurzes Motiv (${formText(input.leadBuild)}), das sich wie ein Sample-Loop wiederholt${uses ? c[1] : ""}.`);
+      break;
+    }
   }
 
   const approach = input.bassRhythm.hits.some((h) => h.role === "A");
-  out.push(
-    `Bass: ${input.bassRhythm.name}${approach ? ", mit Überleitungs-Tönen kurz vor jedem Akkordwechsel" : ""}${variant.lanes.bass.chromatic ? " (auch einen Halbton von unten, wie im Garage)" : ""}.`,
-  );
+  if (variant.lanes.bass.mode === "808") {
+    const glides = input.bassNotes?.some((n) => n.glide) ?? false;
+    out.push(`Bass: eine 808, die mit jeder Kick einsetzt und bis zum nächsten Schlag klingt${glides ? ", manchmal gleitet sie in den nächsten Ton (Slide)" : ""}.`);
+  } else {
+    out.push(
+      `Bass: ${input.bassRhythm.name}${approach ? ", mit Überleitungs-Tönen kurz vor jedem Akkordwechsel" : ""}${variant.lanes.bass.chromatic ? " (auch einen Halbton von unten, wie im Garage)" : ""}.`,
+    );
+  }
   if (input.keysYield) {
     out.push(
       `Begleitung: Die Akkorde spielen den gehaltenen Ton der Stimme nicht mit, so bleibt sie klar${style.id === "bunt" ? " („weniger klingt größer“)" : ""}.`,
@@ -117,10 +137,16 @@ export function explainIdea(input: {
   }
   if (input.pluckAnswers) out.push("Pluck: tritt zurück, solange die Hook singt, und füllt ihre Pausen (Frage und Antwort).");
   const swing = Math.round(variant.drumSwing * 100);
-  out.push(
-    swing > 51
-      ? `Groove: Kick gerade, Hats und Percussion mit ${swing} % Swing. Alles außer den Drums pumpt mit der Kick.`
-      : "Groove: gerade gespielt. Alles außer den Drums pumpt mit der Kick.",
-  );
+  if (variant.lanes.bass.mode === "808") {
+    out.push(
+      `Groove: Half-Time, die Snare kommt auf die Drei${input.drumRolls ? ", und die Hi-Hats rollen in 32teln und Triolen" : ""}. Nichts pumpt, die 808 trägt den Bass allein.`,
+    );
+  } else {
+    out.push(
+      swing > 51
+        ? `Groove: Kick gerade, Hats und Percussion mit ${swing} % Swing. Alles außer den Drums pumpt mit der Kick.`
+        : "Groove: gerade gespielt. Alles außer den Drums pumpt mit der Kick.",
+    );
+  }
   return out;
 }

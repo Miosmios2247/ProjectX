@@ -58,6 +58,19 @@ export interface DrumPattern {
   fill?: Partial<Record<DrumInst, DrumTrack>>;
   /** Default velocity per instrument. */
   vel?: Partial<Record<DrumInst, number>>;
+  /** Trap hi-hat rolls: at these steps of a bar a burst replaces the hat (chance per position). */
+  rolls?: DrumRolls;
+}
+
+/** A roll covers two 16ths: 1/32 (4 hits), 1/16 triplets (3), 1/64 (8); "8t" covers a beat with 1/8 triplets (3). */
+export type RollKind = "32" | "16t" | "64" | "8t";
+
+export interface DrumRolls {
+  inst: DrumInst;
+  /** Steps in the bar where a roll may start. */
+  at: number[];
+  chance: number;
+  kinds: (RollKind | { kind: RollKind; weight: number })[];
 }
 
 export interface WeightedRef {

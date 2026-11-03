@@ -1,6 +1,7 @@
 // Duels: the same idea in two versions (an older and a newer rule or sound),
 // played blind. The rater picks the one that sounds more like the artist.
 
+import { STYLES } from "../../engine/src/index";
 import type { IdeaFlags } from "../../engine/src/index";
 import type { PlayerOptions } from "./audio";
 
@@ -15,7 +16,7 @@ export interface Duel {
   id: string;
   /** What is compared, shown in the results. */
   title: string;
-  /** Variants it applies to: "style" or "style/variant". */
+  /** Variants it applies to: "style" or "style/variant", or every house style ("all"). */
   for: string[] | "all";
   /** a = the newer version, b = the older one. */
   a: DuelArm;
@@ -61,5 +62,7 @@ export const DUELS: Duel[] = [
 ];
 
 export function duelsFor(styleId: string, variantId: string): Duel[] {
-  return DUELS.filter((d) => d.for === "all" || d.for.includes(styleId) || d.for.includes(`${styleId}/${variantId}`));
+  // The hip-hop styles came after round 4: they have no round-4 sounds to compare.
+  const house = (STYLES.find((s) => s.id === styleId)?.genre ?? "house") === "house";
+  return DUELS.filter((d) => (d.for === "all" ? house : d.for.includes(styleId) || d.for.includes(`${styleId}/${variantId}`)));
 }

@@ -7,13 +7,19 @@ import { VoicingOptions } from "./voicing";
 import { MelodyTargets } from "./critic";
 
 /**
+ * loop: an instrumental melody loop of a beat (flute, bells, piano, guitar), as hip-hop producers make them
  * vocal-chop: re-sequenced vocal slices (Fred again..)
  * gated-vowel: stretched, held vowels chopped by a 1/16 gate (stutter house, BUNT.)
  * topline: sung melody (AVAION)
  * brass-hook: short call-and-response lead hook (AVAION "WACUKA" drop)
  * folk: pentatonic riff (early BUNT.)
  */
-export type LeadMode = "vocal-chop" | "gated-vowel" | "topline" | "brass-hook" | "folk";
+export type LeadMode = "vocal-chop" | "gated-vowel" | "topline" | "brass-hook" | "folk" | "loop";
+/**
+ * Tone set of a melody: the key's own scale, or (minor keys) harmonic minor with
+ * its raised 7th, phrygian with its ♭2 or dorian with its raised 6th (trap loops).
+ */
+export type MelodyScale = "natural" | "harmonic" | "phrygian" | "dorian";
 export type PluckMode = "arp" | "stab" | "marimba" | "pick" | "counter";
 export type ArpOrder = "up" | "down" | "updown" | "skip" | "pendulum";
 
@@ -29,6 +35,12 @@ export interface ChordsLaneProfile extends LaneProfileBase {
 
 export interface BassLaneProfile extends LaneProfileBase {
   range: [number, number];
+  /** "808": a trap 808 that starts with every kick and rings on; default: a bass line from the rhythm. */
+  mode?: "line" | "808";
+  /** 808: chance that a note slides (glides) in from the previous one. */
+  glide?: number;
+  /** 808: chance that a note jumps up an octave. */
+  octave?: number;
   /** Chance to hold the tonic under all chords (pedal). */
   pedal?: number;
   /** Approach notes may come a semitone from below, outside the scale (garage, house). */
@@ -38,6 +50,8 @@ export interface BassLaneProfile extends LaneProfileBase {
 export interface LeadLaneProfile extends LaneProfileBase {
   mode: LeadMode;
   range: [number, number];
+  /** Tone set of the melody (minor keys); default the key's own scale. */
+  scale?: MelodyScale;
   /** Allow 7ths/9ths as target notes on strong beats. */
   tensions?: boolean;
   /** What the melody critic aims for (overrides the mode's defaults). */
@@ -77,6 +91,8 @@ export interface ArrangementSection {
   pluckSound?: string;
   /** The rater's Fred again.. recording plays as it is, like a voice memo (round 5, needs a recording). */
   voiceMemo?: boolean;
+  /** Beat stop: drums and bass drop out in the section's last bar, before the next part hits (hip-hop). */
+  stopLastBar?: boolean;
 }
 
 export interface StyleVariant {
@@ -114,9 +130,16 @@ export interface StyleVariant {
   arrangement?: ArrangementSection[];
 }
 
+/** House and electronic artists, or hip-hop producers (round 7). */
+export type Genre = "house" | "hiphop";
+
+export const GENRE_NAMES: Record<Genre, string> = { house: "House & Electronic", hiphop: "Hip-Hop" };
+
 export interface StyleProfile {
   id: string;
   artist: string;
+  /** Default "house". */
+  genre?: Genre;
   blurb: string;
   /** Why the artist's chords sound the way they do (shown to the user). */
   harmonyNote: string;
@@ -133,6 +156,8 @@ export interface Note {
   vel: number;
   /** A vocal sampler plays this syllable reversed (Fred again..-style answer). */
   fx?: "rev";
+  /** Slides in from the previous note without a new attack (trap 808 glide). */
+  glide?: boolean;
 }
 
 export interface DrumHit {

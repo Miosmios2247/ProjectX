@@ -711,5 +711,16 @@
     "role": "A"
    }
   ]
+ },
+ {
+  "id": "808-kick",
+  "name": "808 mit der Kick",
+  "lane": "bass",
+  "tags": [
+   "808",
+   "trap"
+  ],
+  "bars": 1,
+  "hits": []
  }
 ]

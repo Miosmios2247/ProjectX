@@ -362,6 +362,15 @@ export class Player {
       const bar = Math.floor((transport.getTicksAtTime(time) + 2) / (4 * ppq));
       return byBar[((bar % songBars) + songBars) % songBars] ?? null;
     };
+    // Hip-hop beat stop: drums and bass leave the section's last bar to the melody.
+    const inStopBar = (time: number): boolean => {
+      if (!arrangement) return false;
+      const bar = (((Math.floor((transport.getTicksAtTime(time) + 2) / (4 * ppq)) % songBars) + songBars) % songBars);
+      const sec = byBar[bar];
+      if (!sec?.stopLastBar) return false;
+      const info = this.song.find((s) => bar >= s.startBar && bar < s.startBar + s.bars);
+      return !!info && bar === info.startBar + info.bars - 1;
+    };
     transport.loop = true;
     transport.loopStart = 0;
     transport.loopEnd = ticks(songBars * 4);
@@ -410,6 +419,7 @@ export class Player {
           vel: n.vel / 127,
           // The last syllable before a rest of a beat or more ends a phrase.
           phraseEnd: !sorted[i + 1] || sorted[i + 1].start - (n.start + n.len) >= 4,
+          glide: !!n.glide,
           i,
         };
       });
@@ -430,6 +440,7 @@ export class Player {
       const part = new T.Part((time, ev: (typeof events)[number]) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
+        if (lane === "bass" && inStopBar(time)) return;
         // While the voice memo plays (Fred again.. intro), the chops wait.
         if (memoSection && sec?.voiceMemo && this.memo && this.inMemo(transport.getTicksAtTime(time))) return;
         const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
@@ -459,7 +470,7 @@ export class Player {
           if (dur > 0) voice.trigger(ev.midi, dur, time, ev.vel * (sec.leadHold ? 0.72 : 0.9), ev.i);
           return;
         }
-        (swaps.get(sec?.pluckSound ?? "") ?? voice).trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i);
+        (swaps.get(sec?.pluckSound ?? "") ?? voice).trigger(ev.midi + up, ev.dur, time, ev.vel, ev.i, ev.glide ? { glide: true } : undefined);
         if (lane === "lead" && sec?.leadHarmony) {
           ev.harm.forEach((h, k) => voice.trigger(h + up, ev.dur, time, ev.vel * (k === 0 ? 0.6 : 0.5), -(k + 1)));
         }
@@ -495,6 +506,7 @@ export class Player {
     const drumPart = new T.Part((time, ev: (typeof drumEvents)[number]) => {
       const sec = sectionAt(time);
       if (sec && (!sec.lanes.includes("drums") || (sec.noKick && ev.inst === "kick") || (sec.kickOnly && ev.inst !== "kick"))) return;
+      if (inStopBar(time)) return;
       kit.hit(ev.inst, time, ev.vel);
     }, drumEvents);
     loopPart(drumPart);

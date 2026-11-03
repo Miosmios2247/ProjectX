@@ -39,6 +39,19 @@ describe("midi", () => {
     for (const f of files) expect(f.name).toMatch(/^[A-Za-z0-9_.#-]+$/);
   });
 
+  it("lets an 808 glide overlap the note before it", () => {
+    const idea = generateIdea({ styleId: "bunt", variantId: "stutter", key: null, bars: 4, seed: 3 });
+    // Two bass notes, the second sliding in (as a trap 808 lane writes them).
+    idea.lanes.bass.notes = [
+      { pitch: 36, start: 0, len: 8, vel: 100 },
+      { pitch: 43, start: 8, len: 8, vel: 100, glide: true },
+    ];
+    const bass = new Midi(ideaToMidiFiles(idea)[1].data).tracks.find((t) => t.notes.length)!;
+    const [a, b] = bass.notes;
+    expect(a.ticks + a.durationTicks).toBeGreaterThan(b.ticks);
+    expect(b.ticks).toBe(960);
+  });
+
   it("builds a valid stored zip", () => {
     const data = new TextEncoder().encode("hello");
     expect(crc32(data)).toBe(0x3610a686);

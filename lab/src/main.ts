@@ -2,6 +2,8 @@
 
 import {
   ENGINE_VERSION,
+  GENRE_NAMES,
+  Genre,
   Idea,
   IdeaParams,
   KEYS,
@@ -274,10 +276,21 @@ function newIdea(): void {
 // ---------------------------------------------------------------------------
 // Rendering
 
+function genreOf(styleId: string): Genre {
+  return STYLES.find((s) => s.id === styleId)?.genre ?? "house";
+}
+
 function renderArtists(): void {
   const wrap = $("artists");
   wrap.replaceChildren();
+  let genre: Genre | null = null;
   for (const style of STYLES) {
+    // The artists come in two groups: house and electronic, then hip-hop.
+    const g = style.genre ?? "house";
+    if (g !== genre) {
+      genre = g;
+      wrap.append(h("h2", { class: "genre-title" }, GENRE_NAMES[g]));
+    }
     const active = style.id === state.explore.styleId;
     const card = h("article", { class: `artist${active ? " is-active" : ""}` });
     card.append(h("h2", { class: "artist-name" }, style.artist), h("p", { class: "artist-blurb" }, style.blurb));
@@ -955,6 +968,8 @@ async function startRound(): Promise<void> {
   state.blind.round++;
   state.blind.idea = idea;
   state.blind.guessed = null;
+  // Guess among the artists of the same group, so the genre alone does not give it away.
+  renderGuessButtons();
   state.blind.docId = null;
   state.blind.quality = null;
   show(idea);
@@ -999,12 +1014,16 @@ async function rateBlind(v: number): Promise<void> {
   }
 }
 
-/** Three artists, or the six moods. */
+/** The artists of the loop's group (house or hip-hop), or the six moods. */
 function renderGuessButtons(): void {
   const grid = $("guess-buttons");
   grid.replaceChildren();
   grid.classList.toggle("is-moods", state.blind.kind === "mood");
-  const options = state.blind.kind === "mood" ? MOODS.map((m) => ({ id: m.id, label: m.name })) : STYLES.map((s) => ({ id: s.id, label: s.artist }));
+  const genre = genreOf(state.blind.idea?.styleId ?? STYLES[0].id);
+  const options =
+    state.blind.kind === "mood"
+      ? MOODS.map((m) => ({ id: m.id, label: m.name }))
+      : STYLES.filter((s) => (s.genre ?? "house") === genre).map((s) => ({ id: s.id, label: s.artist }));
   for (const o of options) {
     const b = h("button", { type: "button", class: "btn guess-btn" }, o.label);
     b.addEventListener("click", () => void guess(o.id));

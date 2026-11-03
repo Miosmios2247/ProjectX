@@ -20,7 +20,19 @@ import {
   isAvoidNote,
   scalePcs,
 } from "../theory";
-import { IdeaFlags, LeadMode, Note } from "../types";
+import { IdeaFlags, LeadMode, MelodyScale, Note } from "../types";
+
+const MELODY_STEPS: Record<Exclude<MelodyScale, "natural">, number[]> = {
+  harmonic: [0, 2, 3, 5, 7, 8, 11],
+  phrygian: [0, 1, 3, 5, 7, 8, 10],
+  dorian: [0, 2, 3, 5, 7, 9, 10],
+};
+
+/** The tones a melody may use: the key's scale, or in minor its harmonic, phrygian or dorian colour. */
+export function melodyScalePcs(key: Key, scale: MelodyScale = "natural"): PitchClass[] {
+  if (key.mode === "major" || scale === "natural") return scalePcs(key);
+  return MELODY_STEPS[scale].map((s) => mod12(key.tonic + s));
+}
 
 interface Ctx {
   slots: readonly ChordSlot[];
@@ -35,6 +47,8 @@ interface Ctx {
   hi: number;
   totalSteps: number;
   tensions: boolean;
+  /** Tones a melody loop may use (the key's scale or a minor colour such as harmonic minor). */
+  scale: PitchClass[];
 }
 
 /** Scale-degree space over a set of allowed pitch classes. */
@@ -250,7 +264,7 @@ function toNotes(
   return notes;
 }
 
-type MotifMode = "topline" | "folk" | "brass-hook";
+type MotifMode = "topline" | "folk" | "brass-hook" | "loop";
 
 const MODE_OPTS: Record<MotifMode, ContourOpts> = {
   // Sung: mostly steps and repeated notes, phrases fall at the end. AVAION sings high.
@@ -258,6 +272,8 @@ const MODE_OPTS: Record<MotifMode, ContourOpts> = {
   folk: { weights: [0.24, 0.5, 0.2, 0.06], upEarly: 0.6, upLate: 0.4, startBias: 0.45 },
   // Short, punchy hook: repeats and small steps around the middle of the range.
   "brass-hook": { weights: [0.32, 0.42, 0.2, 0.06], upEarly: 0.5, upLate: 0.3, startBias: 0.55 },
+  // A beat's melody loop: steps and chord-tone leaps (an instrument, not a voice), it loops.
+  loop: { weights: [0.16, 0.36, 0.26, 0.14, 0.08], upEarly: 0.55, upLate: 0.35, startBias: 0.5 },
 };
 
 // Phrase forms: A = the motif, A' = the motif with a new ending, B/C = new
@@ -267,10 +283,12 @@ const FORMS: Record<MotifMode, string[][]> = {
   // A drop riff that loops and changes only its ending ("WACUKA").
   "brass-hook": [["A", "A'", "A", "A'"], ["A", "A", "A", "A'"], ["A", "A'", "A", "B"]],
   folk: [["A", "A", "B", "A'"], ["A", "B", "A", "B'"]],
+  // A melody loop repeats and changes at most its ending, like a sample loop.
+  loop: [["A", "A", "A", "A'"], ["A", "A'", "A", "A'"], ["A", "A", "A'", "A"]],
 };
 
 // How often a phrase gets 1–3 pickup notes into its first downbeat.
-const PICKUP: Record<MotifMode, number> = { topline: 0.4, folk: 0.3, "brass-hook": 0.25 };
+const PICKUP: Record<MotifMode, number> = { topline: 0.4, folk: 0.3, "brass-hook": 0.25, loop: 0.15 };
 
 let lastForm = "";
 let lastPickups = 0;
@@ -299,7 +317,9 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
   const pent = pentatonicPcs(ctx.key);
   const pentU = pent.filter((pc) => ctx.universal.includes(pc));
   const allowed =
-    mode === "topline"
+    mode === "loop"
+      ? ctx.scale
+      : mode === "topline"
       ? scalePcs(ctx.key)
       : mode === "brass-hook"
         ? ctx.universal.length >= 4 ? ctx.universal : pent
@@ -742,6 +762,8 @@ export const LEAD_TARGETS: Record<LeadMode, MelodyTargets> = {
   "brass-hook": { pitches: [3, 6], range: 10, steps: 0.55, sync: 0.4, repeat: 0.85, chordTones: 0.8 },
   // Early BUNT. (and Avicii, whom the press compares them to): stepwise, a 6th wide, ~65 % chord tones.
   folk: { pitches: [4, 7], range: 9, steps: 0.6, sync: 0.25, repeat: 0.65, chordTones: 0.65 },
+  // A beat's melody loop: about an octave, steps and chord-tone leaps, repeated like a sample.
+  loop: { pitches: [4, 7], range: 12, rangeMin: 5, steps: 0.5, sync: 0.3, repeat: 0.85, chordTones: 0.7 },
 };
 
 const CANDIDATES = 10;
@@ -767,7 +789,8 @@ function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm 
     }
     case "topline":
     case "folk":
-    case "brass-hook": {
+    case "brass-hook":
+    case "loop": {
       const notes = motifLead(ctx, mode, rhythm, rhythmB, rng);
       return { notes, build: lastPickups ? `${lastForm} +Auftakt` : lastForm };
     }
@@ -787,8 +810,20 @@ export function leadLane(
   targets: Partial<MelodyTargets> = {},
   home: PitchClass = key.tonic,
   flags: IdeaFlags = {},
+  scale: MelodyScale = "natural",
 ): LeadResult {
-  const ctx: Ctx = { slots, key, home, universal: universalPcs(slots, key), flags, lo: range[0], hi: range[1], totalSteps, tensions };
+  const ctx: Ctx = {
+    slots,
+    key,
+    home,
+    universal: universalPcs(slots, key),
+    flags,
+    lo: range[0],
+    hi: range[1],
+    totalSteps,
+    tensions,
+    scale: melodyScalePcs(key, scale),
+  };
   const want: MelodyTargets = { ...LEAD_TARGETS[mode], ...targets };
   const phrase = phraseStepsFor(rhythm.bars, totalSteps);
   let best: LeadResult = { notes: [], build: "" };

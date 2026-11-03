@@ -77,3 +77,40 @@ export function bassLane(
   for (const n of notes) while (n.pitch < lo - 4) n.pitch += 12;
   return { notes, pedal };
 }
+
+/**
+ * Trap 808: a note starts with every kick (and at every chord change) and rings
+ * until the next one; now and then it jumps an octave or slides (glide) into the
+ * next note without a new attack.
+ */
+export function lane808(
+  slots: readonly ChordSlot[],
+  kicks: readonly number[],
+  profile: BassLaneProfile,
+  totalSteps: number,
+  rng: Rng,
+): Note[] {
+  const [lo, hi] = profile.range;
+  const starts = [...new Set([...kicks.map((k) => Math.round(k * 4) / 4), ...slots.map((s) => s.start)])]
+    .filter((s) => s >= 0 && s < totalSteps)
+    .sort((a, b) => a - b);
+  const notes: Note[] = [];
+  let anchor = lo + 5;
+  starts.forEach((step, i) => {
+    const next = starts[i + 1] ?? totalSteps;
+    const slot = slots[slotIndexAt(slots, step)];
+    const root = nearestWithPc(anchor, [slot.chord.bass], lo, hi) ?? lo;
+    anchor = root;
+    const prev = notes[notes.length - 1];
+    // An octave jump now and then, never on the first note of a chord.
+    const pitch = step !== slot.start && rng.chance(profile.octave ?? 0) ? root + 12 : root;
+    // Mostly legato into the next hit; sometimes a short gap before it.
+    const gap = next - step > 2 && rng.chance(0.25) ? 1 : 0;
+    const len = Math.max(0.5, Math.min(next - step, 16) - gap);
+    const touches = !!prev && prev.start + prev.len >= step - 0.01;
+    const glide = touches && prev.pitch !== pitch && rng.chance(profile.glide ?? 0);
+    const vel = clampVel((step % 16 === 0 ? 112 : 102) + rng.int(-4, 4));
+    notes.push(glide ? { pitch, start: step, len, vel, glide: true } : { pitch, start: step, len, vel });
+  });
+  return notes;
+}

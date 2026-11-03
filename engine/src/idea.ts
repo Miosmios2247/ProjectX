@@ -6,7 +6,7 @@ import { voiceProgression } from "./voicing";
 import { LaneId, WeightedRef, pickRef, rhythmDensity } from "./rhythm";
 import { getDrumPattern, getRhythm, getStyle, getVariant } from "./styles";
 import { chordsLane, yieldToLead } from "./lanes/chords";
-import { bassLane } from "./lanes/bass";
+import { bassLane, lane808 } from "./lanes/bass";
 import { leadLane } from "./lanes/lead";
 import { complementLead, pluckLane } from "./lanes/pluck";
 import { drumsLane } from "./lanes/drums";
@@ -73,10 +73,21 @@ export function generateIdea(params: IdeaParams): Idea {
   const chordsPlayed = chordsLane(slots, voicings, getRhythm(chordRhythmId), totalSteps, hr.fork("notes"));
   const chordsNotes = mood ? moodDynamics(chordsPlayed, mood) : chordsPlayed;
 
+  // Drums (accompaniment); they come first because a trap 808 follows the kick.
+  const dr = createRng(seeds.drums);
+  const drumId = pickRef(variant.drums, dr.fork("pattern"));
+  const drumPattern = getDrumPattern(drumId);
+  const drumsPlayed = drumsLane(drumPattern, bars, dr.fork("hits"));
+  const drumHits = mood ? moodDrums(drumsPlayed, mood, bars, bpm, dr.fork("mood")) : drumsPlayed;
+
   // Bass
   const br = createRng(seeds.bass);
   const bassRhythmId = pickRef(variant.lanes.bass.rhythms, br.fork("rhythm"));
-  const bass = bassLane(slots, key, getRhythm(bassRhythmId), variant.lanes.bass, totalSteps, br.fork("notes"));
+  const kicks = drumHits.filter((h) => h.inst === "kick").map((h) => h.step);
+  const bass =
+    variant.lanes.bass.mode === "808"
+      ? { notes: lane808(slots, kicks, variant.lanes.bass, totalSteps, br.fork("notes")), pedal: false }
+      : bassLane(slots, key, getRhythm(bassRhythmId), variant.lanes.bass, totalSteps, br.fork("notes"));
 
   // Lead
   const lr = createRng(seeds.lead);
@@ -97,6 +108,7 @@ export function generateIdea(params: IdeaParams): Idea {
     leadProfile.targets,
     loopHome(key, template),
     params.flags ?? {},
+    leadProfile.scale ?? "natural",
   );
   const leadNotes = lead.notes;
 
@@ -123,13 +135,6 @@ export function generateIdea(params: IdeaParams): Idea {
     totalSteps,
     pr.fork("notes"),
   );
-
-  // Drums (accompaniment)
-  const dr = createRng(seeds.drums);
-  const drumId = pickRef(variant.drums, dr.fork("pattern"));
-  const drumPattern = getDrumPattern(drumId);
-  const drumsPlayed = drumsLane(drumPattern, bars, dr.fork("hits"));
-  const drumHits = mood ? moodDrums(drumsPlayed, mood, bars, bpm, dr.fork("mood")) : drumsPlayed;
 
   // Held vowels and sung toplines get their own pitch; the keys do not double it.
   const keys =
@@ -202,6 +207,9 @@ export function generateIdea(params: IdeaParams): Idea {
       leadBuild: lead.build,
       leadNotes,
       bassRhythm: getRhythm(bassRhythmId),
+      bassNotes: bass.notes,
+      leadScale: leadProfile.scale ?? "natural",
+      drumRolls: !!drumPattern.rolls,
       pluckAnswers: pluckFinal.length > 0,
       key,
       slots,

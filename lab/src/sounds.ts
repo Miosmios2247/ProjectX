@@ -10,8 +10,11 @@ type T = ToneLib;
 
 export interface Voice {
   output: ToneNS.ToneAudioNode;
-  /** `index` is the note's position in its lane (stable across loops); negative = a harmony voice. */
-  trigger(midi: number, duration: number, time: number, velocity: number, index?: number): void;
+  /**
+   * `index` is the note's position in its lane (stable across loops); negative = a harmony voice.
+   * `glide`: slide from the sounding note without a new attack (trap 808).
+   */
+  trigger(midi: number, duration: number, time: number, velocity: number, index?: number, opts?: { glide?: boolean }): void;
   /** Get ready for these notes (and harmony pitches per note) before the loop plays. */
   prepare?(notes: readonly Note[], harmony?: readonly (readonly number[])[]): void;
   dispose(): void;
@@ -43,6 +46,16 @@ export const SOUND_LABELS: Record<string, string> = {
   "brass-lead": "Bläser-Lead",
   harmonica: "Mundharmonika",
   "deep-pluck": "Deep-House-Pluck",
+  "808": "808",
+  "808-hard": "808 verzerrt",
+  bells: "Glocken",
+  flute: "Flöte",
+  "dark-piano": "Dunkles Piano",
+  "trap-guitar": "Gitarre (Loop)",
+  "choir-dark": "Dunkler Chor",
+  "trap-strings": "Streicher",
+  "synth-lead": "Synth-Lead",
+  "dark-pad": "Dunkle Fläche",
   "neutral-keys": "Neutral",
   "neutral-bass": "Neutral",
   "neutral-lead": "Neutral",
@@ -295,6 +308,52 @@ function withPad(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number, 
   };
 }
 
+/**
+ * Trap 808: a sine with a short pitch punch and some drive, mono. A note with
+ * glide slides from the sounding pitch and keeps sounding (FL Studio's slide).
+ */
+function voice808(T: T, out: ToneNS.Gain, o: { drive: number; decay: number; tone: number }): Voice {
+  const osc = new T.Oscillator({ type: "sine", frequency: 55 }).start();
+  const amp = new T.Gain(0);
+  const drive = new T.Distortion({ distortion: o.drive, oversample: "2x" });
+  const tone = new T.Filter({ type: "lowpass", frequency: o.tone, Q: 0.5 });
+  osc.chain(amp, drive, tone, out);
+  const at = timeGuard(osc);
+  return {
+    output: out,
+    trigger(midi, duration, time, velocity, _index, opts) {
+      const t = at(time);
+      const f = freq(T, midi);
+      const end = t + Math.max(0.05, duration);
+      safely(() => {
+        const fr = osc.frequency;
+        const g = amp.gain;
+        fr.cancelAndHoldAtTime(t);
+        g.cancelAndHoldAtTime(t);
+        if (opts?.glide) {
+          // The slide: the pitch moves over about 80 ms, the note rings on.
+          fr.exponentialRampToValueAtTime(f, t + 0.08);
+          g.setTargetAtTime(velocity * 0.55, t, o.decay);
+        } else {
+          // A new hit: a short punch from above, a fast attack, then a slow decay.
+          fr.setValueAtTime(f * 1.8, t);
+          fr.exponentialRampToValueAtTime(f, t + 0.03);
+          g.linearRampToValueAtTime(velocity, t + 0.004);
+          g.setTargetAtTime(velocity * 0.55, t + 0.004, o.decay);
+        }
+        g.setTargetAtTime(0, end, 0.035);
+      });
+    },
+    dispose() {
+      osc.dispose();
+      amp.dispose();
+      drive.dispose();
+      tone.dispose();
+      out.dispose();
+    },
+  };
+}
+
 /** Adds a filtered noise layer that follows each note, like a synth's noise oscillator. */
 function withNoise(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number): Voice {
   const noise = new T.NoiseSynth({
@@ -401,6 +460,13 @@ const SOUND_TRIM: Record<string, number> = {
   "deep-bass": 1.5,
   "house-bass": 3.5,
   "bounce-sub": -1.5,
+  // Hip-hop (round 7), first values from single-note loudness; the 808 sits a little above a house sub.
+  "808": -2.5,
+  "808-hard": -3.3,
+  "trap-guitar": -5,
+  "choir-dark": -7,
+  "trap-strings": -4.5,
+  "synth-lead": 2.5,
   "vox-chop": 0.5,
   "vox-stretch": 0,
   "vox-sing": -4,
@@ -515,6 +581,78 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
       });
       s.maxPolyphony = 16;
       return polyVoice(T, s, [new T.Filter(4500, "lowpass")], out);
+    }
+    // ---- hip-hop (round 7): 808s and the instruments of trap melody loops
+    case "808":
+      return voice808(T, out, { drive: 0.22, decay: 0.9, tone: 1400 });
+    case "808-hard":
+      // Driven harder, so it reads on small speakers too.
+      return voice808(T, out, { drive: 0.55, decay: 0.7, tone: 2200 });
+    case "bells": {
+      // A bright FM bell with a short tail, for melody loops and counter-melodies.
+      const s = new T.PolySynth(T.FMSynth, {
+        harmonicity: 3.01,
+        modulationIndex: 12,
+        oscillator: { type: "sine" },
+        modulation: { type: "sine" },
+        envelope: { attack: 0.002, decay: 0.9, sustain: 0, release: 0.6 },
+        modulationEnvelope: { attack: 0.002, decay: 0.3, sustain: 0, release: 0.2 },
+        volume: -2,
+      });
+      s.maxPolyphony = 12;
+      return polyVoice(T, s, [new T.Filter(7000, "lowpass")], out);
+    }
+    case "flute": {
+      // A breathy flute: a soft triangle with vibrato and a breath of noise.
+      const s = new T.PolySynth(T.Synth, {
+        oscillator: { type: "triangle" },
+        envelope: { attack: 0.06, decay: 0.2, sustain: 0.8, release: 0.25 },
+        volume: -10,
+      });
+      s.maxPolyphony = 4;
+      return withNoise(T, polyVoice(T, s, [new T.Vibrato(5, 0.08), new T.Filter(3200, "lowpass")], out), out, 0.05);
+    }
+    case "dark-piano":
+      // A soft grand behind a low-pass, like a piano loop that sits in the back.
+      return sampledVoice(T, [v5 ? "grand-soft" : "piano"], {
+        release: 1.2,
+        chain: [new T.Filter(1900, "lowpass"), new T.Filter({ type: "lowshelf", frequency: 250, gain: 2 })],
+      }, out);
+    case "trap-guitar":
+      return sampledVoice(T, ["guitar"], {
+        release: 0.8,
+        chain: [new T.Filter(150, "highpass"), new T.Filter(3600, "lowpass"), new T.Chorus(0.5, 3, 0.2).start()],
+      }, out);
+    case "choir-dark":
+      return sampledVoice(T, ["aahs", "oohs"], {
+        attack: 0.25,
+        release: 1.2,
+        pick: (_m, n) => n % 2,
+        chain: [new T.Filter(2600, "lowpass")],
+      }, out);
+    case "trap-strings":
+      return sampledVoice(T, ["strings"], { attack: 0.15, release: 1.0, chain: [new T.Filter(3200, "lowpass")] }, out);
+    case "synth-lead": {
+      // A bright, playful square lead with a touch of glide, like a video-game synth.
+      const s = new T.MonoSynth({
+        oscillator: { type: "square" },
+        filter: { type: "lowpass", Q: 1, rolloff: -12 },
+        filterEnvelope: { attack: 0.002, decay: 0.2, sustain: 0.5, release: 0.2, baseFrequency: 900, octaves: 2.5 },
+        envelope: { attack: 0.003, decay: 0.15, sustain: 0.6, release: 0.12 },
+        portamento: 0.02,
+        volume: -16,
+      });
+      return monoVoice(T, s, [new T.Vibrato(6, 0.04)], out);
+    }
+    case "dark-pad": {
+      const s = new T.PolySynth(T.Synth, {
+        // count 3 is Tone's default: other counts rebuild the oscillators inside the audio callback.
+        oscillator: { type: "fatsawtooth", count: 3, spread: 20 },
+        envelope: { attack: 0.5, decay: 0.5, sustain: 0.8, release: 1.5 },
+        volume: -8,
+      });
+      s.maxPolyphony = 16;
+      return polyVoice(T, s, [new T.Filter(900, "lowpass")], out);
     }
     case "lofi-sine": {
       // Sine one-shot with pitch wobble and saturation: a bubbling bed (Fred again..).
