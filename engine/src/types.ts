@@ -73,6 +73,11 @@ export interface ArrangementSection {
   lanes: (LaneId | "drums")[];
   /** Low-pass filter on the music bus (Hz); omit for an open filter. */
   filter?: number;
+  /**
+   * The tempo rises evenly to this multiple by the end of the section (Oppenheimer's
+   * accelerating ostinato); the next section starts at the idea's tempo again. Lab preview only.
+   */
+  accel?: number;
   /** Drums play without the kick (builds, verses, breakdowns). */
   noKick?: boolean;
   /** Build-up into the next section: snare roll, noise riser, opening filter. */

@@ -1,0 +1,921 @@
+{
+ "id": "hans-zimmer",
+ "artist": "Hans Zimmer",
+ "genre": "film",
+ "blurb": "Wenige Moll-Akkorde, die lange stehen, darunter ein liegender Grundton; Streicher-Ostinatos, tiefes Blech und Trommeln, die Schicht um Schicht wachsen",
+ "harmonyNote": "Hans Zimmer bleibt meist in Moll und lässt wenige Akkorde lange stehen, oft nur i und ♭VI oder einen Vier-Akkord-Loop wie in „Time“ (i–v–♭VII–IV). Eine Auflösung über eine Dur-Dominante gibt es fast nie, und der Bass hält gern den Grundton.",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "pluck",
+    "bass"
+   ],
+   "filter": 900
+  },
+  {
+   "name": "Aufbau",
+   "bars": 8,
+   "lanes": [
+    "pluck",
+    "bass",
+    "chords",
+    "drums"
+   ],
+   "build": true
+  },
+  {
+   "name": "Höhepunkt",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Ruhe",
+   "bars": 4,
+   "lanes": [
+    "pluck",
+    "chords"
+   ],
+   "filter": 1500
+  },
+  {
+   "name": "Höhepunkt",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Ausklang",
+   "bars": 4,
+   "lanes": [
+    "chords",
+    "lead"
+   ],
+   "filter": 1800
+  }
+ ],
+ "variants": [
+  {
+   "id": "nolan",
+   "name": "Inception & Interstellar (Orgel, Klavier)",
+   "blurb": "58–70 BPM, ein Moll-Loop mit langen Akkorden auf Klavier oder Orgel, der Schicht um Schicht wächst; eine Uhr tickt",
+   "references": [
+    "Time (Inception)",
+    "Cornfield Chase",
+    "First Step",
+    "Day One"
+   ],
+   "tempo": [
+    58,
+    70
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "film-bed",
+     "weight": 2
+    },
+    {
+     "id": "film-tick",
+     "weight": 2
+    },
+    {
+     "id": "film-none",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.9,
+     "major": 0.1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "v",
+       "VII",
+       "IV"
+      ],
+      "weight": 3,
+      "like": "„Time“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "IIImaj7",
+       "VII",
+       "IV"
+      ],
+      "weight": 2,
+      "like": "„Time“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "III",
+       "VII"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VII",
+       "VI",
+       "VII"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "vi",
+       "IV",
+       "I",
+       "V"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.65,
+     "add9": 0.15,
+     "sus2": 0.1,
+     "seventh": 0.1
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0.05,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.6,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "film-piano",
+       "weight": 2
+      },
+      {
+       "id": "organ",
+       "weight": 2
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 3
+      },
+      {
+       "id": "film-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 76,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "open",
+      "colorTop": 0.2,
+      "rootBottom": 1
+     }
+    },
+    "bass": {
+     "sound": [
+      "low-strings"
+     ],
+     "rhythms": [
+      {
+       "id": "sub-hold",
+       "weight": 3
+      },
+      {
+       "id": "sub-pulse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ],
+     "pedal": 0.4
+    },
+    "lead": {
+     "sound": [
+      {
+       "id": "horns",
+       "weight": 2
+      },
+      {
+       "id": "cello",
+       "weight": 1
+      }
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "theme-sparse",
+       "weight": 2
+      },
+      {
+       "id": "theme-slow",
+       "weight": 2
+      }
+     ],
+     "range": [
+      50,
+      72
+     ],
+     "tensions": false,
+     "scale": "natural",
+     "targets": {
+      "pitches": [
+       2,
+       5
+      ],
+      "range": 9,
+      "rangeMin": 3,
+      "repeat": 0.75,
+      "sync": 0.05
+     }
+    },
+    "pluck": {
+     "sound": [
+      {
+       "id": "organ",
+       "weight": 2
+      },
+      {
+       "id": "spiccato",
+       "weight": 1
+      }
+     ],
+     "mode": "arp",
+     "orders": [
+      "pedal",
+      "up"
+     ],
+     "rhythms": [
+      {
+       "id": "ostinato-8",
+       "weight": 2
+      },
+      {
+       "id": "ostinato-16",
+       "weight": 1
+      }
+     ],
+     "range": [
+      55,
+      79
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.7,
+    "drumKit": "epic",
+    "noise": 0
+   },
+   "soundHints": [
+    "Ein Vier-Akkord-Loop in Moll, der lange stehen bleibt; die IV in Dur (wie in „Time“) klingt hoffnungsvoll",
+    "Klavier oder Kirchenorgel als Grundlage, darunter tiefe Streicher auf dem Grundton",
+    "Jede Runde kommt eine Schicht dazu: Ostinato, Trommeln, Blech; am Ende bleibt das Klavier allein",
+    "Die Melodie ist kaum eine: wenige lange Töne, oft von Hörnern, die sich mit jeder Runde wiederholen",
+    "Viel Hall wie in einer Kirche oder einem großen Saal"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "chords"
+     ],
+     "filter": 1600
+    },
+    {
+     "name": "Erste Schicht",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead"
+     ]
+    },
+    {
+     "name": "Zweite Schicht",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck"
+     ]
+    },
+    {
+     "name": "Höhepunkt",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ausklang",
+     "bars": 4,
+     "lanes": [
+      "chords"
+     ],
+     "filter": 1800
+    }
+   ]
+  },
+  {
+   "id": "dark-knight",
+   "name": "The Dark Knight (Ostinato, Blech, Trommeln)",
+   "blurb": "100–128 BPM, ein Streicher-Ostinato in 16teln über einem liegenden Grundton, tiefes Blech, ein Motiv aus zwei Tönen, Taiko-Trommeln",
+   "references": [
+    "Molossus (Batman Begins)",
+    "A Dark Knight",
+    "Why So Serious?"
+   ],
+   "tempo": [
+    100,
+    128
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "film-taiko",
+     "weight": 2
+    },
+    {
+     "id": "film-pulse",
+     "weight": 2
+    },
+    {
+     "id": "film-march",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 3,
+      "like": "„The Dark Knight“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "III",
+       "VII"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VII"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i"
+      ],
+      "durations": [
+       4
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.8,
+     "sus2": 0.1,
+     "add9": 0.1
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.05,
+    "stretch": 0.3,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "low-brass",
+       "weight": 2
+      },
+      {
+       "id": "film-strings",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 3
+      },
+      {
+       "id": "film-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 46,
+      "high": 70,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "open",
+      "rootBottom": 1.2
+     }
+    },
+    "bass": {
+     "sound": [
+      {
+       "id": "low-strings",
+       "weight": 2
+      },
+      {
+       "id": "synth-bass",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "low-pulse-8",
+       "weight": 2
+      },
+      {
+       "id": "low-pulse-16",
+       "weight": 1
+      },
+      {
+       "id": "sub-hold",
+       "weight": 1
+      }
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "pedal": 0.5
+    },
+    "lead": {
+     "sound": [
+      "horns"
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "theme-sparse",
+       "weight": 2
+      },
+      {
+       "id": "theme-slow",
+       "weight": 2
+      },
+      {
+       "id": "theme-call",
+       "weight": 1
+      }
+     ],
+     "range": [
+      50,
+      70
+     ],
+     "tensions": false,
+     "scale": "natural",
+     "targets": {
+      "pitches": [
+       2,
+       4
+      ],
+      "range": 5,
+      "rangeMin": 3,
+      "repeat": 0.85,
+      "steps": 0.5,
+      "sync": 0.05,
+      "chordTones": 0.8
+     }
+    },
+    "pluck": {
+     "sound": [
+      "spiccato"
+     ],
+     "mode": "arp",
+     "orders": [
+      "pedal",
+      "updown"
+     ],
+     "rhythms": [
+      {
+       "id": "ostinato-16",
+       "weight": 3
+      },
+      {
+       "id": "ostinato-332",
+       "weight": 1
+      }
+     ],
+     "range": [
+      48,
+      72
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.6,
+    "drumKit": "epic",
+    "noise": 0
+   },
+   "soundHints": [
+    "Ein Streicher-Ostinato in 16teln, das immer wieder zum tiefsten Ton zurückkehrt, trägt den Puls",
+    "Darunter halten tiefe Streicher (oder ein Synth-Bass) den Grundton",
+    "Tiefes Blech in langen Akkorden; die Hörner spielen ein Motiv aus zwei, drei Tönen",
+    "Nur zwei Akkorde (i und ♭VI) oder ein einziger: die Spannung kommt aus Rhythmus und Lautstärke",
+    "Taiko und Konzert-Snare statt Drumkit"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "pluck",
+      "bass"
+     ],
+     "filter": 900
+    },
+    {
+     "name": "Aufbau",
+     "bars": 8,
+     "lanes": [
+      "pluck",
+      "bass",
+      "chords",
+      "drums"
+     ],
+     "build": true
+    },
+    {
+     "name": "Höhepunkt",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ruhe",
+     "bars": 4,
+     "lanes": [
+      "pluck",
+      "chords"
+     ],
+     "filter": 1500
+    },
+    {
+     "name": "Höhepunkt",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ausklang",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "lead"
+     ],
+     "filter": 1800
+    }
+   ]
+  },
+  {
+   "id": "gladiator",
+   "name": "Gladiator (Hymne und Schlacht)",
+   "blurb": "116–134 BPM, ein Hörner-Thema mit punktierten Rhythmen über Streichern und Männerchor, ein Bass, der stufenweise steigt, Schlacht-Trommeln",
+   "references": [
+    "The Battle",
+    "Now We Are Free",
+    "Honor Him",
+    "Barbarian Horde"
+   ],
+   "tempo": [
+    116,
+    134
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "film-taiko",
+     "weight": 2
+    },
+    {
+     "id": "film-march",
+     "weight": 2
+    },
+    {
+     "id": "film-pulse",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "ii°7",
+       "i/3",
+       "iv"
+      ],
+      "weight": 3,
+      "like": "„Gladiator“ und „Crimson Tide“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "III",
+       "VII"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "VII",
+       "i"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.75,
+     "seventh": 0.1,
+     "add9": 0.1,
+     "sus4": 0.05
+    },
+    "colorConsistency": 0.4,
+    "inversions": 0.1,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.2,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "film-strings",
+       "weight": 2
+      },
+      {
+       "id": "choir-dark",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 2
+      },
+      {
+       "id": "film-half",
+       "weight": 2
+      }
+     ],
+     "voicing": {
+      "low": 45,
+      "high": 74,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "open",
+      "rootBottom": 1
+     }
+    },
+    "bass": {
+     "sound": [
+      "low-strings"
+     ],
+     "rhythms": [
+      {
+       "id": "sub-pulse",
+       "weight": 2
+      },
+      {
+       "id": "low-pulse-8",
+       "weight": 2
+      }
+     ],
+     "range": [
+      26,
+      40
+     ],
+     "pedal": 0.15
+    },
+    "lead": {
+     "sound": [
+      {
+       "id": "horns",
+       "weight": 3
+      },
+      {
+       "id": "cello",
+       "weight": 1
+      }
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "theme-long",
+       "weight": 3
+      },
+      {
+       "id": "theme-rise",
+       "weight": 2
+      },
+      {
+       "id": "theme-call",
+       "weight": 1
+      }
+     ],
+     "range": [
+      53,
+      74
+     ],
+     "tensions": false,
+     "scale": "natural",
+     "targets": {
+      "pitches": [
+       4,
+       7
+      ],
+      "range": 12,
+      "rangeMin": 7,
+      "repeat": 0.6,
+      "steps": 0.6,
+      "sync": 0.1
+     }
+    },
+    "pluck": {
+     "sound": [
+      "spiccato"
+     ],
+     "mode": "arp",
+     "orders": [
+      "pedal",
+      "up"
+     ],
+     "rhythms": [
+      {
+       "id": "ostinato-8",
+       "weight": 2
+      },
+      {
+       "id": "ostinato-16",
+       "weight": 2
+      }
+     ],
+     "range": [
+      50,
+      74
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.65,
+    "drumKit": "epic",
+    "noise": 0
+   },
+   "soundHints": [
+    "Ein Thema für Hörner mit punktierten Rhythmen und langen Tönen, wie eine Hymne",
+    "Darunter Streicher und ein tiefer Männerchor in langen Akkorden",
+    "Die typische Zimmer-Folge der 90er: der Bass steigt stufenweise (i–ii°7–i/3–iv)",
+    "In der Schlacht treiben Ostinato, Taiko und Konzert-Snare",
+    "Für die Klage am Anfang: Solo-Cello oder eine Stimme statt Hörner"
+   ],
+   "arrangement": [
+    {
+     "name": "Klage",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "lead"
+     ],
+     "filter": 1500
+    },
+    {
+     "name": "Hymne",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead"
+     ]
+    },
+    {
+     "name": "Schlacht",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Hymne",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ausklang",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "lead"
+     ],
+     "filter": 2000
+    }
+   ]
+  }
+ ]
+}

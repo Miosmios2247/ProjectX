@@ -1,0 +1,791 @@
+{
+ "id": "ludwig-goeransson",
+ "artist": "Ludwig Göransson",
+ "genre": "film",
+ "blurb": "Ein besonderes Solo-Instrument pro Film (sprechende Trommel, Blockflöte, Geige), darüber Beats und dann das ganze Orchester",
+ "harmonyNote": "Ludwig Göransson schreibt meist in Moll mit wenigen Akkorden, oft über einem liegenden Grundton. Die Farbe kommt aus dem Solo-Instrument und dem Rhythmus, nicht aus komplizierten Akkorden.",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "lead"
+   ],
+   "filter": 2600
+  },
+  {
+   "name": "Puls",
+   "bars": 8,
+   "lanes": [
+    "lead",
+    "drums",
+    "bass"
+   ]
+  },
+  {
+   "name": "Synth",
+   "bars": 8,
+   "lanes": [
+    "lead",
+    "drums",
+    "bass",
+    "pluck"
+   ]
+  },
+  {
+   "name": "Orchester",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Ausklang",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 2000
+  }
+ ],
+ "variants": [
+  {
+   "id": "black-panther",
+   "name": "Black Panther (Trommeln und Flöte)",
+   "blurb": "112–128 BPM, sprechende Trommeln, eine hauchige Flöte mit Ruf und Antwort, eine 808 unter den Trommeln, Hörner und Chor",
+   "references": [
+    "Wakanda",
+    "Killmonger",
+    "Warrior Falls",
+    "Ancestral Plane"
+   ],
+   "tempo": [
+    112,
+    128
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "wakanda-talk",
+     "weight": 3
+    },
+    {
+     "id": "wakanda-drive",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.85,
+     "major": 0.15
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "VII",
+       "i"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VII",
+       "i",
+       "VI"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i"
+      ],
+      "durations": [
+       4
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "I",
+       "bVII",
+       "IV",
+       "I"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.8,
+     "sus4": 0.1,
+     "sus2": 0.1
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.2,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "horns",
+       "weight": 2
+      },
+      {
+       "id": "choir-dark",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 3
+      },
+      {
+       "id": "film-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 72,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "open",
+      "rootBottom": 1
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      24,
+      43
+     ],
+     "mode": "808",
+     "glide": 0.15,
+     "octave": 0.1
+    },
+    "lead": {
+     "sound": [
+      "breath-flute"
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "afro-call-01",
+       "weight": 2
+      },
+      {
+       "id": "afro-call-02",
+       "weight": 1
+      },
+      {
+       "id": "theme-call",
+       "weight": 1
+      }
+     ],
+     "range": [
+      67,
+      86
+     ],
+     "tensions": false,
+     "scale": "natural",
+     "targets": {
+      "pitches": [
+       3,
+       6
+      ],
+      "range": 9,
+      "rangeMin": 5,
+      "repeat": 0.7,
+      "steps": 0.55,
+      "sync": 0.25
+     }
+    },
+    "pluck": {
+     "sound": [
+      "guitar-pick"
+     ],
+     "mode": "marimba",
+     "rhythms": [
+      {
+       "id": "marimba-01",
+       "weight": 2
+      },
+      {
+       "id": "marimba-02",
+       "weight": 1
+      }
+     ],
+     "range": [
+      60,
+      84
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.5,
+    "drumKit": "wakanda",
+    "noise": 0
+   },
+   "soundHints": [
+    "Die sprechende Trommel (Talking Drum) ist die Stimme: ihr Ton gleitet nach dem Schlag, wie ein Wort",
+    "Darüber eine hauchige Flöte (bei Göransson die Fula-Flöte) mit kurzen Rufen und Antworten",
+    "Eine 808 verstärkt die Schläge der Trommeln, wie bei Killmonger",
+    "Hörner und Chor in langen Akkorden für das Königliche",
+    "Für den Klang: echte Trommel- und Flöten-Aufnahmen bearbeiten, ruhig mit etwas Verzerrung"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "lead",
+      "chords"
+     ],
+     "filter": 1800
+    },
+    {
+     "name": "Trommeln",
+     "bars": 8,
+     "lanes": [
+      "lead",
+      "chords",
+      "drums"
+     ]
+    },
+    {
+     "name": "Beat",
+     "bars": 8,
+     "lanes": [
+      "lead",
+      "drums",
+      "bass",
+      "pluck"
+     ]
+    },
+    {
+     "name": "Tutti",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ausklang",
+     "bars": 4,
+     "lanes": [
+      "lead",
+      "chords"
+     ],
+     "filter": 2200
+    }
+   ]
+  },
+  {
+   "id": "mandalorian",
+   "name": "The Mandalorian (Blockflöte und Synth)",
+   "blurb": "70–84 BPM, eine tiefe Blockflöte mit Echo, ein Synth-Bass in 8teln, ein Herzschlag, dann das Orchester",
+   "references": [
+    "The Mandalorian (Hauptthema)"
+   ],
+   "tempo": [
+    70,
+    84
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "film-heart",
+     "weight": 3
+    },
+    {
+     "id": "film-bed",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "VII",
+       "i"
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "bII",
+       "i",
+       "i"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "III",
+       "bV",
+       "i"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.85,
+     "sus4": 0.1,
+     "add9": 0.05
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.4,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "film-strings",
+       "weight": 2
+      },
+      {
+       "id": "dark-pad",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 3
+      }
+     ],
+     "voicing": {
+      "low": 45,
+      "high": 72,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "open",
+      "rootBottom": 1
+     }
+    },
+    "bass": {
+     "sound": [
+      "synth-bass"
+     ],
+     "rhythms": [
+      {
+       "id": "low-pulse-8",
+       "weight": 3
+      },
+      {
+       "id": "sub-pulse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      40
+     ],
+     "pedal": 0.3
+    },
+    "lead": {
+     "sound": [
+      "breath-flute"
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "theme-call",
+       "weight": 2
+      },
+      {
+       "id": "theme-long",
+       "weight": 2
+      },
+      {
+       "id": "theme-slow",
+       "weight": 1
+      }
+     ],
+     "range": [
+      53,
+      79
+     ],
+     "tensions": false,
+     "scale": "phrygian",
+     "targets": {
+      "pitches": [
+       3,
+       6
+      ],
+      "range": 9,
+      "rangeMin": 5,
+      "repeat": 0.7,
+      "sync": 0.1
+     }
+    },
+    "pluck": {
+     "sound": [
+      "staccato-synth"
+     ],
+     "mode": "arp",
+     "orders": [
+      "pedal"
+     ],
+     "rhythms": [
+      {
+       "id": "ostinato-8",
+       "weight": 3
+      },
+      {
+       "id": "ostinato-16",
+       "weight": 1
+      }
+     ],
+     "range": [
+      48,
+      67
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.6,
+    "drumKit": "epic",
+    "noise": 0
+   },
+   "soundHints": [
+    "Eine tiefe Blockflöte (Bassblockflöte) spielt das Thema, mit Echo und viel Hall",
+    "Darunter ein Synth-Bass in 8teln und ein Herzschlag aus zwei kurzen Schlägen",
+    "Die kleine Sekunde über dem Grundton (♭II) klingt nach Wüste und Gefahr",
+    "Schicht für Schicht: erst die Flöte allein, dann Herzschlag und Bass, dann ein Synth, zuletzt das Orchester"
+   ],
+   "arrangement": [
+    {
+     "name": "Intro",
+     "bars": 4,
+     "lanes": [
+      "lead"
+     ],
+     "filter": 2600
+    },
+    {
+     "name": "Puls",
+     "bars": 8,
+     "lanes": [
+      "lead",
+      "drums",
+      "bass"
+     ]
+    },
+    {
+     "name": "Synth",
+     "bars": 8,
+     "lanes": [
+      "lead",
+      "drums",
+      "bass",
+      "pluck"
+     ]
+    },
+    {
+     "name": "Orchester",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Ausklang",
+     "bars": 4,
+     "lanes": [
+      "lead",
+      "chords"
+     ],
+     "filter": 2000
+    }
+   ]
+  },
+  {
+   "id": "oppenheimer",
+   "name": "Oppenheimer (Geigen-Ostinato)",
+   "blurb": "80–96 BPM, eine Solo-Geige über einem rasenden Geigen-Ostinato, keine Drums; im Song-Modus wird es immer schneller",
+   "references": [
+    "Can You Hear the Music",
+    "Fission",
+    "Destroyer of Worlds"
+   ],
+   "tempo": [
+    80,
+    96
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "film-none",
+     "weight": 3
+    },
+    {
+     "id": "film-boom",
+     "weight": 1
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 3
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "III",
+       "VII"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "v",
+       "VI"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.8,
+     "add9": 0.1,
+     "sus2": 0.1
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.3,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "film-strings"
+     ],
+     "rhythms": [
+      {
+       "id": "film-hold",
+       "weight": 3
+      },
+      {
+       "id": "film-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 76,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "open",
+      "rootBottom": 1
+     }
+    },
+    "bass": {
+     "sound": [
+      "low-strings"
+     ],
+     "rhythms": [
+      {
+       "id": "sub-pulse",
+       "weight": 2
+      },
+      {
+       "id": "sub-hold",
+       "weight": 1
+      }
+     ],
+     "range": [
+      28,
+      43
+     ],
+     "pedal": 0.3
+    },
+    "lead": {
+     "sound": [
+      "violin"
+     ],
+     "mode": "theme",
+     "rhythms": [
+      {
+       "id": "theme-call",
+       "weight": 2
+      },
+      {
+       "id": "theme-long",
+       "weight": 2
+      }
+     ],
+     "range": [
+      55,
+      84
+     ],
+     "tensions": false,
+     "scale": "natural",
+     "targets": {
+      "pitches": [
+       4,
+       6
+      ],
+      "range": 10,
+      "rangeMin": 5,
+      "repeat": 0.7,
+      "steps": 0.7,
+      "sync": 0.08
+     }
+    },
+    "pluck": {
+     "sound": [
+      "violin-spiccato"
+     ],
+     "mode": "arp",
+     "orders": [
+      "updown",
+      "pedal"
+     ],
+     "rhythms": [
+      {
+       "id": "ostinato-16",
+       "weight": 2
+      },
+      {
+       "id": "ostinato-triplet",
+       "weight": 2
+      }
+     ],
+     "range": [
+      55,
+      79
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.55,
+    "drumKit": "epic",
+    "noise": 0
+   },
+   "soundHints": [
+    "Eine Solo-Geige spielt ein kurzes Motiv aus wenigen Tönen, eine zweite Geige rast in 16teln oder Triolen darunter",
+    "Keine Drums: Streicher und Bass tragen alles",
+    "Im Song-Modus wird der letzte Teil immer schneller, bis zum doppelten Tempo, dann bricht alles ab",
+    "Im Film wird das Tempo in vielen kleinen Stufen schneller; in FL Studio geht das mit einer Tempo-Automation"
+   ],
+   "arrangement": [
+    {
+     "name": "Bass",
+     "bars": 4,
+     "lanes": [
+      "bass",
+      "chords"
+     ],
+     "filter": 1400
+    },
+    {
+     "name": "Geige",
+     "bars": 8,
+     "lanes": [
+      "bass",
+      "chords",
+      "lead"
+     ]
+    },
+    {
+     "name": "Gegenstimme",
+     "bars": 8,
+     "lanes": [
+      "bass",
+      "chords",
+      "lead",
+      "pluck"
+     ]
+    },
+    {
+     "name": "Beschleunigung",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ],
+     "accel": 2
+    }
+   ]
+  }
+ ]
+}

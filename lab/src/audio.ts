@@ -377,6 +377,7 @@ export class Player {
     transport.loopStart = 0;
     transport.loopEnd = ticks(songBars * 4);
     if (transport.ticks >= this.songTicks) transport.ticks = 0;
+    const accel = !!arrangement?.some((s) => (s.accel ?? 1) > 1);
     const loopPart = (part: ToneNS.Part) => {
       if (arrangement) {
         part.loop = true;
@@ -439,10 +440,13 @@ export class Player {
           swaps.set(s.pluckSound, v);
         }
       }
-      const part = new T.Part((time, ev: (typeof events)[number]) => {
+      const part = new T.Part((time, ev0: (typeof events)[number]) => {
         const sec = sectionAt(time);
         if (sec && !sec.lanes.includes(lane)) return;
         if (lane === "bass" && inStopBar(time)) return;
+        // While the tempo speeds up (Oppenheimer), notes get shorter with it.
+        const k = accel ? idea.bpm / transport.bpm.getValueAtTime(time) : 1;
+        const ev = k === 1 ? ev0 : { ...ev0, dur: ev0.dur * k, raw: ev0.raw * k, hold: ev0.hold * k };
         // While the voice memo plays (Fred again.. intro), the chops wait.
         if (memoSection && sec?.voiceMemo && this.memo && this.inMemo(transport.getTicksAtTime(time))) return;
         const up = lane === "lead" && sec?.leadUp && top + 12 <= 86 ? 12 : 0;
@@ -574,11 +578,23 @@ export class Player {
     if (!arrangement) return;
     const ticks = (beats: number) => `${Math.round(beats * ppq)}i`;
     let bar = 0;
+    const accel = arrangement.some((s) => (s.accel ?? 1) > 1);
+    const base = 60 / secPerBeat;
     arrangement.forEach((sec, i) => {
       const prev = arrangement[(i - 1 + arrangement.length) % arrangement.length];
       const dur = sec.bars * 4 * secPerBeat;
       this.songEvents.push(
         transport.schedule((time) => {
+          if (accel) {
+            // Oppenheimer: the tempo rises evenly through the section; the next one starts at the
+            // idea's tempo again. A linear ramp over the time the section takes at its average tempo
+            // ends with the section.
+            const bpm = transport.bpm;
+            bpm.cancelScheduledValues(time);
+            bpm.setValueAtTime(base, time);
+            const a = sec.accel ?? 1;
+            if (a > 1) bpm.linearRampToValueAtTime(base * a, time + (2 * dur) / (1 + a));
+          }
           f.cancelScheduledValues(time);
           rl.cancelScheduledValues(time);
           rf.cancelScheduledValues(time);

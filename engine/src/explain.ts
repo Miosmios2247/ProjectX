@@ -159,7 +159,13 @@ export function explainIdea(input: {
       `Begleitung: Die Akkorde spielen den gehaltenen Ton der Stimme nicht mit, so bleibt sie klar${style.id === "bunt" ? " („weniger klingt größer“)" : ""}.`,
     );
   }
-  if (input.pluckAnswers) out.push("Pluck: tritt zurück, solange die Hook singt, und füllt ihre Pausen (Frage und Antwort).");
+  if (input.pluckAnswers) {
+    out.push(
+      style.genre === "film"
+        ? "Begleitfigur: spielt leiser, solange das Thema klingt, und tritt in seinen Pausen hervor."
+        : "Pluck: tritt zurück, solange die Hook singt, und füllt ihre Pausen (Frage und Antwort).",
+    );
+  }
   const swing = Math.round(variant.drumSwing * 100);
   const pump = variant.mix.sidechain > 0.01 ? " Alles außer den Drums pumpt mit der Kick." : "";
   if (style.genre === "film") {

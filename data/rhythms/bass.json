@@ -1,7 +1,7 @@
 [
  {
   "id": "sub-hold",
-  "name": "Sub gehalten",
+  "name": "lange Grundtöne",
   "lane": "bass",
   "tags": [
    "sub",
@@ -46,7 +46,7 @@
  },
  {
   "id": "sub-pulse",
-  "name": "Sub halbe Noten",
+  "name": "Grundton in halben Noten",
   "lane": "bass",
   "tags": [
    "sub",

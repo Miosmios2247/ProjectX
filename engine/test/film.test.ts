@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { ChordSlot, buildChord, chordPcs, createRng, getMood, getRhythm, moodDrums } from "../src/index";
+import {
+  ChordSlot,
+  MOODS,
+  STYLES,
+  buildChord,
+  chordPcs,
+  createRng,
+  generateIdea,
+  getDrumPattern,
+  getMood,
+  getRhythm,
+  getVariant,
+  moodDrums,
+} from "../src/index";
 import { pluckLane } from "../src/lanes/pluck";
 import { leadLane } from "../src/lanes/lead";
 import { DrumHit } from "../src/types";
@@ -69,5 +82,58 @@ describe("film percussion under moods", () => {
   it("leaves a cue without drums without drums", () => {
     expect(moodDrums([], getMood("energie"), 2, 120, createRng(1), "film")).toEqual([]);
     expect(moodDrums([], getMood("episch"), 4, 120, createRng(1), "film")).toEqual([]);
+  });
+});
+
+describe("film composers", () => {
+  const film = STYLES.filter((s) => s.genre === "film").flatMap((s) => s.variants.map((v) => ({ styleId: s.id, variantId: v.id })));
+
+  it("has Hans Zimmer and Ludwig Göransson with three takes each", () => {
+    expect(STYLES.filter((s) => s.genre === "film").map((s) => s.artist)).toEqual(["Hans Zimmer", "Ludwig Göransson"]);
+    expect(film).toHaveLength(6);
+  });
+
+  it("writes themes with long notes and explains them without house words", () => {
+    for (const { styleId, variantId } of film) {
+      let len = 0;
+      let n = 0;
+      for (let seed = 1; seed <= 6; seed++) {
+        const idea = generateIdea({ styleId, variantId, key: null, bars: 4, seed });
+        const where = `${styleId}/${variantId} ${seed}`;
+        for (const x of idea.lanes.lead.notes) {
+          len += x.len;
+          n++;
+        }
+        expect(idea.insights.some((t) => t.startsWith("Thema:")), where).toBe(true);
+        expect(idea.insights.some((t) => /^Trommeln:|^Keine Drums/.test(t)), where).toBe(true);
+        expect(idea.insights.join(" "), where).not.toMatch(/pumpt mit|Drop|House|Hook/);
+      }
+      // Black Panther's flute calls are short; every other theme sings in long notes.
+      expect(len / n, `${styleId}/${variantId}`).toBeGreaterThan(styleId === "ludwig-goeransson" && variantId === "black-panther" ? 1.5 : 3);
+    }
+  });
+
+  it("keeps a cue without drums without drums under every mood, and its own chord rhythms", () => {
+    for (const { styleId, variantId } of film) {
+      const own = new Set(getVariant(styleId, variantId).lanes.chords.rhythms.map((r) => (typeof r === "string" ? r : r.id)));
+      for (const mood of MOODS) {
+        for (let seed = 1; seed <= 3; seed++) {
+          const idea = generateIdea({ styleId, variantId, key: null, bars: 4, seed, mood: mood.id });
+          const where = `${styleId}/${variantId} ${mood.id} ${seed}`;
+          expect(own.has(idea.lanes.chords.rhythmId), where).toBe(true);
+          if (getDrumPattern(idea.drums.patternId).tags.includes("none")) expect(idea.drums.hits, where).toEqual([]);
+        }
+      }
+    }
+  });
+
+  it("builds the song forms the research describes", () => {
+    const opp = getVariant("ludwig-goeransson", "oppenheimer").arrangement!;
+    expect(opp[opp.length - 1].accel).toBe(2);
+    const nolan = getVariant("hans-zimmer", "nolan").arrangement!;
+    // "Time": the layers come in one after another, the end strips back.
+    const sizes = nolan.map((s) => s.lanes.length);
+    expect(sizes.slice(0, 4)).toEqual([...sizes.slice(0, 4)].sort((a, b) => a - b));
+    expect(sizes[sizes.length - 1]).toBeLessThan(Math.max(...sizes));
   });
 });
