@@ -1,6 +1,6 @@
 # ProjectX – Planung: Stil-Generator-Plugin (VST3)
 
-> **Status:** v0.6 · Phase 1 läuft: Hör-Labor Runde 6 (Stimmungen neben den Künstlern: Euphorie, Energie, Episch, Melancholie, Verträumt, Dunkel), davor Runde 5 mit allen Bausteinen aus dem [Plan „4 von 5“](PLAN-4-VON-5.md), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 31.10.2026
+> **Status:** v0.7 · Phase 1 läuft: Hör-Labor Runde 7 (Hip-Hop: OZ, Metro Boomin, Pi'erre Bourne mit 808, Hi-Hat-Rolls und Melodie-Loops), davor Runde 6 (Stimmungen neben den Künstlern: Euphorie, Energie, Episch, Melancholie, Verträumt, Dunkel) und Runde 5 mit allen Bausteinen aus dem [Plan „4 von 5“](PLAN-4-VON-5.md), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 03.11.2026
 > Wir planen gemeinsam weiter. Was noch zu entscheiden ist, steht in [Abschnitt 11](#11-offene-entscheidungen).
 
 ## 1. Vision
@@ -101,6 +101,19 @@ wissen, was man sucht. ProjectX dreht das um:
 - **BUNT.:** seit „Clouds“ (2023) Stutter House: eine geliehene Gesangszeile mit gedehnten Vokalen im 16tel-Gate über zwei bis vier Akkorden auf der VI (VI–i, VI–VII–i–VII) bei 127–133 BPM, dazu Drum & Bass („TRIPPIN“). Das Frühwerk bis 2022 ist Folk-House in Dur (vi–IV–I) mit Gitarre und Mundharmonika.
 
 **Erkenntnis:** Künstler haben Phasen. Das Profil-System unterstützt deshalb von Anfang an mehrere Varianten pro Künstler.
+
+**Hip-Hop (seit Runde 7):** Drei Produzenten, je zwei Varianten, Kurzfassung aus den Notizen in
+[research_notes/Stilanalyse OZ Metro Boomin Pierre Bourne/](../research_notes/Stilanalyse%20OZ%20Metro%20Boomin%20Pierre%20Bourne/):
+
+- **OZ:** Schweizer Loop-Produzent (Travis Scott, Drake). Schlichte, gläserne Melodie-Loops in Moll aus
+  zwei bis vier Akkorden, darüber oft ein seltsamer zweiter Klang, viele Hi-Hats, 150–168 BPM.
+- **Metro Boomin:** dunkel und filmisch. Moll-Loops aus Flöte, Glocken oder Chor, eine schwere 808,
+  flatternde Hi-Hats bei 140–150 BPM; die „Heroes & Villains“-Ära langsamer mit Streichern und Chor.
+- **Pi'erre Bourne:** hell und verspielt. Videospiel-Melodien aus Synths, doppelte Kicks, eine hüpfende
+  808, auch Dur-Loops (IV–vi), 148–164 BPM.
+
+Gemeinsam: 808, das der Kick folgt und rutscht, Half-Time-Snare auf der Drei, Hi-Hat-Rolls und ein
+Beat-Stopp vor der Hook.
 
 ### 3.5 Beispiel: ein Stil-Profil als Datei
 

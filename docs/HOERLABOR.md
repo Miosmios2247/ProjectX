@@ -1,11 +1,75 @@
-# Hör-Labor – Runde 6
+# Hör-Labor – Runde 7
 
 Das Hör-Labor ist der Prototyp aus Phase 1 (siehe [PLAN.md](PLAN.md)). Hier prüfen wir, ob das
 Musik-Gehirn wirklich nach den Künstlern klingt, bevor das VST3-Plugin gebaut wird.
 
 **Link (privat, nur für dich):** https://claude.ai/artifact/RURpPL3bJpJN2EnmkPDcWm
 
-## Neu in Runde 6: Stimmungen
+## Neu in Runde 7: Hip-Hop
+
+Dein Wunsch: „Mach noch so Hip-Hop-Künstler wie OZ.“ Die Künstler-Auswahl hat jetzt zwei Gruppen:
+**House & Electronic** (Fred again.., AVAION, BUNT.) und **Hip-Hop**. Bei Hip-Hop sind drei
+Produzenten dabei, jeder mit zwei Varianten. Neben OZ habe ich Metro Boomin und Pi'erre Bourne
+gewählt, weil sie gut zu OZ passen und sich trotzdem klar unterscheiden: OZ baut gläserne
+Melodie-Loops, Metro Boomin klingt dunkel und filmisch, Pi'erre Bourne hell und verspielt. Andere
+Produzenten (zum Beispiel Cubeatz, Nick Mira oder Wheezy) kann ich gern dazunehmen.
+
+| Produzent | Variante | Tempo | Akkordfolgen (Moll-Sicht) | Melodie-Loop und Klang | Zum Vergleich |
+|---|---|---|---|---|---|
+| OZ | Travis Scott (dunkel) | 150–156 | i–v, VI–iv–i–v, i–iv–v–v | düstere Gitarren-Melodie, darüber ein schwebender Theremin-Ton | HIGHEST IN THE ROOM, SICKO MODE (Teil 2), ESCAPE PLAN |
+| OZ | Drake (gläsern, Bounce) | 158–168 | VImaj7–v7–VII–i7, VI–VII–i | gläserne Glocken über Rhodes-Akkorden | Toosie Slide, Girls Want Girls, Life Is Good |
+| Metro Boomin | Savage Mode (dunkel) | 140–150 | i–VI–v–i, i–iv–VII–i, nur Moll | Flöte oder Glocken, dunkles Piano, harte 808 | Mask Off, Bank Account, Jumpman, X |
+| Metro Boomin | Heroes & Villains (filmisch) | 112–120 | i–v–VI–V, i–VI–III–V (mit dem Leitton des harmonischen Moll) | Streicher und Chor, dunkles Piano | Superhero, Trance, Creepin', Am I Dreaming |
+| Pi'erre Bourne | Die Lit (Magnolia) | 158–164 | i–iv–v–v, i–VI–VImaj7–iv | Videospiel-Synth, doppelte Kick, hüpfende 808 | Magnolia, Old Money, Choppa Won't Miss, Fell in Luv |
+| Pi'erre Bourne | Life of Pi'erre (hell) | 148–156 | IV–vi, I–IV–vi–IV (Dur) | Glocken und Flöte über einer warmen Fläche | wokeuplikethis*, Poke It Out, Sossboy |
+
+### Was Hip-Hop anders macht
+
+- **Das 808:** Der Bass ist ein langer, tiefer 808-Ton. Er startet mit jeder Kick und klingt bis
+  zum nächsten Schlag. Manchmal rutscht er in den nächsten Ton (Slide) oder springt eine Oktave
+  hoch.
+- **Half-Time:** Das Tempo ist hoch (meist 140–168), aber die Snare kommt nur einmal pro Takt, auf
+  die Drei. Darum fühlt sich der Beat halb so schnell an.
+- **Hi-Hat-Rolls:** Die Hi-Hats spielen 8tel, 16tel oder Triolen. Kurz vor der Snare und vor dem
+  nächsten Takt rollen sie immer wieder schneller (32tel, Triolen, ganz schnelle 64tel).
+- **Melodie-Loop statt Gesang:** Die Melodie ist eine kurze Schleife aus einem Instrument (Gitarre,
+  Glocken, Flöte, Synth), oft mit dunklen Moll-Farben. Darüber spielt eine zweite Stimme leise
+  Antworten.
+- **Beat-Stopp:** Im Song-Modus setzen Drums und 808 am Ende der Strophe einen Takt lang aus. Dann
+  kommt die Hook mit voller Wucht zurück.
+- **Eigene Mischung:** 808 und Melodie liegen vorn, die Flächen weiter hinten, ohne House-Pumpen.
+- **Blindtest:** Im Blindtest rätst du bei einem Hip-Hop-Loop nur zwischen OZ, Metro Boomin und
+  Pi'erre Bourne. Raten wäre 33 %.
+- **Stimmungen gehen auch hier:** Der Groove bleibt Hip-Hop. „Energie“ lässt die Hi-Hats öfter
+  rollen, „Verträumt“ und „Melancholie“ seltener, „Episch“ bringt Toms. House-Rhythmen kommen nicht
+  dazu.
+- **MIDI für FL Studio:** Ein Slide im 808 steht im MIDI als kurze Überlappung von zwei Noten.
+  Damit das 808 in FL Studio wirklich rutscht, stell im Kanal (zum Beispiel im Sampler oder in
+  3x Osc) „Mono“ und „Porta“ an.
+
+### Ehrlich gesagt
+
+- Die Recherche lief über Suchergebnisse. Viele Seiten (Interviews, Musikdatenbanken) waren von
+  hier aus gesperrt. Tempo und Tonart einzelner Songs sind darum oft nur aus einer Quelle. Die
+  Notizen mit allen Quellen liegen in
+  [research_notes/Stilanalyse OZ Metro Boomin Pierre Bourne/](../research_notes/Stilanalyse%20OZ%20Metro%20Boomin%20Pierre%20Bourne/).
+- Die Producer-Tags (die kurzen Sprach-Erkennungsmarken am Anfang der Beats) sind bewusst nicht
+  nachgebaut. Ich beschreibe sie nur.
+- Die Klänge sind nachgebaut (808, Flöte, Glocken, Gitarre). OZ arbeitet oft mit echten
+  Gitarren- und Sample-Loops, die wir hier nicht haben. Rap gibt es keinen, die Melodie-Loops
+  ersetzen ihn.
+
+### Was du jetzt tun kannst (etwa 20–30 Minuten)
+
+1. Hör dir jede Hip-Hop-Variante mit 2–3 neuen Ideen an und bewerte, wie sehr sie nach dem
+   Produzenten klingt. Am meisten hilft, wenn du kurz sagst, was fehlt (zum Beispiel „808 zu
+   brav“ oder „Melodie zu fröhlich“).
+2. Spiel 10–15 Runden Blindtest mit Hip-Hop-Loops.
+3. Probier zwei Stimmungen mit Hip-Hop, zum Beispiel Metro Boomin mit „Dunkel“ und Pi'erre Bourne
+   mit „Euphorie“.
+4. Wenn du magst: exportier eine Idee als MIDI und hör sie in FL Studio mit deinem eigenen 808.
+
+## Seit Runde 6 dabei: Stimmungen
 
 Deine Frage: „Kannst du auch Stimmungen in die Akkordfolgen machen, neben den Künstlern? Also
 Euphorie, Energie, Episch …“ Jetzt gibt es unter den Künstlern eine zweite Auswahl: **Stimmung**.
@@ -281,9 +345,15 @@ Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im 
 | BUNT. | Stutter House | 127–133 | VI–i, VI–VII–i–VII, VI–iv–i | gedehnter Vokal auf dem Grundton, 1/16-Gate | Clouds, Spaces, Moment, Lost My Mind |
 | BUNT. | Drum & Bass | 172–176 | ii–IV–I–I (Dur) | gedehnter Vokal mit Gate | TRIPPIN |
 | BUNT. | Folk-House (früh) | 124–127 | vi–IV–I–I (Dur) | Mundharmonika oder Bläser, Gitarre | Old Guitar, Unbreakable, Coming Home, Harmonica |
+| OZ | Travis Scott (dunkel) | 150–156 | i–v, VI–iv–i–v, i–iv–v–v | Gitarren-Loop, Theremin, 808 mit Slides | HIGHEST IN THE ROOM, SICKO MODE (Teil 2), ESCAPE PLAN |
+| OZ | Drake (gläsern, Bounce) | 158–168 | VImaj7–v7–VII–i7, VI–VII–i–i | Glocken-Loop über Rhodes | Toosie Slide, Girls Want Girls, Life Is Good |
+| Metro Boomin | Savage Mode (dunkel) | 140–150 | i–VI–v–i, i–iv–VII–i, i–iv | Flöten- oder Glocken-Loop, harte 808 | Mask Off, Bank Account, Jumpman, X |
+| Metro Boomin | Heroes & Villains (filmisch) | 112–120 | i–v–VI–V, i–VI–III–V | dunkles Piano über Streichern und Chor | Superhero, Trance, Creepin', Am I Dreaming |
+| Pi'erre Bourne | Die Lit (Magnolia) | 158–164 | i–iv–v–v, i–VI–VImaj7–iv | Videospiel-Synth, doppelte Kick | Magnolia, Old Money, Choppa Won't Miss, Fell in Luv |
+| Pi'erre Bourne | Life of Pi'erre (hell) | 148–156 | IV–vi, I–IV–vi–IV (Dur) | Glocken-Loop, Flöte | wokeuplikethis*, Poke It Out, Sossboy |
 
 Bewertungen aus früheren Runden bleiben gespeichert. Runde 2 ist an der Version `0.2.0`
-erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0`, Runde 5 an `0.5.0` und Runde 6 an `0.6.0`. Seit
+erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0`, Runde 5 an `0.5.0`, Runde 6 an `0.6.0` und Runde 7 an `0.7.0`. Seit
 Runde 3 steht dort auch, ob du im Song-Modus und mit eigener Stimme bewertet hast, seit Runde 6
 auch die Stimmung.
 
@@ -301,6 +371,7 @@ npm test              # Theorie, Voicings, Ideen, MIDI/ZIP
 npm run build:lab     # baut lab/dist/hoer-labor.html (eine Datei) und lab/dist/index.html (vollständiges Dokument)
 npm run idea -- --style avaion --variant wacuka --seed 7 --bars 8 --zip /tmp/idee.zip
 npm run idea -- --style bunt --variant stutter --mood euphorie
+npm run idea -- --style oz --variant travis --seed 7
 ```
 
 - `engine/` – Musik-Gehirn (TypeScript, ohne Abhängigkeiten): Theorie, Voicings, Akkordfolgen,
@@ -309,6 +380,12 @@ npm run idea -- --style bunt --variant stutter --mood euphorie
 - `data/` – Stil-Profile und Rhythmus-Bibliothek als JSON; `data/moods.json` enthält die Stimmungen
   (eigene Akkordfolgen, Farben, Tempo-Bereich, Tonlage, Rhythmus-Vorlieben, Drums), angewendet von
   `engine/src/mood.ts`
+- Hip-Hop (Runde 7): `genre: "hiphop"` im Stil-Profil; Bass mit `mode: "808"` (`lane808` in
+  `engine/src/lanes/bass.ts`, folgt der Kick, `glide` und `octave` als Chancen); Hi-Hat-Rolls über
+  `rolls` im Drum-Pattern (`engine/src/lanes/drums.ts`); Lead-Modus `loop` mit `scale`
+  (natural, harmonic, phrygian, dorian); `stopLastBar` im Arrangement für den Beat-Stopp;
+  `mix.laneDb` für die eigene Spur-Balance (808 und Melodie vorn). Ein Slide steht im MIDI als
+  Überlappung um eine 32tel. Tests in `engine/test/trap.test.ts`
 - `lab/` – die Hör-Labor-Seite (UI, Tone.js-Klänge, Speicher); `lab/samples/` enthält die
   Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`);
   `lab/src/voice-analysis.ts` erkennt Silben und Tonhöhe der eigenen Stimme,

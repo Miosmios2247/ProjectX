@@ -243,7 +243,7 @@
    "mix": {
     "sidechain": 0,
     "reverb": 0.42,
-    "drumKit": "trap",
+    "drumKit": "trap", "laneDb": { "chords": -3, "bass": -2.5, "lead": 2, "drums": -0.5 },
     "noise": 0
    },
    "soundHints": [
@@ -441,7 +441,7 @@
    "mix": {
     "sidechain": 0,
     "reverb": 0.38,
-    "drumKit": "trap",
+    "drumKit": "trap", "laneDb": { "chords": -3, "bass": -2.5, "lead": 2, "drums": -0.5 },
     "noise": 0
    },
    "soundHints": [

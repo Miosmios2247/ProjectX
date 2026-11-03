@@ -16,7 +16,7 @@ import { applyMood, getMood, moodArrangement, moodDrums, moodDynamics, moodRolls
 import { Key, mod12 } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
-export const ENGINE_VERSION = "0.6.0";
+export const ENGINE_VERSION = "0.7.0";
 
 export type SeedLane = LaneId | "drums";
 export const SEED_LANES: SeedLane[] = ["chords", "bass", "lead", "pluck", "drums"];

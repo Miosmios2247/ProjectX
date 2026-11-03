@@ -115,6 +115,8 @@ export class Player {
   private duckEvent: number | null = null;
   private gateEvent: number | null = null;
   private muted = new Set<PlayLane>();
+  /** The style's lane balance (dB), on top of LANE_TRIM. */
+  private laneOffset: Partial<Record<PlayLane, number>> = {};
   private built = false;
   idea: Idea | null = null;
   soundMode: SoundMode = "style";
@@ -207,7 +209,7 @@ export class Player {
     if (muted) this.muted.add(lane);
     else this.muted.delete(lane);
     if (!this.built) return;
-    const base = this.T.dbToGain(LANE_TRIM[lane]);
+    const base = this.T.dbToGain(LANE_TRIM[lane] + (this.laneOffset[lane] ?? 0));
     this.laneGain[lane].gain.rampTo(muted ? 0 : base, 0.03);
   }
 
@@ -553,7 +555,9 @@ export class Player {
     this.noiseLevel.gain.rampTo(bed.noise * (this.wantPlaying ? 1 : 0), 0.05);
     this.vinylLevel.gain.rampTo(bed.vinyl * (this.wantPlaying ? 1 : 0), 0.05);
     this.reverbIn.gain.value = neutral ? 0.25 : idea.mix.reverb;
-    for (const lane of this.muted) this.setMuted(lane, true);
+    // The style's own balance (hip-hop: 808 and melody loop in front); neutral sounds keep the default.
+    this.laneOffset = neutral ? {} : idea.mix.laneDb ?? {};
+    for (const lane of PLAY_LANES_ALL) this.setMuted(lane, this.muted.has(lane));
   }
 
   /** Filter, riser, snare roll and crash for each section of the song form. */

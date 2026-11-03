@@ -462,13 +462,18 @@ const SOUND_TRIM: Record<string, number> = {
   "deep-bass": 1.5,
   "house-bass": 3.5,
   "bounce-sub": -1.5,
-  // Hip-hop (round 7), first values from single-note loudness; the 808 sits a little above a house sub.
+  // Hip-hop (round 7), from offline loudness of the six hip-hop loops with the trap lane
+  // balance (mix.laneDb); the 808 sits a little above a house sub.
   "808": -2.5,
   "808-hard": -3.3,
-  "trap-guitar": -5,
-  "choir-dark": -7,
-  "trap-strings": -4.5,
-  "synth-lead": 2.5,
+  "trap-guitar": -4.5,
+  "choir-dark": -9.5,
+  "trap-strings": -7.5,
+  "synth-lead": 1.8,
+  bells: 2,
+  flute: -2,
+  "dark-piano": -2.5,
+  theremin: -6,
   "vox-chop": 0.5,
   "vox-stretch": 0,
   "vox-sing": -4,

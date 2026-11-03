@@ -124,6 +124,8 @@ export interface StyleVariant {
     noise?: number;
     /** How long the sidechain pump takes to recover, in beats (time constant; default 0.16). */
     pumpRelease?: number;
+    /** Lane balance in dB on top of the lab's default mix, e.g. trap: 808 and melody in front, pads behind. */
+    laneDb?: Partial<Record<LaneId | "drums", number>>;
   };
   soundHints: string[];
   /** Song preview for this variant; falls back to the artist's arrangement. */
