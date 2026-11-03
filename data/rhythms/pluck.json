@@ -915,5 +915,321 @@
     "vel": 72
    }
   ]
+ },
+ {
+  "id": "ostinato-16",
+  "name": "Ostinato in 16teln",
+  "lane": "pluck",
+  "tags": [
+   "ostinato",
+   "drive",
+   "arp",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 96
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 70
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 70
+   }
+  ]
+ },
+ {
+  "id": "ostinato-8",
+  "name": "Ostinato in 8teln",
+  "lane": "pluck",
+  "tags": [
+   "ostinato",
+   "arp",
+   "calm",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 78
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 78
+   }
+  ]
+ },
+ {
+  "id": "ostinato-332",
+  "name": "Ostinato 3+3+2",
+  "lane": "pluck",
+  "tags": [
+   "ostinato",
+   "drive",
+   "syncopated",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 1,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 4,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 5,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 6,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 8,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 9,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 13,
+    "len": 1,
+    "vel": 66
+   },
+   {
+    "step": 14,
+    "len": 1,
+    "vel": 100
+   },
+   {
+    "step": 15,
+    "len": 1,
+    "vel": 66
+   }
+  ]
+ },
+ {
+  "id": "ostinato-triplet",
+  "name": "Ostinato in Triolen",
+  "lane": "pluck",
+  "tags": [
+   "ostinato",
+   "drive",
+   "triplet",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0.0,
+    "len": 1.33,
+    "vel": 96
+   },
+   {
+    "step": 1.333,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 2.667,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 4.0,
+    "len": 1.33,
+    "vel": 96
+   },
+   {
+    "step": 5.333,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 6.667,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 8.0,
+    "len": 1.33,
+    "vel": 96
+   },
+   {
+    "step": 9.333,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 10.667,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 12.0,
+    "len": 1.33,
+    "vel": 96
+   },
+   {
+    "step": 13.333,
+    "len": 1.33,
+    "vel": 76
+   },
+   {
+    "step": 14.667,
+    "len": 1.33,
+    "vel": 76
+   }
+  ]
  }
 ]

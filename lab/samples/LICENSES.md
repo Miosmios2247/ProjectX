@@ -2,10 +2,13 @@
 
 The audio samples in this folder are used by the Hör-Labor preview sounds.
 
-## FluidR3 GM (piano, epiano, guitar, nylon, strings, trumpet, harmonica, kit)
+## FluidR3 GM (piano, epiano, guitar, nylon, strings, trumpet, harmonica, kit; since round 8 also horns, trombone, cello, contrabass, violin, flute, shakuhachi and orch)
 
 MP3 renders from the FluidR3 GM SoundFont, taken from the npm package
 `soundfont-for-samplers` (v0.0.3, MIT).
+
+The `orch` folder holds single hits from the taiko drum, the orchestra kit (concert bass drum,
+concert snare, cymbal, timpani) and the woodblock, trimmed and normalised to -1 dBFS.
 
 FluidR3 SoundFont, Copyright (c) 2000-2002, 2008, 2013 Frank Wen <getfrank@gmail.com>.
 Licensed under the MIT License:

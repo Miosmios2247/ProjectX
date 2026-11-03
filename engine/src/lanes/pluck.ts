@@ -38,6 +38,10 @@ function orderIndex(order: ArpOrder, c: number, n: number): number {
       const k = Math.floor(c / 2) % n;
       return c % 2 === 0 ? k : n - 1 - k;
     }
+    case "pedal":
+      // Lowest tone on every other note, the others climb above it: 1-3-1-5-1-8-1-5.
+      if (c % 2 === 0) return 0;
+      return 1 + (n > 2 ? orderIndex("updown", Math.floor(c / 2), n - 1) : 0);
   }
 }
 

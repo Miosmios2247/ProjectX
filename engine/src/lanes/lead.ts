@@ -264,7 +264,7 @@ function toNotes(
   return notes;
 }
 
-type MotifMode = "topline" | "folk" | "brass-hook" | "loop";
+type MotifMode = "topline" | "folk" | "brass-hook" | "loop" | "theme";
 
 const MODE_OPTS: Record<MotifMode, ContourOpts> = {
   // Sung: mostly steps and repeated notes, phrases fall at the end. AVAION sings high.
@@ -274,6 +274,9 @@ const MODE_OPTS: Record<MotifMode, ContourOpts> = {
   "brass-hook": { weights: [0.32, 0.42, 0.2, 0.06], upEarly: 0.5, upLate: 0.3, startBias: 0.55 },
   // A beat's melody loop: steps and chord-tone leaps (an instrument, not a voice), it loops.
   loop: { weights: [0.16, 0.36, 0.26, 0.14, 0.08], upEarly: 0.55, upLate: 0.35, startBias: 0.5 },
+  // A film theme: long notes, mostly steps, now and then a 4th or 5th that opens the phrase upward;
+  // it starts low and climbs, the answer comes back down.
+  theme: { weights: [0.1, 0.5, 0.16, 0.13, 0.11], upEarly: 0.7, upLate: 0.3, startBias: 0.35 },
 };
 
 // Phrase forms: A = the motif, A' = the motif with a new ending, B/C = new
@@ -285,10 +288,12 @@ const FORMS: Record<MotifMode, string[][]> = {
   folk: [["A", "A", "B", "A'"], ["A", "B", "A", "B'"]],
   // A melody loop repeats and changes at most its ending, like a sample loop.
   loop: [["A", "A", "A", "A'"], ["A", "A'", "A", "A'"], ["A", "A", "A'", "A"]],
+  // A theme states its motif, varies it, contrasts it and comes back.
+  theme: [["A", "A'", "B", "A'"], ["A", "B", "A", "B'"], ["A", "A'", "A", "B"]],
 };
 
 // How often a phrase gets 1–3 pickup notes into its first downbeat.
-const PICKUP: Record<MotifMode, number> = { topline: 0.4, folk: 0.3, "brass-hook": 0.25, loop: 0.15 };
+const PICKUP: Record<MotifMode, number> = { topline: 0.4, folk: 0.3, "brass-hook": 0.25, loop: 0.15, theme: 0.3 };
 
 let lastForm = "";
 let lastPickups = 0;
@@ -317,7 +322,7 @@ function motifLead(ctx: Ctx, mode: MotifMode, rhythmA: Rhythm, rhythmB: Rhythm |
   const pent = pentatonicPcs(ctx.key);
   const pentU = pent.filter((pc) => ctx.universal.includes(pc));
   const allowed =
-    mode === "loop"
+    mode === "loop" || mode === "theme"
       ? ctx.scale
       : mode === "topline"
       ? scalePcs(ctx.key)
@@ -764,6 +769,8 @@ export const LEAD_TARGETS: Record<LeadMode, MelodyTargets> = {
   folk: { pitches: [4, 7], range: 9, steps: 0.6, sync: 0.25, repeat: 0.65, chordTones: 0.65 },
   // A beat's melody loop: about an octave, steps and chord-tone leaps, repeated like a sample.
   loop: { pitches: [4, 7], range: 12, rangeMin: 5, steps: 0.5, sync: 0.3, repeat: 0.85, chordTones: 0.7 },
+  // A film theme: an octave or more, mostly steps, few syncopations, a motif that comes back varied.
+  theme: { pitches: [4, 8], range: 12, rangeMin: 7, steps: 0.6, sync: 0.12, repeat: 0.6, chordTones: 0.75 },
 };
 
 const CANDIDATES = 10;
@@ -790,7 +797,8 @@ function generateOnce(ctx: Ctx, mode: LeadMode, rhythm: Rhythm, rhythmB: Rhythm 
     case "topline":
     case "folk":
     case "brass-hook":
-    case "loop": {
+    case "loop":
+    case "theme": {
       const notes = motifLead(ctx, mode, rhythm, rhythmB, rng);
       return { notes, build: lastPickups ? `${lastForm} +Auftakt` : lastForm };
     }

@@ -1,5 +1,5 @@
 // Sampled instruments (FluidR3 GM, GeneralUser GS voices, Salamander Grand, Sonic Pi
-// drums), published next to the page.
+// drums, FluidR3 orchestra), published next to the page.
 
 import type * as ToneNS from "tone";
 
@@ -37,6 +37,14 @@ export const SAMPLE_SETS: Record<string, { base: string; urls: Record<string, st
   "grand-soft": { base: "samples/grand-soft/", urls: every3(33, 96), gain: 9.6 },
   "grand-hard": { base: "samples/grand-hard/", urls: every3(33, 96), gain: 2.9 },
   aahs: { base: "samples/vox/", urls: vox("aahs", [45, 49, 51, 55, 59, 61, 65, 69, 71, 73, 77, 79]), gain: 0 },
+  // Film (round 8): orchestral FluidR3 GM instruments.
+  horns: { base: "samples/horns/", urls: every3(41, 77), gain: 13.5 },
+  trombone: { base: "samples/trombone/", urls: every3(40, 70), gain: 14 },
+  cello: { base: "samples/cello/", urls: every3(36, 72), gain: 15.4 },
+  contrabass: { base: "samples/contrabass/", urls: every3(28, 55), gain: 16.9 },
+  violin: { base: "samples/violin/", urls: every3(55, 91), gain: 15.2 },
+  "flute-real": { base: "samples/flute/", urls: every3(60, 96), gain: 16.5 },
+  shakuhachi: { base: "samples/shakuhachi/", urls: every3(55, 82), gain: 12.8 },
 };
 
 export const KIT_SAMPLES = [
@@ -53,6 +61,10 @@ export const KIT5_SAMPLES = [
   "snare-dub", "snare-dolf", "snare-generic", "snare-elec", "snap", "crash", "impact",
 ] as const;
 export type Kit5Sample = (typeof KIT5_SAMPLES)[number];
+
+/** Round-8 film percussion from FluidR3 GM (taiko, orchestra kit, woodblock), normalised to -1 dBFS. */
+export const ORCH_SAMPLES = ["taiko-lo", "taiko-mid", "taiko-hi", "bass-drum", "concert-snare", "cymbal", "timpani", "woodblock"] as const;
+export type OrchSample = (typeof ORCH_SAMPLES)[number];
 
 const cache = new Map<string, Promise<ToneNS.ToneAudioBuffer | null>>();
 

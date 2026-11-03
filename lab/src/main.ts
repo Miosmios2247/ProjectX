@@ -285,7 +285,7 @@ function renderArtists(): void {
   wrap.replaceChildren();
   let genre: Genre | null = null;
   for (const style of STYLES) {
-    // The artists come in two groups: house and electronic, then hip-hop.
+    // The artists come in groups: house and electronic, hip-hop, film music.
     const g = style.genre ?? "house";
     if (g !== genre) {
       genre = g;

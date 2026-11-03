@@ -58,6 +58,20 @@ export const SOUND_LABELS: Record<string, string> = {
   "dark-pad": "Dunkle Fläche",
   theremin: "Schwebender Sinus",
   "warm-pad": "Warme Fläche",
+  "film-strings": "Streicher (Orchester)",
+  "low-strings": "Tiefe Streicher",
+  horns: "Hörner",
+  "low-brass": "Posaunen und Hörner",
+  braam: "Blech-Wand",
+  violin: "Solo-Geige",
+  cello: "Solo-Cello",
+  spiccato: "Spiccato-Streicher",
+  "violin-spiccato": "Geigen-Ostinato",
+  "film-flute": "Orchester-Flöte",
+  "breath-flute": "Hauchflöte",
+  organ: "Kirchenorgel",
+  "film-piano": "Weicher Flügel",
+  "synth-bass": "Analog-Synth-Bass",
   "neutral-keys": "Neutral",
   "neutral-bass": "Neutral",
   "neutral-lead": "Neutral",
@@ -380,6 +394,61 @@ function withNoise(T: T, voice: Voice, into: ToneNS.ToneAudioNode, level: number
   };
 }
 
+/**
+ * Short notes cut from sustained samples (spiccato): the slow bowed onset is skipped,
+ * so each note starts crisp, and a quick fade ends it.
+ */
+function shortSampleVoice(
+  T: T,
+  set: string,
+  o: { offset: number; maxLength: number; fade: number },
+  chain: ToneNS.ToneAudioNode[],
+  out: ToneNS.Gain,
+): Voice {
+  const input = new T.Gain(T.dbToGain(SAMPLE_SETS[set]?.gain ?? 0));
+  let node: ToneNS.ToneAudioNode = input;
+  for (const c of chain) {
+    node.connect(c);
+    node = c;
+  }
+  node.connect(out);
+  let buffers: { midi: number; buf: ToneNS.ToneAudioBuffer }[] = [];
+  let disposed = false;
+  const ready = loadSet(T, set).then((b) => {
+    if (disposed) return;
+    buffers = Object.entries(b).map(([name, buf]) => ({ midi: midiOfName(name), buf }));
+  });
+  return {
+    output: out,
+    ready,
+    trigger(midi, duration, time, velocity) {
+      if (!buffers.length) return;
+      let best = buffers[0];
+      for (const x of buffers) if (Math.abs(x.midi - midi) < Math.abs(best.midi - midi)) best = x;
+      const len = Math.max(0.06, Math.min(duration, o.maxLength));
+      safely(() => {
+        // A non-empty onended lets Tone dispose the source once it has played.
+        const src = new T.ToneBufferSource({
+          url: best.buf,
+          playbackRate: Math.pow(2, (midi - best.midi) / 12),
+          fadeIn: 0.004,
+          fadeOut: o.fade,
+          curve: "exponential",
+          onended: () => undefined,
+        });
+        src.connect(input);
+        src.start(time, o.offset, len, velocity);
+      });
+    },
+    dispose() {
+      disposed = true;
+      input.dispose();
+      chain.forEach((c) => c.dispose());
+      out.dispose();
+    },
+  };
+}
+
 function polyVoice(
   T: T,
   synth: ToneNS.PolySynth<any>,
@@ -474,6 +543,21 @@ const SOUND_TRIM: Record<string, number> = {
   flute: -2,
   "dark-piano": -2.5,
   theremin: -6,
+  // Film (round 8): first values, balanced with the offline loudness of the film loops.
+  "film-strings": 0,
+  "low-strings": 0,
+  horns: 0,
+  "low-brass": 0,
+  braam: 0,
+  violin: 0,
+  cello: 0,
+  spiccato: 0,
+  "violin-spiccato": 0,
+  "film-flute": 0,
+  "breath-flute": 0,
+  organ: 0,
+  "film-piano": 0,
+  "synth-bass": 0,
   "vox-chop": 0.5,
   "vox-stretch": 0,
   "vox-sing": -4,
@@ -682,6 +766,98 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
       });
       s.maxPolyphony = 16;
       return polyVoice(T, s, [new T.Filter(900, "lowpass")], out);
+    }
+    // ---- film (round 8): FluidR3 orchestra samples and a few synths
+    case "film-strings":
+      // The string section as a bed: a slow bow, a long release, a little darker.
+      return sampledVoice(T, ["strings"], { attack: 0.35, release: 1.8, chain: [new T.Filter(3600, "lowpass")] }, out);
+    case "low-strings":
+      // Basses below C3, cellos above: the low strings that carry a film cue's bass.
+      return sampledVoice(T, ["contrabass", "cello"], {
+        attack: 0.08,
+        release: 0.9,
+        pick: (m) => (m < 48 ? 0 : 1),
+        chain: [new T.Filter(2400, "lowpass")],
+      }, out);
+    case "horns":
+      return sampledVoice(T, ["horns"], { attack: 0.08, release: 1.0, chain: [new T.Filter(3800, "lowpass")] }, out);
+    case "low-brass":
+      // Trombones, with horns on the long notes: the big brass chord.
+      return sampledVoice(T, ["trombone"], {
+        attack: 0.05,
+        release: 0.9,
+        chain: [new T.Filter(3200, "lowpass")],
+        layer: { set: "horns", minDuration: 0.4, gain: 0.7, attack: 0.1, release: 1.0 },
+      }, out);
+    case "braam":
+      // The trailer blast: low brass driven into distortion, dark.
+      return sampledVoice(T, ["trombone"], {
+        attack: 0.02,
+        release: 1.2,
+        chain: [new T.Distortion(0.35), new T.Filter(1600, "lowpass")],
+        layer: { set: "horns", minDuration: 0.3, gain: 0.8, attack: 0.05, release: 1.2 },
+      }, out);
+    case "violin":
+      return sampledVoice(T, ["violin"], { attack: 0.03, release: 0.5, chain: [new T.Filter(220, "highpass"), new T.Filter(7000, "lowpass")] }, out);
+    case "cello":
+      return sampledVoice(T, ["cello"], { attack: 0.05, release: 0.8, chain: [new T.Filter(5000, "lowpass")] }, out);
+    case "spiccato":
+      // Short, bouncing section strings for ostinatos.
+      return shortSampleVoice(T, "strings", { offset: 0.12, maxLength: 0.22, fade: 0.06 }, [new T.Filter(5500, "lowpass")], out);
+    case "violin-spiccato":
+      // One fast violin, close and dry, as in a racing ostinato.
+      return shortSampleVoice(T, "violin", { offset: 0.1, maxLength: 0.2, fade: 0.05 }, [new T.Filter(250, "highpass"), new T.Filter(7500, "lowpass")], out);
+    case "film-flute":
+      return sampledVoice(T, ["flute-real"], { attack: 0.03, release: 0.4, chain: [new T.Filter(7000, "lowpass")] }, out);
+    case "breath-flute":
+      // An airy, breathy flute (shakuhachi samples), close to a fula flute or a bass recorder.
+      return sampledVoice(T, ["shakuhachi"], { attack: 0.02, release: 0.5, chain: [new T.Filter(5000, "lowpass")] }, out);
+    case "organ": {
+      // A pipe organ: 8' and 4' flue stops (partials) and a soft 16' an octave below.
+      const s = new T.PolySynth(T.Synth, {
+        oscillator: { type: "custom", partials: [1, 0.55, 0.3, 0.4, 0.1, 0.18, 0, 0.12] },
+        envelope: { attack: 0.08, decay: 0.2, sustain: 0.9, release: 1.0 },
+        volume: -16,
+      });
+      s.maxPolyphony = 16;
+      const sub = new T.PolySynth(T.Synth, {
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.12, decay: 0.2, sustain: 0.9, release: 1.0 },
+        volume: -20,
+      });
+      sub.maxPolyphony = 16;
+      const tone = new T.Filter(4800, "lowpass");
+      s.connect(tone);
+      sub.connect(tone);
+      tone.connect(out);
+      return {
+        output: out,
+        trigger(midi, duration, time, velocity) {
+          // Pipes do not get louder when pressed harder.
+          const v = 0.6 + velocity * 0.3;
+          safely(() => s.triggerAttackRelease(freq(T, midi), duration, time, v));
+          safely(() => sub.triggerAttackRelease(freq(T, midi - 12), duration, time, v));
+        },
+        dispose() {
+          s.dispose();
+          sub.dispose();
+          tone.dispose();
+          out.dispose();
+        },
+      };
+    }
+    case "film-piano":
+      return sampledVoice(T, [v5 ? "grand-soft" : "piano"], { release: 2.2, chain: [new T.Filter(3400, "lowpass")] }, out);
+    case "synth-bass": {
+      // A driven analog saw bass with a plucky filter.
+      const s = new T.MonoSynth({
+        oscillator: { type: "sawtooth" },
+        filter: { type: "lowpass", Q: 2, rolloff: -24 },
+        filterEnvelope: { attack: 0.002, decay: 0.25, sustain: 0.3, release: 0.2, baseFrequency: 120, octaves: 3 },
+        envelope: { attack: 0.004, decay: 0.2, sustain: 0.8, release: 0.12 },
+        volume: -10,
+      });
+      return monoVoice(T, s, [new T.Distortion(0.3), new T.Filter(2200, "lowpass")], out);
     }
     case "lofi-sine": {
       // Sine one-shot with pitch wobble and saturation: a bubbling bed (Fred again..).

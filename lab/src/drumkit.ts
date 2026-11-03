@@ -6,7 +6,7 @@
 import type * as ToneNS from "tone";
 import type { DrumInst } from "../../engine/src/index";
 import { timeGuard } from "./sounds";
-import { KIT5_SAMPLES, Kit5Sample, KitSample, loadKit } from "./samples";
+import { KIT5_SAMPLES, Kit5Sample, KitSample, ORCH_SAMPLES, OrchSample, loadKit } from "./samples";
 
 type T = ToneLib;
 
@@ -56,9 +56,42 @@ const KITS: Record<string, KitShape> = {
     trim: 3, kickDecay: 0.22, kickVol: -4, kickPunch: 7, hatHp: 9500, hatVol: -17, clapVol: -7, snareVol: -8,
     samples: { rim: ["sidestick", -10], percHi: ["bongohi", -14], percLo: ["congalo", -14], tom: ["tomlo", -10], shaker: ["shaker", -16], tamb: ["tambourine", -18] },
   },
+  // Film (round 8): the orchestral samples below carry these kits; the synths are only a fallback.
+  epic: {
+    trim: 0, kickDecay: 0.9, kickVol: -2, kickPunch: 2, hatHp: 7000, hatVol: -20, clapVol: -12, snareVol: -10,
+    samples: { shaker: ["shaker", -16] },
+  },
+  wakanda: {
+    trim: 0, kickDecay: 0.7, kickVol: -3, kickPunch: 2.5, hatHp: 7000, hatVol: -19, clapVol: -11, snareVol: -11,
+    samples: { shaker: ["shaker", -13], tamb: ["cabasa", -16] },
+  },
   neutral: {
     trim: 3, kickDecay: 0.36, kickVol: -4, kickPunch: 5, hatHp: 7500, hatVol: -18, clapVol: -10, snareVol: -11,
     samples: {},
+  },
+};
+
+interface OrchShape {
+  /** Orchestral one-shots (they ring out instead of choking each other) and their level in dB. */
+  samples: Partial<Record<DrumInst, [OrchSample, number]>>;
+  /** Talking drums (a pitch-bending membrane) on the high and low percussion. */
+  talking?: boolean;
+}
+
+// Round-8 film percussion: a taiko ensemble, concert bass drum and snare, a cymbal for
+// swells and climaxes, timpani and a woodblock that ticks like a clock.
+const KITS_ORCH: Record<string, OrchShape> = {
+  epic: {
+    samples: {
+      kick: ["taiko-lo", -3], percLo: ["bass-drum", -4], tom: ["taiko-hi", -6], percHi: ["taiko-mid", -6],
+      snare: ["concert-snare", -8], clap: ["concert-snare", -9], hatO: ["cymbal", -12], rim: ["woodblock", -12], hatC: ["woodblock", -18],
+      tamb: ["timpani", -6],
+    },
+  },
+  // Black Panther: deep drums under talking drums, shaker and woodblock.
+  wakanda: {
+    samples: { kick: ["taiko-lo", -4], tom: ["taiko-hi", -7], snare: ["concert-snare", -10], hatO: ["cymbal", -14], rim: ["woodblock", -13], hatC: ["woodblock", -19] },
+    talking: true,
   },
 };
 
@@ -106,9 +139,15 @@ export class DrumKit {
   private percLo: ToneNS.MembraneSynth;
   private rim: ToneNS.MembraneSynth;
   private crashSynth: ToneNS.NoiseSynth;
+  private T: T;
+  private oneShots: Partial<Record<DrumInst, { buffer: ToneNS.ToneAudioBuffer; gain: ToneNS.Gain }>> = {};
+  private talkOut: ToneNS.Gain | null = null;
+  private slap: ToneNS.NoiseSynth | null = null;
 
   constructor(T: T, kitId: string, readonly soundSet: "v5" | "v4" = "v5") {
+    this.T = T;
     const k = KITS[kitId] ?? KITS.house;
+    const orch = KITS_ORCH[kitId];
     this.output = new T.Gain(T.dbToGain(k.trim));
     const track = <N extends ToneNS.ToneAudioNode>(n: N): N => {
       this.nodes.push(n);
@@ -172,7 +211,33 @@ export class DrumKit {
         }),
       );
     }
-    const k5 = soundSet === "v5" ? KITS5[kitId] ?? KITS5.house : null;
+    if (orch) {
+      if (orch.talking) {
+        this.talkOut = track(new T.Gain(T.dbToGain(-8)));
+        this.talkOut.connect(this.output);
+        this.slap = track(new T.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0 }, volume: -22 }));
+        to(this.slap, track(new T.Filter({ type: "bandpass", frequency: 2200, Q: 1.2 })));
+      }
+      loads.push(
+        loadKit(T, ORCH_SAMPLES, "samples/orch/").then((buffers) => {
+          if (this.disposed) return;
+          for (const [inst, [sample, db]] of Object.entries(orch.samples) as [DrumInst, [OrchSample, number]][]) {
+            const buf = buffers[sample];
+            if (!buf) continue;
+            const gain = track(new T.Gain(T.dbToGain(db)));
+            gain.connect(this.output);
+            this.oneShots[inst] = { buffer: buf, gain };
+          }
+          // The song form's crash becomes a real cymbal.
+          if (buffers.cymbal) {
+            this.crashSample = track(new T.Player({ url: buffers.cymbal, volume: -10, fadeOut: 0.3 }));
+            to(this.crashSample);
+          }
+        }),
+      );
+    }
+    // The orchestral kits have their own samples; the round-5 drum samples would replace them.
+    const k5 = soundSet === "v5" && !orch ? KITS5[kitId] ?? KITS5.house : null;
     if (k5) {
       loads.push(
         loadKit(T, KIT5_SAMPLES, "samples/kit5/").then((buffers) => {
@@ -243,6 +308,19 @@ export class DrumKit {
 
   private play(inst: DrumInst, time: number, velocity: number, at: (t: number) => number): void {
     const v = Math.max(0.05, Math.min(1, velocity));
+    if (this.talkOut && (inst === "percHi" || inst === "percLo")) {
+      this.talk(at(time), v, inst === "percHi");
+      return;
+    }
+    const one = this.oneShots[inst];
+    if (one) {
+      // A fresh source per hit, so a taiko keeps ringing under the next one. A non-empty
+      // onended lets Tone dispose the source when it is done.
+      const src = new this.T.ToneBufferSource({ url: one.buffer, fadeOut: 0.05, onended: () => undefined });
+      src.connect(one.gain);
+      src.start(at(time), 0, undefined, v);
+      return;
+    }
     const player = this.players[inst];
     if (player) {
       // Velocity as a level change; restarting a Player chokes the previous hit.
@@ -293,6 +371,34 @@ export class DrumKit {
         this.rim.triggerAttackRelease(1100, 0.03, at(time), v);
         break;
     }
+  }
+
+  /**
+   * A talking drum: the skin is squeezed while it rings, so the pitch drops after the
+   * strike and then bends up, like a voice.
+   */
+  private talk(time: number, v: number, high: boolean): void {
+    const T = this.T;
+    const out = this.talkOut;
+    if (!out) return;
+    const f0 = high ? 210 : 135;
+    const bend = high ? 1.42 : 1.26;
+    const osc = new T.Oscillator({ type: "sine", frequency: f0 * 1.7 });
+    const amp = new T.Gain(0);
+    osc.connect(amp);
+    amp.connect(out);
+    osc.frequency.setValueAtTime(f0 * 1.7, time);
+    osc.frequency.exponentialRampToValueAtTime(f0, time + 0.025);
+    osc.frequency.exponentialRampToValueAtTime(f0 * bend, time + 0.2);
+    amp.gain.setValueAtTime(0, time);
+    amp.gain.linearRampToValueAtTime(v, time + 0.003);
+    amp.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+    osc.onstop = () => {
+      osc.dispose();
+      amp.dispose();
+    };
+    osc.start(time).stop(time + 0.55);
+    this.slap?.triggerAttackRelease(0.03, this.guard("slap")(time), v);
   }
 
   dispose(): void {

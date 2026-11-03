@@ -2103,5 +2103,204 @@
     "vel": 86
    }
   ]
+ },
+ {
+  "id": "theme-long",
+  "name": "Thema: punktiert und lang (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "theme",
+   "film",
+   "phrase",
+   "anthem"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 6,
+    "vel": 100
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 8,
+    "vel": 94
+   },
+   {
+    "step": 16,
+    "len": 6,
+    "vel": 98
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 82
+   },
+   {
+    "step": 24,
+    "len": 8,
+    "vel": 92
+   }
+  ]
+ },
+ {
+  "id": "theme-slow",
+  "name": "Thema: ganz lange Töne (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "theme",
+   "film",
+   "sparse",
+   "stretched"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 12,
+    "vel": 96
+   },
+   {
+    "step": 12,
+    "len": 4,
+    "vel": 84
+   },
+   {
+    "step": 16,
+    "len": 16,
+    "vel": 92
+   }
+  ]
+ },
+ {
+  "id": "theme-call",
+  "name": "Thema: Ruf und langer Ton (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "theme",
+   "film",
+   "phrase"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 4,
+    "vel": 98
+   },
+   {
+    "step": 4,
+    "len": 4,
+    "vel": 88
+   },
+   {
+    "step": 8,
+    "len": 8,
+    "vel": 94
+   },
+   {
+    "step": 16,
+    "len": 4,
+    "vel": 96
+   },
+   {
+    "step": 20,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 24,
+    "len": 8,
+    "vel": 92
+   }
+  ]
+ },
+ {
+  "id": "theme-rise",
+  "name": "Thema: Anlauf und Aufschwung (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "theme",
+   "film",
+   "anthem",
+   "hook"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 4,
+    "len": 12,
+    "vel": 100
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 88
+   },
+   {
+    "step": 18,
+    "len": 2,
+    "vel": 88
+   },
+   {
+    "step": 20,
+    "len": 4,
+    "vel": 94
+   },
+   {
+    "step": 24,
+    "len": 8,
+    "vel": 96
+   }
+  ]
+ },
+ {
+  "id": "theme-sparse",
+  "name": "Thema: ein Ton pro Takt (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "theme",
+   "film",
+   "sparse",
+   "stretched"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 16,
+    "vel": 96
+   },
+   {
+    "step": 16,
+    "len": 8,
+    "vel": 90
+   },
+   {
+    "step": 24,
+    "len": 8,
+    "vel": 88
+   }
+  ]
  }
 ]

@@ -62,7 +62,7 @@ export const DUELS: Duel[] = [
 ];
 
 export function duelsFor(styleId: string, variantId: string): Duel[] {
-  // The hip-hop styles came after round 4: they have no round-4 sounds to compare.
+  // Hip-hop and film styles came after round 4: they have no round-4 sounds to compare.
   const house = (STYLES.find((s) => s.id === styleId)?.genre ?? "house") === "house";
   return DUELS.filter((d) => (d.for === "all" ? house : d.for.includes(styleId) || d.for.includes(`${styleId}/${variantId}`)));
 }

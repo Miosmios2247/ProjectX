@@ -6,6 +6,7 @@ import {
   chordPcs,
   chordSlotForNote,
   generateIdea,
+  getDrumPattern,
   isAvoidNote,
   mod12,
 } from "../src/index";
@@ -33,7 +34,8 @@ describe("generateIdea", () => {
                 if (!ok) problems.push(`${where}: ${lane} ${JSON.stringify(n)}`);
               }
             }
-            if (!idea.drums.hits.length) problems.push(`${where}: no drums`);
+            // Film cues may come without drums (pattern "none"); everything else needs them.
+            if (!idea.drums.hits.length && !getDrumPattern(idea.drums.patternId).tags.includes("none")) problems.push(`${where}: no drums`);
             count++;
           }
         }

@@ -809,5 +809,146 @@
     "vel": 74
    }
   ]
+ },
+ {
+  "id": "film-hold",
+  "name": "Orchester gehalten",
+  "lane": "chords",
+  "tags": [
+   "pad",
+   "sustain",
+   "film",
+   "hold"
+  ],
+  "bars": 1,
+  "perChord": true,
+  "hits": [
+   {
+    "step": 0,
+    "len": -1,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "film-half",
+  "name": "Orchester in halben Noten",
+  "lane": "chords",
+  "tags": [
+   "pad",
+   "pulse",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 8,
+    "vel": 90
+   },
+   {
+    "step": 8,
+    "len": 8,
+    "vel": 80
+   }
+  ]
+ },
+ {
+  "id": "film-pulse-8",
+  "name": "Marcato-Achtel",
+  "lane": "chords",
+  "tags": [
+   "drive",
+   "pulse",
+   "stab",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 2,
+    "len": 1.5,
+    "vel": 74
+   },
+   {
+    "step": 4,
+    "len": 1.5,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 1.5,
+    "vel": 74
+   },
+   {
+    "step": 8,
+    "len": 1.5,
+    "vel": 100
+   },
+   {
+    "step": 10,
+    "len": 1.5,
+    "vel": 74
+   },
+   {
+    "step": 12,
+    "len": 1.5,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 1.5,
+    "vel": 74
+   }
+  ]
+ },
+ {
+  "id": "film-332",
+  "name": "Akkord-Schläge 3+3+2",
+  "lane": "chords",
+  "tags": [
+   "drive",
+   "syncopated",
+   "stab",
+   "film"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2.5,
+    "vel": 100
+   },
+   {
+    "step": 3,
+    "len": 2.5,
+    "vel": 88
+   },
+   {
+    "step": 6,
+    "len": 1.5,
+    "vel": 92
+   },
+   {
+    "step": 8,
+    "len": 2.5,
+    "vel": 96
+   },
+   {
+    "step": 11,
+    "len": 2.5,
+    "vel": 86
+   },
+   {
+    "step": 14,
+    "len": 1.5,
+    "vel": 90
+   }
+  ]
  }
 ]

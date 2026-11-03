@@ -50,8 +50,8 @@ export interface Mood {
   defaults?: Partial<Record<"chords" | "bass", string>>;
   drums?: { energy?: number; offbeatHats?: boolean; toms?: boolean; noBright?: boolean };
   song?: { climaxUp?: boolean; longBuild?: boolean };
-  /** Explanation: a base line, one line per loop feature, and the rest (with its own wording for hip-hop). */
-  text: { base: string; after: string; afterHiphop?: string } & Partial<Record<LoopFeature, string>>;
+  /** Explanation: a base line, one line per loop feature, and the rest (with its own wording per genre). */
+  text: { base: string; after: string; afterBy?: Partial<Record<Genre, string>> } & Partial<Record<LoopFeature, string>>;
 }
 
 export const MOODS: Mood[] = (moodData as unknown as Mood[]).map((m) => ({
@@ -157,7 +157,10 @@ function reweight(refs: (WeightedRef | string)[], factors: Record<string, number
 
 const shiftRange = (r: [number, number], by: number): [number, number] => [r[0] + by, r[1] + by];
 
-/** The variant as the mood hears it. Hip-hop keeps its own grooves: no house rhythms come in, the 808 stays on the kick. */
+/**
+ * The variant as the mood hears it. Hip-hop and film keep their own grooves: no house rhythms come in,
+ * the 808 stays on the kick.
+ */
 export function applyMood(variant: StyleVariant, mood: Mood, genre: Genre = "house"): StyleVariant {
   const h = variant.harmony;
   // Modes
@@ -208,7 +211,7 @@ export function applyMood(variant: StyleVariant, mood: Mood, genre: Genre = "hou
   if (ld.repeat) targets.repeat = Math.min(0.95, Math.max(0.3, base.repeat + ld.repeat));
 
   const r = mood.rhythms ?? {};
-  const house = genre !== "hiphop";
+  const house = genre === "house";
   return {
     ...variant,
     harmony: { ...h, modes, progressions: [...own, ...extra], colors, stretch, lift },
@@ -255,12 +258,25 @@ export function moodRolls(pattern: DrumPattern, mood: Mood): DrumPattern {
 /**
  * Drums as the mood plays them: more or fewer hats, open hats, epic toms.
  * Hip-hop keeps its hats (the rolls carry the energy there, see moodRolls); calm moods only play them softer.
+ * Film percussion gets a tom pulse in 8ths with energy and plays softer when calm; a cue without drums stays without.
  */
 export function moodDrums(hits: readonly DrumHit[], mood: Mood, bars: number, bpm: number, rng: Rng, genre: Genre = "house"): DrumHit[] {
   const d = mood.drums ?? {};
   let out = hits.map((x) => ({ ...x }));
   if (genre === "hiphop") {
     if ((d.energy ?? 0) < 0) out = out.map((x) => (SMALL.includes(x.inst) ? { ...x, vel: clampVel(x.vel * 0.85) } : x));
+    if (d.toms) addToms(out, bars, rng);
+    return out.sort((a, b) => a.step - b.step || a.inst.localeCompare(b.inst));
+  }
+  if (genre === "film") {
+    if (!out.length) return out;
+    if ((d.energy ?? 0) < 0) out = out.map((x) => ({ ...x, vel: clampVel(x.vel * 0.8) }));
+    if ((d.energy ?? 0) > 0) {
+      for (let s = 0; s < bars * 16; s += 2) {
+        if (out.some((x) => Math.abs(x.step - s) < 0.01 && (x.inst === "tom" || x.inst === "kick" || x.inst === "percLo"))) continue;
+        out.push({ inst: "tom", step: s, vel: clampVel((s % 4 === 0 ? 70 : 58) + rng.int(-5, 5)) });
+      }
+    }
     if (d.toms) addToms(out, bars, rng);
     return out.sort((a, b) => a.step - b.step || a.inst.localeCompare(b.inst));
   }
@@ -304,7 +320,11 @@ export function moodArrangement(sections: readonly ArrangementSection[], mood: M
   const out = sections.map((s) => ({ ...s, lanes: [...s.lanes] }));
   if (mood.song?.longBuild) for (const s of out) if (s.build && s.bars < 8) s.bars = 8;
   if (mood.song?.climaxUp) {
-    const last = [...out].reverse().find((s) => s.lanes.includes("lead") && !s.build && !s.noKick && s.lanes.includes("drums"));
+    const rev = [...out].reverse();
+    // The last full section with drums; a cue without drums takes its fullest section with the theme.
+    const last =
+      rev.find((s) => s.lanes.includes("lead") && !s.build && !s.noKick && s.lanes.includes("drums")) ??
+      rev.filter((s) => s.lanes.includes("lead") && !s.build).sort((a, b) => b.lanes.length - a.lanes.length)[0];
     if (last) last.leadUp = true;
   }
   return out;
@@ -328,6 +348,6 @@ export function explainMood(mood: Mood, template: ProgressionTemplate, genre: Ge
   add("two", f.two === 1);
   add("short", f.short === 1 && f.two === 0);
   add("long", f.long === 1);
-  const after = genre === "hiphop" ? (mood.text.afterHiphop ?? mood.text.after) : mood.text.after;
+  const after = mood.text.afterBy?.[genre] ?? mood.text.after;
   return `Stimmung „${mood.name}“: ${mood.text.base} ${[...lines.slice(0, 2), after].join(" ")}`;
 }

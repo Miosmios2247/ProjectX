@@ -13,15 +13,17 @@ import { MelodyTargets } from "./critic";
  * topline: sung melody (AVAION)
  * brass-hook: short call-and-response lead hook (AVAION "WACUKA" drop)
  * folk: pentatonic riff (early BUNT.)
+ * theme: a film theme: long notes, mostly steps with a rising leap early on, a motif that is developed
  */
-export type LeadMode = "vocal-chop" | "gated-vowel" | "topline" | "brass-hook" | "folk" | "loop";
+export type LeadMode = "vocal-chop" | "gated-vowel" | "topline" | "brass-hook" | "folk" | "loop" | "theme";
 /**
  * Tone set of a melody: the key's own scale, or (minor keys) harmonic minor with
  * its raised 7th, phrygian with its ♭2 or dorian with its raised 6th (trap loops).
  */
 export type MelodyScale = "natural" | "harmonic" | "phrygian" | "dorian";
 export type PluckMode = "arp" | "stab" | "marimba" | "pick" | "counter";
-export type ArpOrder = "up" | "down" | "updown" | "skip" | "pendulum";
+/** pedal: an ostinato that returns to its lowest tone between all other notes (film strings). */
+export type ArpOrder = "up" | "down" | "updown" | "skip" | "pendulum" | "pedal";
 
 export interface LaneProfileBase {
   /** Sound preset id(s) for the lab player. */
@@ -132,10 +134,10 @@ export interface StyleVariant {
   arrangement?: ArrangementSection[];
 }
 
-/** House and electronic artists, or hip-hop producers (round 7). */
-export type Genre = "house" | "hiphop";
+/** House and electronic artists, hip-hop producers (round 7) or film composers (round 8). */
+export type Genre = "house" | "hiphop" | "film";
 
-export const GENRE_NAMES: Record<Genre, string> = { house: "House & Electronic", hiphop: "Hip-Hop" };
+export const GENRE_NAMES: Record<Genre, string> = { house: "House & Electronic", hiphop: "Hip-Hop", film: "Filmmusik" };
 
 export interface StyleProfile {
   id: string;
