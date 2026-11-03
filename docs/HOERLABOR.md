@@ -1,11 +1,76 @@
-# Hör-Labor – Runde 7
+# Hör-Labor – Runde 8
 
 Das Hör-Labor ist der Prototyp aus Phase 1 (siehe [PLAN.md](PLAN.md)). Hier prüfen wir, ob das
 Musik-Gehirn wirklich nach den Künstlern klingt, bevor das VST3-Plugin gebaut wird.
 
 **Link (privat, nur für dich):** https://claude.ai/artifact/RURpPL3bJpJN2EnmkPDcWm
 
-## Neu in Runde 7: Hip-Hop
+## Neu in Runde 8: Filmmusik
+
+Dein Wunsch: „Und noch Hans Zimmer und Ludwig Göransson.“ Es gibt jetzt eine dritte Gruppe:
+**Filmmusik**. Beide Komponisten haben drei Varianten:
+
+| Komponist | Variante | Tempo | Akkordfolgen (Moll-Sicht) | Klang | Zum Vergleich |
+|---|---|---|---|---|---|
+| Hans Zimmer | Inception & Interstellar (Orgel, Klavier) | 58–70 | i–v–VII–IV, i–IIImaj7–VII–IV, i–VI–III–VII | Klavier oder Kirchenorgel, tiefe Streicher, Hörner mit wenigen langen Tönen, eine tickende Uhr | Time, Cornfield Chase, First Step, Day One |
+| Hans Zimmer | The Dark Knight (Ostinato, Blech, Trommeln) | 100–128 | i–VI, i–VI–III–VII, nur i | Spiccato-Streicher in 16teln, tiefes Blech, ein Hörner-Motiv aus zwei Tönen, Taiko | Molossus, A Dark Knight, Why So Serious? |
+| Hans Zimmer | Gladiator (Hymne und Schlacht) | 116–134 | i–ii°7–i/3–iv, i–VI–III–VII | ein Hörner-Thema mit punktierten Rhythmen, Streicher, Männerchor, Schlacht-Trommeln | The Battle, Now We Are Free, Honor Him, Barbarian Horde |
+| Ludwig Göransson | Black Panther (Trommeln und Flöte) | 112–128 | i–VI–VII–i, i–VII–i–VI, in Dur I–bVII–IV–I | sprechende Trommeln, eine hauchige Flöte mit Ruf und Antwort, eine 808, Hörner und Chor | Wakanda, Killmonger, Warrior Falls, Ancestral Plane |
+| Ludwig Göransson | The Mandalorian (Blockflöte und Synth) | 70–84 | i–VI–VII–i, i–bII–i–i, i–III–bV–i | eine tiefe Flöte als Blockflöte, ein Synth-Bass in 8teln, ein Herzschlag, dann Orchester | The Mandalorian (Hauptthema) |
+| Ludwig Göransson | Oppenheimer (Geigen-Ostinato) | 80–96 | i–VI, i–VI–III–VII, v–VI | eine Solo-Geige über einem rasenden Geigen-Ostinato, Streicher, keine Drums | Can You Hear the Music, Fission, Destroyer of Worlds |
+
+### Was Filmmusik anders macht
+
+- **Thema statt Hook:** Die Melodie hat wenige, lange Töne, meist in kleinen Schritten, oft mit
+  einem Sprung nach oben am Anfang. Das Motiv kommt verändert wieder.
+- **Ostinato:** Die Begleitfigur wiederholt eine kurze Figur in 8teln, 16teln oder Triolen und
+  kehrt immer wieder zu ihrem tiefsten Ton zurück, wie die Streicher bei Hans Zimmer.
+- **Orgelpunkt:** Der Bass hält oft den Grundton, während die Akkorde darüber wechseln.
+- **Trommeln statt Drumkit:** Taiko, große Konzerttrommel, Konzert-Snare, Pauke und Becken. Bei
+  Black Panther spielen sprechende Trommeln, deren Ton nach dem Schlag gleitet. Interstellar hat
+  eine tickende Uhr, Oppenheimer gar keine Drums.
+- **Song-Modus:** Die Stücke wachsen Schicht für Schicht, wie Zimmers „Time“. Bei Oppenheimer wird
+  der letzte Teil immer schneller, bis zum doppelten Tempo.
+- **Echte Orchester-Klänge:** Hörner, Posaunen, Cello, Kontrabass, Geige und Flöte kommen jetzt aus
+  freien Samples (FluidR3, MIT-Lizenz). Dazu gibt es kurze Spiccato-Streicher, eine Kirchenorgel und
+  einen weichen Flügel.
+- **Stimmungen gehen auch hier:** „Energie“ bringt einen Trommel-Puls in 8teln, „Verträumt“ und
+  „Melancholie“ machen die Trommeln leiser, „Episch“ bringt Toms. Ein Stück ohne Drums bleibt ohne.
+- **Blindtest:** Bei einem Film-Loop rätst du zwischen Hans Zimmer und Ludwig Göransson. Raten
+  wäre 50 %.
+- **MIDI für FL Studio:** Die Lautstärke steckt in der Anschlagstärke (Velocity) jeder Note. Viele
+  Orchester-Plugins, zum Beispiel die kostenlosen Spitfire LABS oder BBC Symphony Orchestra
+  Discover, nutzen für die Dynamik zusätzlich das Modulationsrad (CC1). Das schreibt der Generator
+  noch nicht. Tipp: Zeichne in FL Studio eine Automation für das Modulationsrad, die in der
+  Steigerung hochgeht.
+
+### Ehrlich gesagt
+
+- Auch diese Recherche lief nur über Suchergebnisse, viele Seiten waren gesperrt. Tempo und Tonart
+  einzelner Cues stammen oft aus automatischen Datenbanken oder Noten-Ausgaben und widersprechen
+  sich teilweise.
+- Für die meisten Cues gibt es keine belegte Akkordfolge. Gut belegt sind vor allem „Time“
+  (i–v–VII–IV) und das i–VI bei The Dark Knight. Für Göransson fand sich gar keine Stufen-Analyse;
+  seine Folgen hier sind begründete Startwerte.
+- Die Themen sind nicht nachgebaut: Der Generator erfindet neue Motive im Stil, er kopiert keine
+  Melodien.
+- Die Klänge sind einfache GM-Samples, kein großes Orchester. Die Fula-Flöte und die Bassblockflöte
+  spielt eine hauchige Bambusflöte (Shakuhachi), die sprechende Trommel ist ein Synth-Nachbau.
+- Das Beschleunigen gibt es nur im Hör-Labor; die MIDI-Datei hat ein festes Tempo.
+- Der Bericht mit allen Quellen:
+  [reports/Stilanalyse Hans Zimmer Ludwig Göransson.md](../reports/Stilanalyse%20Hans%20Zimmer%20Ludwig%20G%C3%B6ransson.md),
+  die Notizen in
+  [research_notes/Stilanalyse Hans Zimmer Ludwig Göransson/](../research_notes/Stilanalyse%20Hans%20Zimmer%20Ludwig%20G%C3%B6ransson/).
+
+### Was du jetzt tun kannst (etwa 20–30 Minuten)
+
+1. Hör dir jede Film-Variante mit 2–3 Ideen an, am besten im Song-Modus (da wächst das Stück), und
+   bewerte sie.
+2. Spiel 10–15 Runden Blindtest mit Film-Loops.
+3. Probier zwei Stimmungen, zum Beispiel Hans Zimmer mit „Episch“ und Göransson mit „Dunkel“.
+4. Wenn du magst: Exportier eine Idee als MIDI und lade in FL Studio ein Orchester-Plugin dazu.
+
+## Seit Runde 7 dabei: Hip-Hop
 
 Dein Wunsch: „Mach noch so Hip-Hop-Künstler wie OZ.“ Die Künstler-Auswahl hat jetzt zwei Gruppen:
 **House & Electronic** (Fred again.., AVAION, BUNT.) und **Hip-Hop**. Bei Hip-Hop sind drei
@@ -357,9 +422,15 @@ Das Ziel für Phase 1 bleibt: die meisten Loops ≥ 4/5 und ≥ 60 % Treffer im 
 | Metro Boomin | Heroes & Villains (filmisch) | 112–120 | i–v–VI–V, i–VI–III–V | dunkles Piano über Streichern und Chor | Superhero, Trance, Creepin', Am I Dreaming |
 | Pi'erre Bourne | Die Lit (Magnolia) | 158–164 | i–iv–v–v, i–VI–VImaj7–iv | Videospiel-Synth, doppelte Kick | Magnolia, Old Money, Choppa Won't Miss, Fell in Luv |
 | Pi'erre Bourne | Life of Pi'erre (hell) | 148–156 | IV–vi, I–IV–vi–IV (Dur) | Glocken-Loop, Flöte | wokeuplikethis*, Poke It Out, Sossboy |
+| Hans Zimmer | Inception & Interstellar | 58–70 | i–v–VII–IV, i–IIImaj7–VII–IV, i–VI–III–VII | Thema aus wenigen langen Tönen (Hörner), Orgel-Ostinato | Time, Cornfield Chase, First Step, Day One |
+| Hans Zimmer | The Dark Knight | 100–128 | i–VI, i–VI–III–VII, nur i | Motiv aus zwei, drei Tönen, Spiccato-Ostinato in 16teln | Molossus, A Dark Knight, Why So Serious? |
+| Hans Zimmer | Gladiator | 116–134 | i–ii°7–i/3–iv, i–VI–III–VII | Hörner-Hymne mit punktierten Rhythmen | The Battle, Now We Are Free, Honor Him, Barbarian Horde |
+| Ludwig Göransson | Black Panther | 112–128 | i–VI–VII–i, i–VII–i–VI | Flöte mit Ruf und Antwort, sprechende Trommeln | Wakanda, Killmonger, Warrior Falls, Ancestral Plane |
+| Ludwig Göransson | The Mandalorian | 70–84 | i–VI–VII–i, i–bII–i–i | tiefe Flöte mit langen Tönen, Herzschlag | The Mandalorian (Hauptthema) |
+| Ludwig Göransson | Oppenheimer | 80–96 | i–VI, i–VI–III–VII | Solo-Geige über Geigen-Ostinato | Can You Hear the Music, Fission, Destroyer of Worlds |
 
 Bewertungen aus früheren Runden bleiben gespeichert. Runde 2 ist an der Version `0.2.0`
-erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0`, Runde 5 an `0.5.0`, Runde 6 an `0.6.0` und Runde 7 an `0.7.0`. Seit
+erkennbar, Runde 3 an `0.3.0`, Runde 4 an `0.4.0`, Runde 5 an `0.5.0`, Runde 6 an `0.6.0`, Runde 7 an `0.7.0` und Runde 8 an `0.8.0`. Seit
 Runde 3 steht dort auch, ob du im Song-Modus und mit eigener Stimme bewertet hast, seit Runde 6
 auch die Stimmung.
 
@@ -378,6 +449,7 @@ npm run build:lab     # baut lab/dist/hoer-labor.html (eine Datei) und lab/dist/
 npm run idea -- --style avaion --variant wacuka --seed 7 --bars 8 --zip /tmp/idee.zip
 npm run idea -- --style bunt --variant stutter --mood euphorie
 npm run idea -- --style oz --variant travis --seed 7
+npm run idea -- --style hans-zimmer --variant dark-knight --seed 7
 ```
 
 - `engine/` – Musik-Gehirn (TypeScript, ohne Abhängigkeiten): Theorie, Voicings, Akkordfolgen,
@@ -392,6 +464,11 @@ npm run idea -- --style oz --variant travis --seed 7
   (natural, harmonic, phrygian, dorian); `stopLastBar` im Arrangement für den Beat-Stopp;
   `mix.laneDb` für die eigene Spur-Balance (808 und Melodie vorn). Ein Slide steht im MIDI als
   Überlappung um eine 32tel. Tests in `engine/test/trap.test.ts`
+- Filmmusik (Runde 8): `genre: "film"`; Lead-Modus `theme` (lange Töne, Motiv mit Varianten);
+  Arp-Reihenfolge `pedal` für Ostinatos, die zum tiefsten Ton zurückkehren; Film-Kits `epic` und
+  `wakanda` in `lab/src/drumkit.ts` (Orchester-Samples in `lab/samples/orch/`, sprechende Trommel
+  als Synth); `accel` im Arrangement lässt einen Abschnitt im Hör-Labor schneller werden. Tests in
+  `engine/test/film.test.ts`
 - `lab/` – die Hör-Labor-Seite (UI, Tone.js-Klänge, Speicher); `lab/samples/` enthält die
   Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`);
   `lab/src/voice-analysis.ts` erkennt Silben und Tonhöhe der eigenen Stimme,

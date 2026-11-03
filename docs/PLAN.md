@@ -1,6 +1,6 @@
 # ProjectX – Planung: Stil-Generator-Plugin (VST3)
 
-> **Status:** v0.7 · Phase 1 läuft: Hör-Labor Runde 7 (Hip-Hop: OZ, Metro Boomin, Pi'erre Bourne mit 808, Hi-Hat-Rolls und Melodie-Loops), davor Runde 6 (Stimmungen neben den Künstlern: Euphorie, Energie, Episch, Melancholie, Verträumt, Dunkel) und Runde 5 mit allen Bausteinen aus dem [Plan „4 von 5“](PLAN-4-VON-5.md), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 03.11.2026
+> **Status:** v0.8 · Phase 1 läuft: Hör-Labor Runde 8 (Filmmusik: Hans Zimmer und Ludwig Göransson mit Themen, Ostinatos, Orgelpunkt und Orchester-Samples), davor Runde 7 (Hip-Hop: OZ, Metro Boomin, Pi'erre Bourne mit 808, Hi-Hat-Rolls und Melodie-Loops), Runde 6 (Stimmungen neben den Künstlern: Euphorie, Energie, Episch, Melancholie, Verträumt, Dunkel) und Runde 5 mit allen Bausteinen aus dem [Plan „4 von 5“](PLAN-4-VON-5.md), siehe [HOERLABOR.md](HOERLABOR.md) und den [Stil-Report](../reports/Stilanalyse%20Fred%20again%20AVAION%20BUNT.md) · Stand 03.11.2026
 > Wir planen gemeinsam weiter. Was noch zu entscheiden ist, steht in [Abschnitt 11](#11-offene-entscheidungen).
 
 ## 1. Vision
@@ -114,6 +114,18 @@ wissen, was man sucht. ProjectX dreht das um:
 
 Gemeinsam: 808, das der Kick folgt und rutscht, Half-Time-Snare auf der Drei, Hi-Hat-Rolls und ein
 Beat-Stopp vor der Hook.
+
+**Filmmusik (seit Runde 8):** zwei Komponisten, je drei Varianten, Kurzfassung aus den Notizen in
+[research_notes/Stilanalyse Hans Zimmer Ludwig Göransson/](../research_notes/Stilanalyse%20Hans%20Zimmer%20Ludwig%20G%C3%B6ransson/):
+
+- **Hans Zimmer:** wenige Moll-Akkorde, die lange stehen (i–v–VII–IV in „Time“, i–VI bei The Dark
+  Knight), ein liegender Grundton, Streicher-Ostinatos in 16teln, tiefes Blech, Motive aus zwei bis
+  vier Tönen, Stücke, die Schicht um Schicht wachsen. Phasen: Hymnen der 90er (Gladiator), die
+  Nolan-Jahre (Inception, Interstellar, The Dark Knight), Wüste und Puls (Dunkirk, Dune; dafür gibt es
+  noch keine eigene Variante).
+- **Ludwig Göransson:** pro Film ein besonderes Solo-Instrument (sprechende Trommel und Fula-Flöte
+  bei Black Panther, Bassblockflöte bei The Mandalorian, Solo-Geige bei Oppenheimer), live
+  aufgenommen und bearbeitet, darüber Beats und dann Orchester und Chor.
 
 ### 3.5 Beispiel: ein Stil-Profil als Datei
 

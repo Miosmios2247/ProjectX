@@ -132,8 +132,12 @@ export function explainIdea(input: {
     case "theme": {
       const c = SCALE_COLOUR[input.leadScale ?? "natural"];
       const uses = !!c && key.mode === "minor" && leadPcs.includes(mod12(key.tonic + c[0]));
+      const notes = input.leadNotes;
+      const avg = notes.length ? notes.reduce((a, n) => a + n.len, 0) / notes.length : 0;
       out.push(
-        `Thema: lange Töne, meist in kleinen Schritten, oft mit einem Sprung nach oben am Anfang (${formText(input.leadBuild)})${uses ? c[1] : ""}. Das Motiv kommt verändert wieder, so wächst ein Filmthema.`,
+        avg >= 3
+          ? `Thema: lange Töne, meist in kleinen Schritten, oft mit einem Sprung nach oben am Anfang (${formText(input.leadBuild)})${uses ? c[1] : ""}. Das Motiv kommt verändert wieder, so wächst ein Filmthema.`
+          : `Thema: kurze Rufe und Antworten auf wenigen Tönen (${formText(input.leadBuild)})${uses ? c[1] : ""}, wie ein Solo-Instrument, das mit dem Orchester spricht.`,
       );
       break;
     }
@@ -148,10 +152,19 @@ export function explainIdea(input: {
       `Bass: ${input.bassRhythm.name}${approach ? ", mit Überleitungs-Tönen kurz vor jedem Akkordwechsel" : ""}${variant.lanes.bass.chromatic ? " (auch einen Halbton von unten, wie im Garage)" : ""}${input.bassPedal ? ". Er bleibt als Orgelpunkt auf dem Grundton liegen, während die Akkorde darüber wechseln" : ""}.`,
     );
   }
-  if (input.pluckOrder === "pedal") {
-    const perBar = input.pluckRhythm ? input.pluckRhythm.hits.length / input.pluckRhythm.bars : 8;
+  const ostinato = input.pluckRhythm?.tags.includes("ostinato") ?? false;
+  if (input.pluckOrder === "pedal" || (ostinato && input.pluckOrder)) {
+    const r = input.pluckRhythm;
+    const perBar = r ? r.hits.length / r.bars : 8;
+    const unit = r?.tags.includes("triplet") ? "Triolen" : perBar >= 12 ? "16teln" : "8teln";
+    const shape: Partial<Record<ArpOrder, string>> = {
+      pedal: "die immer wieder zu ihrem tiefsten Ton zurückkehrt",
+      updown: "die auf und ab durch die Akkordtöne läuft",
+      up: "die die Akkordtöne hinaufsteigt",
+      down: "die die Akkordtöne hinabsteigt",
+    };
     out.push(
-      `Ostinato: eine kurze Figur in ${perBar >= 12 ? "16teln" : "8teln"}, die immer wieder zu ihrem tiefsten Ton zurückkehrt. So treiben Streicher in der Filmmusik eine Szene an.`,
+      `Ostinato: eine kurze Figur in ${unit}, ${shape[input.pluckOrder!] ?? "die sich immer wiederholt"}. So treiben Streicher in der Filmmusik eine Szene an.`,
     );
   }
   if (input.keysYield) {

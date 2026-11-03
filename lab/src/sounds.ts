@@ -427,8 +427,10 @@ function shortSampleVoice(
       for (const x of buffers) if (Math.abs(x.midi - midi) < Math.abs(best.midi - midi)) best = x;
       const len = Math.max(0.06, Math.min(duration, o.maxLength));
       safely(() => {
-        // A non-empty onended lets Tone dispose the source once it has played.
+        // A non-empty onended lets Tone dispose the source once it has played. The source joins
+        // the voice's own context (offline renders create notes after their callback returned).
         const src = new T.ToneBufferSource({
+          context: input.context,
           url: best.buf,
           playbackRate: Math.pow(2, (midi - best.midi) / 12),
           fadeIn: 0.004,

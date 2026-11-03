@@ -316,7 +316,7 @@ export class DrumKit {
     if (one) {
       // A fresh source per hit, so a taiko keeps ringing under the next one. A non-empty
       // onended lets Tone dispose the source when it is done.
-      const src = new this.T.ToneBufferSource({ url: one.buffer, fadeOut: 0.05, onended: () => undefined });
+      const src = new this.T.ToneBufferSource({ context: one.gain.context, url: one.buffer, fadeOut: 0.05, onended: () => undefined });
       src.connect(one.gain);
       src.start(at(time), 0, undefined, v);
       return;
@@ -383,8 +383,9 @@ export class DrumKit {
     if (!out) return;
     const f0 = high ? 210 : 135;
     const bend = high ? 1.42 : 1.26;
-    const osc = new T.Oscillator({ type: "sine", frequency: f0 * 1.7 });
-    const amp = new T.Gain(0);
+    // Created per hit, so they join the kit's context (offline renders run after their callback).
+    const osc = new T.Oscillator({ context: out.context, type: "sine", frequency: f0 * 1.7 });
+    const amp = new T.Gain({ context: out.context, gain: 0 });
     osc.connect(amp);
     amp.connect(out);
     osc.frequency.setValueAtTime(f0 * 1.7, time);

@@ -48,7 +48,7 @@ import { drawDrums, drawNotes } from "./roll";
 import { RatingDoc, Store, StoredRating, errorText } from "./store";
 import type * as ToneNS from "tone";
 
-const LAB_VERSION = "0.7.0";
+const LAB_VERSION = "0.8.0";
 const PLAY_LANES: PlayLane[] = ["chords", "bass", "lead", "pluck", "drums"];
 const LANE_LABEL: Record<PlayLane, string> = {
   chords: "Akkorde",
