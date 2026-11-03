@@ -36,6 +36,9 @@ Dein Wunsch: „Und noch Hans Zimmer und Ludwig Göransson.“ Es gibt jetzt ein
   einen weichen Flügel.
 - **Stimmungen gehen auch hier:** „Energie“ bringt einen Trommel-Puls in 8teln, „Verträumt“ und
   „Melancholie“ machen die Trommeln leiser, „Episch“ bringt Toms. Ein Stück ohne Drums bleibt ohne.
+  Der Punkt an einer Stimmung zeigt bei Filmmusik, welche Stimmungen zur Musik passen (zum Beispiel
+  „Dunkel“ und „Energie“ bei The Dark Knight). Nur aus den Akkorden gerechnet käme dort „Euphorie“
+  heraus, weil i–VI–III–VII sonst als hebende Folge gilt.
 - **Blindtest:** Bei einem Film-Loop rätst du zwischen Hans Zimmer und Ludwig Göransson. Raten
   wäre 50 %.
 - **MIDI für FL Studio:** Die Lautstärke steckt in der Anschlagstärke (Velocity) jeder Note. Viele
@@ -467,7 +470,8 @@ npm run idea -- --style hans-zimmer --variant dark-knight --seed 7
 - Filmmusik (Runde 8): `genre: "film"`; Lead-Modus `theme` (lange Töne, Motiv mit Varianten);
   Arp-Reihenfolge `pedal` für Ostinatos, die zum tiefsten Ton zurückkehren; Film-Kits `epic` und
   `wakanda` in `lab/src/drumkit.ts` (Orchester-Samples in `lab/samples/orch/`, sprechende Trommel
-  als Synth); `accel` im Arrangement lässt einen Abschnitt im Hör-Labor schneller werden. Tests in
+  als Synth); `accel` im Arrangement lässt einen Abschnitt im Hör-Labor schneller werden; `moods` in
+  einer Variante nennt ihre typischen Stimmungen, statt sie aus den Akkorden zu rechnen. Tests in
   `engine/test/film.test.ts`
 - `lab/` – die Hör-Labor-Seite (UI, Tone.js-Klänge, Speicher); `lab/samples/` enthält die
   Samples, die neben der Seite veröffentlicht werden (Lizenzen in `lab/samples/LICENSES.md`);

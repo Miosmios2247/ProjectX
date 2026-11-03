@@ -345,7 +345,9 @@ function renderMoods(): void {
     wrap.append(b);
   }
   const names = typical.map((id) => getMood(id).name).join(" und ");
-  $("mood-hint").textContent = `Der Punkt zeigt, welche Stimmungen schon in den Akkorden von ${style.artist} (${variant.name}) stecken: ${names}. Jede Stimmung verändert vor allem die Akkordfolge, dazu Tempo, Tonlage, Rhythmus und Drums. Klang und Hook bleiben die des Künstlers.`;
+  // Film takes name their moods from the research; the others measure them on their chord loops.
+  const where = variant.moods?.length ? `zur Musik von ${style.artist} (${variant.name}) passen` : `schon in den Akkorden von ${style.artist} (${variant.name}) stecken`;
+  $("mood-hint").textContent = `Der Punkt zeigt, welche Stimmungen ${where}: ${names}. Jede Stimmung verändert vor allem die Akkordfolge, dazu Tempo, Tonlage, Rhythmus und Drums. Klang und Hook bleiben die des Künstlers.`;
 }
 
 function renderKeySelect(): void {

@@ -61,6 +61,8 @@ export const SOUND_LABELS: Record<string, string> = {
   "film-strings": "Streicher (Orchester)",
   "low-strings": "Tiefe Streicher",
   horns: "Hörner",
+  "horn-pad": "Hörner (Akkorde)",
+  "film-choir": "Chor",
   "low-brass": "Posaunen und Hörner",
   braam: "Blech-Wand",
   violin: "Solo-Geige",
@@ -545,21 +547,24 @@ const SOUND_TRIM: Record<string, number> = {
   flute: -2,
   "dark-piano": -2.5,
   theremin: -6,
-  // Film (round 8): first values, balanced with the offline loudness of the film loops.
-  "film-strings": 0,
-  "low-strings": 0,
-  horns: 0,
-  "low-brass": 0,
-  braam: 0,
-  violin: 0,
-  cello: 0,
-  spiccato: 0,
-  "violin-spiccato": 0,
-  "film-flute": 0,
-  "breath-flute": 0,
-  organ: 0,
-  "film-piano": 0,
-  "synth-bass": 0,
+  // Film (round 8), from offline loudness of the six film loops (mix about -14 LUFS like the
+  // other styles): the section sounds sit back, the solo instruments in front.
+  "film-strings": -8.7,
+  "low-strings": -4.4,
+  horns: -2.4,
+  "horn-pad": -7.4,
+  "film-choir": -10.9,
+  "low-brass": -9.3,
+  braam: -9.3,
+  violin: -3.4,
+  cello: -2,
+  spiccato: -1.2,
+  "violin-spiccato": -4.5,
+  "film-flute": -1.8,
+  "breath-flute": -1.9,
+  organ: -0.9,
+  "film-piano": 2.3,
+  "synth-bass": -3.3,
   "vox-chop": 0.5,
   "vox-stretch": 0,
   "vox-sing": -4,
@@ -783,6 +788,17 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
       }, out);
     case "horns":
       return sampledVoice(T, ["horns"], { attack: 0.08, release: 1.0, chain: [new T.Filter(3800, "lowpass")] }, out);
+    case "horn-pad":
+      // The horn section holding chords: softer onset, longer release.
+      return sampledVoice(T, ["horns"], { attack: 0.25, release: 1.4, chain: [new T.Filter(3000, "lowpass")] }, out);
+    case "film-choir":
+      // A choir "ah" and "oh" as a pad, with a slow onset and a long hall.
+      return sampledVoice(T, ["aahs", "oohs"], {
+        attack: 0.4,
+        release: 1.6,
+        pick: (_m, n) => n % 2,
+        chain: [new T.Filter(2800, "lowpass")],
+      }, out);
     case "low-brass":
       // Trombones, with horns on the long notes: the big brass chord.
       return sampledVoice(T, ["trombone"], {

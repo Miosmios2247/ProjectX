@@ -128,6 +128,7 @@ export function moodAffinity(variant: StyleVariant, mood: Mood): number {
 
 /** The two moods closest to the variant's own chord loops. */
 export function typicalMoods(variant: StyleVariant): MoodId[] {
+  if (variant.moods?.length) return variant.moods.slice(0, 2);
   return [...MOODS]
     .sort((a, b) => moodAffinity(variant, b) - moodAffinity(variant, a))
     .slice(0, 2)

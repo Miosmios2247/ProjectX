@@ -307,6 +307,10 @@
     "Die Melodie ist kaum eine: wenige lange Töne, oft von Hörnern, die sich mit jeder Runde wiederholen",
     "Viel Hall wie in einer Kirche oder einem großen Saal"
    ],
+   "moods": [
+    "episch",
+    "melancholie"
+   ],
    "arrangement": [
     {
      "name": "Intro",
@@ -588,6 +592,10 @@
     "Nur zwei Akkorde (i und ♭VI) oder ein einziger: die Spannung kommt aus Rhythmus und Lautstärke",
     "Taiko und Konzert-Snare statt Drumkit"
    ],
+   "moods": [
+    "dunkel",
+    "energie"
+   ],
    "arrangement": [
     {
      "name": "Intro",
@@ -739,7 +747,7 @@
        "weight": 2
       },
       {
-       "id": "choir-dark",
+       "id": "film-choir",
        "weight": 1
       }
      ],
@@ -865,6 +873,10 @@
     "Die typische Zimmer-Folge der 90er: der Bass steigt stufenweise (i–ii°7–i/3–iv)",
     "In der Schlacht treiben Ostinato, Taiko und Konzert-Snare",
     "Für die Klage am Anfang: Solo-Cello oder eine Stimme statt Hörner"
+   ],
+   "moods": [
+    "episch",
+    "energie"
    ],
    "arrangement": [
     {

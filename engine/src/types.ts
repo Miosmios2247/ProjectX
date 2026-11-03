@@ -135,6 +135,8 @@ export interface StyleVariant {
     laneDb?: Partial<Record<LaneId | "drums", number>>;
   };
   soundHints: string[];
+  /** The moods this take is known for (the dot in the lab); without it they are measured on its chord loops. */
+  moods?: MoodId[];
   /** Song preview for this variant; falls back to the artist's arrangement. */
   arrangement?: ArrangementSection[];
 }

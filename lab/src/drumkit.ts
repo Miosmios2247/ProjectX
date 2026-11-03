@@ -62,7 +62,7 @@ const KITS: Record<string, KitShape> = {
     samples: { shaker: ["shaker", -16] },
   },
   wakanda: {
-    trim: 0, kickDecay: 0.7, kickVol: -3, kickPunch: 2.5, hatHp: 7000, hatVol: -19, clapVol: -11, snareVol: -11,
+    trim: 4.2, kickDecay: 0.7, kickVol: -3, kickPunch: 2.5, hatHp: 7000, hatVol: -19, clapVol: -11, snareVol: -11,
     samples: { shaker: ["shaker", -13], tamb: ["cabasa", -16] },
   },
   neutral: {
