@@ -3,6 +3,9 @@
 import fredAgain from "../../data/styles/fred-again.json";
 import avaion from "../../data/styles/avaion.json";
 import bunt from "../../data/styles/bunt.json";
+import oz from "../../data/styles/oz.json";
+import metroBoomin from "../../data/styles/metro-boomin.json";
+import pierreBourne from "../../data/styles/pierre-bourne.json";
 import chordRhythms from "../../data/rhythms/chords.json";
 import bassRhythms from "../../data/rhythms/bass.json";
 import leadRhythms from "../../data/rhythms/lead.json";
@@ -11,7 +14,7 @@ import drumPatterns from "../../data/rhythms/drums.json";
 import { DrumPattern, Rhythm } from "./rhythm";
 import { StyleProfile, StyleVariant } from "./types";
 
-export const STYLES: StyleProfile[] = [fredAgain, avaion, bunt] as unknown as StyleProfile[];
+export const STYLES: StyleProfile[] = [fredAgain, avaion, bunt, oz, metroBoomin, pierreBourne] as unknown as StyleProfile[];
 
 const RHYTHMS = new Map<string, Rhythm>();
 for (const list of [chordRhythms, bassRhythms, leadRhythms, pluckRhythms] as unknown as Rhythm[][]) {

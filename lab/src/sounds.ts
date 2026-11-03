@@ -56,6 +56,8 @@ export const SOUND_LABELS: Record<string, string> = {
   "trap-strings": "Streicher",
   "synth-lead": "Synth-Lead",
   "dark-pad": "Dunkle Fläche",
+  theremin: "Schwebender Sinus",
+  "warm-pad": "Warme Fläche",
   "neutral-keys": "Neutral",
   "neutral-bass": "Neutral",
   "neutral-lead": "Neutral",
@@ -643,6 +645,28 @@ export function createVoice(T: T, id: string, options: PlayerOptions = { soundSe
         volume: -16,
       });
       return monoVoice(T, s, [new T.Vibrato(6, 0.04)], out);
+    }
+    case "theremin": {
+      // An eerie sine that glides from note to note with a wide vibrato (OZ's odd hook layer).
+      const s = new T.MonoSynth({
+        oscillator: { type: "sine" },
+        filter: { type: "lowpass", Q: 0.5, rolloff: -12 },
+        filterEnvelope: { attack: 0.01, decay: 0.3, sustain: 1, release: 0.3, baseFrequency: 2500, octaves: 0 },
+        envelope: { attack: 0.08, decay: 0.2, sustain: 0.9, release: 0.4 },
+        portamento: 0.09,
+        volume: -8,
+      });
+      return monoVoice(T, s, [new T.Vibrato(5.5, 0.18), new T.Distortion(0.08)], out);
+    }
+    case "warm-pad": {
+      const s = new T.PolySynth(T.Synth, {
+        // count 3 is Tone's default: other counts rebuild the oscillators inside the audio callback.
+        oscillator: { type: "fattriangle", count: 3, spread: 16 },
+        envelope: { attack: 0.35, decay: 0.4, sustain: 0.85, release: 1.2 },
+        volume: -10,
+      });
+      s.maxPolyphony = 16;
+      return polyVoice(T, s, [new T.Filter(2200, "lowpass")], out);
     }
     case "dark-pad": {
       const s = new T.PolySynth(T.Synth, {

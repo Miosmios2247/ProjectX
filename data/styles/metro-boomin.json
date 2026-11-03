@@ -1,0 +1,510 @@
+{
+ "id": "metro-boomin",
+ "artist": "Metro Boomin",
+ "genre": "hiphop",
+ "blurb": "Dunkel und filmisch: Moll-Loops aus Flöte, Glocken oder Chor, eine schwere 808, flatternde Hi-Hats",
+ "harmonyNote": "Metro Boomin bleibt fast immer in Moll, mit sehr kurzen Loops wie i–VI–v–i oder nur einem Akkord. Er sagt selbst: Weniger ist oft mehr.",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 800
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Strophe",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "drums"
+   ],
+   "stopLastBar": true
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Outro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 1800
+  }
+ ],
+ "variants": [
+  {
+   "id": "savage",
+   "name": "Savage Mode (dunkel)",
+   "blurb": "140–150 BPM im Half-Time, i–VI–v–i, i–iv oder ein einziger Moll-Akkord, Flöte oder Glocken als Loop, verzerrte 808",
+   "references": [
+    "Mask Off (Future)",
+    "Bank Account (21 Savage)",
+    "Jumpman",
+    "X"
+   ],
+   "tempo": [
+    140,
+    150
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "trap-metro",
+     "weight": 3
+    },
+    {
+     "id": "trap-metro-16",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "v",
+       "i"
+      ],
+      "weight": 3,
+      "like": "„Mask Off“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "VII",
+       "i"
+      ],
+      "weight": 2,
+      "like": "„Mask Off“ (andere Lesart)"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i"
+      ],
+      "durations": [
+       4
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.85,
+     "seventh": 0.1,
+     "add9": 0.05
+    },
+    "colorConsistency": 0.6,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.2,
+    "liftMap": {
+     "i": [
+      "VI"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "dark-pad",
+       "weight": 2
+      },
+      {
+       "id": "choir-dark",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "trap-pad",
+       "weight": 3
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 72,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.2,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "808-hard"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.35,
+     "octave": 0.2
+    },
+    "lead": {
+     "sound": [
+      {
+       "id": "flute",
+       "weight": 2
+      },
+      {
+       "id": "bells",
+       "weight": 2
+      }
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-flute",
+       "weight": 3
+      },
+      {
+       "id": "loop-triplets",
+       "weight": 2
+      },
+      {
+       "id": "loop-8ths",
+       "weight": 1
+      }
+     ],
+     "range": [
+      62,
+      81
+     ],
+     "tensions": false,
+     "scale": "natural"
+    },
+    "pluck": {
+     "sound": [
+      "dark-piano"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "bell-answer",
+       "weight": 2
+      },
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      55,
+      74
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.4,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Eine Sample-artige Hauptmelodie (Flöte, Glocken, Spieluhr) über einem einzigen Moll-Akkord oder i–iv",
+    "808 laut und verzerrt, ein bis zwei Slides pro vier Takte, meist am Taktende",
+    "Hi-Hats flattern: Achtel mit 32tel- und Triolen-Rolls, Clap und Snare zusammen auf der Drei",
+    "Weniger ist mehr: höchstens drei Melodie-Spuren gleichzeitig"
+   ]
+  },
+  {
+   "id": "heroes",
+   "name": "Heroes & Villains (filmisch)",
+   "blurb": "112–120 BPM, Streicher und Chor als Akkorde, ein dunkles Piano als Loop, harmonisch Moll mit Dur-V, Snare auf 2 und 4 oder im Half-Time",
+   "references": [
+    "Superhero (Heroes & Villains)",
+    "Trance",
+    "Creepin'",
+    "Am I Dreaming"
+   ],
+   "tempo": [
+    112,
+    120
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "rnb-trap",
+     "weight": 2
+    },
+    {
+     "id": "trap-cinematic",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.9,
+     "major": 0.1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "v",
+       "VI",
+       "V"
+      ],
+      "weight": 3,
+      "like": "„Creepin'“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "III",
+       "V"
+      ],
+      "weight": 2
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "VI",
+       "V"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "VII",
+       "i",
+       "i"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.6,
+     "seventh": 0.25,
+     "add9": 0.15
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0.1,
+    "substitution": 0,
+    "lift": 0.1,
+    "stretch": 0.3,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "trap-strings",
+       "weight": 2
+      },
+      {
+       "id": "choir-dark",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "trap-pad",
+       "weight": 3
+      },
+      {
+       "id": "hold-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 45,
+      "high": 74,
+      "voices": [
+       4,
+       5
+      ],
+      "spread": "open",
+      "colorTop": 0.3,
+      "rootBottom": 1.2
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.25,
+     "octave": 0.1
+    },
+    "lead": {
+     "sound": [
+      "dark-piano"
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-glass",
+       "weight": 2
+      },
+      {
+       "id": "loop-8ths",
+       "weight": 2
+      }
+     ],
+     "range": [
+      60,
+      81
+     ],
+     "tensions": false,
+     "scale": "harmonic"
+    },
+    "pluck": {
+     "sound": [
+      "bells"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "bell-answer",
+       "weight": 2
+      },
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      74,
+      93
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.45,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Streicher und Chor als Akkorde, ein dunkles Piano als Loop (bei Metro spielen Johan Lenox und Peter Lee Johnson solche Teile echt ein)",
+    "Harmonisch Moll: Die Dur-V vor dem Grundton klingt filmisch",
+    "Intro und Outro ohne Drums, nur Chor und Streicher",
+    "Saubere 808 und 16tel-Hats; bei 112–120 BPM liegt die Snare oft auf 2 und 4"
+   ],
+   "arrangement": [
+    {
+     "name": "Chor-Intro",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "pluck"
+     ],
+     "filter": 1500
+    },
+    {
+     "name": "Hook",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Strophe",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "drums"
+     ],
+     "stopLastBar": true
+    },
+    {
+     "name": "Hook",
+     "bars": 8,
+     "lanes": [
+      "chords",
+      "bass",
+      "lead",
+      "pluck",
+      "drums"
+     ]
+    },
+    {
+     "name": "Outro",
+     "bars": 4,
+     "lanes": [
+      "chords",
+      "lead"
+     ]
+    }
+   ]
+  }
+ ]
+}

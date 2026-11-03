@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ChordSlot, DrumPattern, buildChord, createRng } from "../src/index";
+import { ChordSlot, DrumPattern, MOODS, STYLES, buildChord, createRng, generateIdea, getVariant } from "../src/index";
 import { lane808 } from "../src/lanes/bass";
 import { drumsLane } from "../src/lanes/drums";
 import { melodyScalePcs } from "../src/lanes/lead";
@@ -88,5 +88,65 @@ describe("melody scales", () => {
     expect(melodyScalePcs(key, "harmonic")).toEqual([0, 2, 3, 5, 7, 8, 11]);
     expect(melodyScalePcs(key, "phrygian")).toEqual([0, 1, 3, 5, 7, 8, 10]);
     expect(melodyScalePcs({ tonic: 0, mode: "major" }, "harmonic")).toEqual([0, 2, 4, 5, 7, 9, 11]);
+  });
+});
+
+describe("hip-hop styles", () => {
+  const hiphop = STYLES.filter((s) => s.genre === "hiphop").flatMap((s) => s.variants.map((v) => ({ styleId: s.id, variantId: v.id })));
+  const offGrid = (steps: number[]) => steps.filter((x) => !Number.isInteger(x)).length;
+
+  it("has three artists with two takes each", () => {
+    expect(hiphop).toHaveLength(6);
+  });
+
+  it("lets the 808 follow the kick and slide now and then, with rolling hats", () => {
+    for (const { styleId, variantId } of hiphop) {
+      let glides = 0;
+      let rolls = 0;
+      for (let seed = 1; seed <= 6; seed++) {
+        const idea = generateIdea({ styleId, variantId, key: null, bars: 8, seed });
+        expect(idea.lanes.bass.rhythmId).toBe("808-kick");
+        const kicks = new Set(idea.drums.hits.filter((h) => h.inst === "kick").map((h) => Math.round(h.step * 4) / 4));
+        const changes = new Set(idea.progression.map((s) => s.start));
+        for (const n of idea.lanes.bass.notes) expect(kicks.has(n.start) || changes.has(n.start), `${styleId}/${variantId} ${n.start}`).toBe(true);
+        glides += idea.lanes.bass.notes.filter((n) => n.glide).length;
+        rolls += offGrid(idea.drums.hits.filter((h) => h.inst === "hatC").map((h) => h.step));
+      }
+      expect(glides, `${styleId}/${variantId}`).toBeGreaterThan(0);
+      expect(rolls, `${styleId}/${variantId}`).toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps its own grooves under every mood", () => {
+    for (const { styleId, variantId } of hiphop) {
+      const own = new Set(getVariant(styleId, variantId).lanes.chords.rhythms.map((r) => (typeof r === "string" ? r : r.id)));
+      for (const mood of MOODS) {
+        for (let seed = 1; seed <= 4; seed++) {
+          const plain = generateIdea({ styleId, variantId, key: null, bars: 4, seed });
+          const idea = generateIdea({ styleId, variantId, key: null, bars: 4, seed, mood: mood.id });
+          const where = `${styleId}/${variantId} ${mood.id} ${seed}`;
+          expect(idea.lanes.bass.rhythmId, where).toBe("808-kick");
+          expect(own.has(idea.lanes.chords.rhythmId), where).toBe(true);
+          // No house offbeat hats or 16th fills: the hats are the pattern's own (rolls aside).
+          const opens = (i: typeof idea) => i.drums.hits.filter((h) => h.inst === "hatO").length;
+          if (idea.drums.patternId === plain.drums.patternId) expect(opens(idea), where).toBe(opens(plain));
+          expect(idea.insights.find((t) => t.startsWith("Stimmung")), where).not.toMatch(/Drop|Tamburin|Shaker|Aufbau|16tel/);
+        }
+      }
+    }
+  });
+
+  it("rolls the hats more with energy and less when calm", () => {
+    const count = (mood: "energie" | "vertraeumt") => {
+      let n = 0;
+      for (const { styleId, variantId } of hiphop) {
+        for (let seed = 1; seed <= 10; seed++) {
+          const idea = generateIdea({ styleId, variantId, key: null, bars: 8, seed, mood });
+          n += offGrid(idea.drums.hits.filter((h) => h.inst === "hatC").map((h) => h.step));
+        }
+      }
+      return n;
+    };
+    expect(count("energie")).toBeGreaterThan(count("vertraeumt") * 2);
   });
 });

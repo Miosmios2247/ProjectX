@@ -9,12 +9,12 @@ import moodData from "../../data/moods.json";
 import { ProgressionTemplate } from "./progression";
 import { ColorToken, Mode } from "./theory";
 import { Rng } from "./rng";
-import { DrumInst, LaneId, WeightedRef } from "./rhythm";
+import { DrumInst, DrumPattern, LaneId, WeightedRef } from "./rhythm";
 import { clampVel } from "./groove";
 import { getRhythm } from "./styles";
 import { LEAD_TARGETS } from "./lanes/lead";
 import { Spread, VoicingOptions } from "./voicing";
-import { ArrangementSection, DrumHit, MoodId, Note, StyleVariant } from "./types";
+import { ArrangementSection, DrumHit, Genre, MoodId, Note, StyleVariant } from "./types";
 
 /** What a chord loop sounds like, measured on its degrees. */
 export type LoopFeature = "major" | "minor" | "rise" | "epic" | "iv" | "bII" | "maj7" | "short" | "long" | "two";
@@ -50,8 +50,8 @@ export interface Mood {
   defaults?: Partial<Record<"chords" | "bass", string>>;
   drums?: { energy?: number; offbeatHats?: boolean; toms?: boolean; noBright?: boolean };
   song?: { climaxUp?: boolean; longBuild?: boolean };
-  /** Explanation: a base line, one line per loop feature, and the rest. */
-  text: { base: string; after: string } & Partial<Record<LoopFeature, string>>;
+  /** Explanation: a base line, one line per loop feature, and the rest (with its own wording for hip-hop). */
+  text: { base: string; after: string; afterHiphop?: string } & Partial<Record<LoopFeature, string>>;
 }
 
 export const MOODS: Mood[] = (moodData as unknown as Mood[]).map((m) => ({
@@ -157,8 +157,8 @@ function reweight(refs: (WeightedRef | string)[], factors: Record<string, number
 
 const shiftRange = (r: [number, number], by: number): [number, number] => [r[0] + by, r[1] + by];
 
-/** The variant as the mood hears it. */
-export function applyMood(variant: StyleVariant, mood: Mood): StyleVariant {
+/** The variant as the mood hears it. Hip-hop keeps its own grooves: no house rhythms come in, the 808 stays on the kick. */
+export function applyMood(variant: StyleVariant, mood: Mood, genre: Genre = "house"): StyleVariant {
   const h = variant.harmony;
   // Modes
   const modes: Partial<Record<Mode, number>> = {};
@@ -208,16 +208,20 @@ export function applyMood(variant: StyleVariant, mood: Mood): StyleVariant {
   if (ld.repeat) targets.repeat = Math.min(0.95, Math.max(0.3, base.repeat + ld.repeat));
 
   const r = mood.rhythms ?? {};
+  const house = genre !== "hiphop";
   return {
     ...variant,
     harmony: { ...h, modes, progressions: [...own, ...extra], colors, stretch, lift },
     lanes: {
-      chords: { ...L.chords, voicing, rhythms: reweight(L.chords.rhythms, r.chords, mood.defaults?.chords) },
-      bass: {
-        ...L.bass,
-        rhythms: reweight(L.bass.rhythms, r.bass, mood.defaults?.bass),
-        pedal: Math.min(0.8, Math.max(0, (L.bass.pedal ?? 0) + (mood.pedal ?? 0))),
-      },
+      chords: { ...L.chords, voicing, rhythms: reweight(L.chords.rhythms, r.chords, house ? mood.defaults?.chords : undefined) },
+      bass:
+        L.bass.mode === "808"
+          ? { ...L.bass }
+          : {
+              ...L.bass,
+              rhythms: reweight(L.bass.rhythms, r.bass, house ? mood.defaults?.bass : undefined),
+              pedal: Math.min(0.8, Math.max(0, (L.bass.pedal ?? 0) + (mood.pedal ?? 0))),
+            },
       lead: { ...L.lead, range: shiftRange(L.lead.range, ld.shift ?? 0), rhythms: reweight(L.lead.rhythms, r.lead), targets },
       pluck: { ...L.pluck, range: shiftRange(L.pluck.range, vs), rhythms: reweight(L.pluck.rhythms, r.pluck) },
     },
@@ -240,10 +244,26 @@ export function moodDynamics(notes: Note[], mood: Mood): Note[] {
 
 const SMALL: DrumInst[] = ["hatC", "hatO", "shaker", "tamb", "percHi", "rim"];
 
-/** Drums as the mood plays them: more or fewer hats, open hats, epic toms. */
-export function moodDrums(hits: readonly DrumHit[], mood: Mood, bars: number, bpm: number, rng: Rng): DrumHit[] {
+/** Hi-hat rolls as the mood plays them: more of them with energy, fewer when calm. */
+export function moodRolls(pattern: DrumPattern, mood: Mood): DrumPattern {
+  const e = mood.drums?.energy ?? 0;
+  if (!pattern.rolls || !e) return pattern;
+  const chance = Math.min(0.9, Math.max(0.05, pattern.rolls.chance * (e > 0 ? 1.7 : 0.45)));
+  return { ...pattern, rolls: { ...pattern.rolls, chance } };
+}
+
+/**
+ * Drums as the mood plays them: more or fewer hats, open hats, epic toms.
+ * Hip-hop keeps its hats (the rolls carry the energy there, see moodRolls); calm moods only play them softer.
+ */
+export function moodDrums(hits: readonly DrumHit[], mood: Mood, bars: number, bpm: number, rng: Rng, genre: Genre = "house"): DrumHit[] {
   const d = mood.drums ?? {};
   let out = hits.map((x) => ({ ...x }));
+  if (genre === "hiphop") {
+    if ((d.energy ?? 0) < 0) out = out.map((x) => (SMALL.includes(x.inst) ? { ...x, vel: clampVel(x.vel * 0.85) } : x));
+    if (d.toms) addToms(out, bars, rng);
+    return out.sort((a, b) => a.step - b.step || a.inst.localeCompare(b.inst));
+  }
   const has = (inst: DrumInst) => out.some((x) => x.inst === inst);
   const at = (inst: DrumInst, step: number) => out.some((x) => x.inst === inst && x.step === step);
   const total = bars * 16;
@@ -267,14 +287,16 @@ export function moodDrums(hits: readonly DrumHit[], mood: Mood, bars: number, bp
   if (d.offbeatHats && !has("hatO")) {
     for (let s = 2; s < total; s += 4) out.push({ inst: "hatO", step: s, vel: clampVel(70 + rng.int(-6, 6)) });
   }
-  if (d.toms) {
-    // A falling tom fill at the end of every 4th bar announces the next round.
-    for (let bar = 3; bar < bars; bar += 4) {
-      const o = bar * 16;
-      [12, 13, 14, 15].forEach((s, k) => out.push({ inst: "tom", step: o + s, vel: clampVel(84 + k * 6 + rng.int(-4, 4)) }));
-    }
-  }
+  if (d.toms) addToms(out, bars, rng);
   return out.sort((a, b) => a.step - b.step || a.inst.localeCompare(b.inst));
+}
+
+/** A falling tom fill at the end of every 4th bar announces the next round. */
+function addToms(out: DrumHit[], bars: number, rng: Rng): void {
+  for (let bar = 3; bar < bars; bar += 4) {
+    const o = bar * 16;
+    [12, 13, 14, 15].forEach((s, k) => out.push({ inst: "tom", step: o + s, vel: clampVel(84 + k * 6 + rng.int(-4, 4)) }));
+  }
 }
 
 /** Song form as the mood shapes it: longer builds (episch), the hook an octave up at the end (euphorisch). */
@@ -289,7 +311,7 @@ export function moodArrangement(sections: readonly ArrangementSection[], mood: M
 }
 
 /** Plain-language lines for "Warum klingt das so?". A loop the mood brought along is explained on its own line. */
-export function explainMood(mood: Mood, template: ProgressionTemplate): string {
+export function explainMood(mood: Mood, template: ProgressionTemplate, genre: Genre = "house"): string {
   const f = loopFeatures(template);
   const lines: string[] = [];
   const add = (k: LoopFeature, on: boolean) => {
@@ -306,5 +328,6 @@ export function explainMood(mood: Mood, template: ProgressionTemplate): string {
   add("two", f.two === 1);
   add("short", f.short === 1 && f.two === 0);
   add("long", f.long === 1);
-  return `Stimmung „${mood.name}“: ${mood.text.base} ${[...lines.slice(0, 2), mood.text.after].join(" ")}`;
+  const after = genre === "hiphop" ? (mood.text.afterHiphop ?? mood.text.after) : mood.text.after;
+  return `Stimmung „${mood.name}“: ${mood.text.base} ${[...lines.slice(0, 2), after].join(" ")}`;
 }

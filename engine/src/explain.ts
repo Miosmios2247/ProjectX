@@ -61,7 +61,7 @@ export function explainIdea(input: {
     const like = template.like ? `, dasselbe Muster wie in ${template.like}` : "";
     out.push(`Akkorde ${input.chordNames} (Stufen ${degrees})${like}. ${style.harmonyNote}`);
   }
-  if (input.mood) out.push(explainMood(input.mood, template));
+  if (input.mood) out.push(explainMood(input.mood, template, style.genre ?? "house"));
   if (input.chordRhythm.tags.includes("push")) {
     out.push("Die Akkorde kommen eine Achtel vor dem Taktanfang (Push). Das gibt den typischen House-Schwung.");
   }

@@ -31,7 +31,8 @@
    "base": "hell und hebend.",
    "rise": "Die Akkorde steigen zum Grundton auf, das hebt an.",
    "major": "Dur-Akkorde überwiegen.",
-   "after": "Akkorde und Hook liegen etwas höher, das Tempo eher oben. Im Song-Modus geht die Hook im letzten Drop eine Oktave höher, wo die Stimmlage das erlaubt."
+   "after": "Akkorde und Hook liegen etwas höher, das Tempo eher oben. Im Song-Modus geht die Hook im letzten Drop eine Oktave höher, wo die Stimmlage das erlaubt.",
+   "afterHiphop": "Akkorde und Melodie liegen etwas höher, das Tempo eher oben. Im Song-Modus geht die Melodie in der letzten Hook eine Oktave höher, wo die Stimmlage das erlaubt."
   }
  },
  {
@@ -66,7 +67,8 @@
    "base": "treibt nach vorn.",
    "short": "Die Akkorde wechseln oft, das hält die Spannung.",
    "two": "Nur zwei Akkorde wechseln sich ab, wie ein Motor.",
-   "after": "Die Hi-Hats laufen durch, kurze Akkord-Schläge kommen öfter, und das Tempo liegt am oberen Rand des Stils."
+   "after": "Die Hi-Hats laufen durch, kurze Akkord-Schläge kommen öfter, und das Tempo liegt am oberen Rand des Stils.",
+   "afterHiphop": "Die Hi-Hats rollen öfter, und das Tempo liegt am oberen Rand des Stils."
   }
  },
  {
@@ -103,7 +105,8 @@
    "base": "groß und weit.",
    "epic": "Das ist die „epische“ Folge i–VI–III–VII.",
    "long": "Die Akkorde bleiben lange liegen.",
-   "after": "Weite Akkord-Griffe, manchmal offene sus-Klänge und oft ein langer Grundton im Bass. Toms kündigen jeden Neustart an, und im Song-Modus dauert der Aufbau doppelt so lang."
+   "after": "Weite Akkord-Griffe, manchmal offene sus-Klänge und oft ein langer Grundton im Bass. Toms kündigen jeden Neustart an, und im Song-Modus dauert der Aufbau doppelt so lang.",
+   "afterHiphop": "Weite Akkord-Griffe und manchmal offene sus-Klänge. Toms kündigen jeden Neustart an."
   }
  },
  {
@@ -138,7 +141,8 @@
    "iv": "Die Moll-Subdominante (iv) klingt traurig.",
    "maj7": "Weiche Septakkorde machen es bittersüß.",
    "minor": "Moll-Akkorde überwiegen.",
-   "after": "Alles liegt etwas tiefer und klingt leiser, die Melodie geht in kleinen Schritten, das Tempo eher unten."
+   "after": "Alles liegt etwas tiefer und klingt leiser, die Melodie geht in kleinen Schritten, das Tempo eher unten.",
+   "afterHiphop": "Alles liegt etwas tiefer und klingt leiser, die Melodie geht in kleinen Schritten, die Hi-Hats rollen seltener, das Tempo eher unten."
   }
  },
  {
@@ -174,7 +178,8 @@
    "base": "schwebend und weich.",
    "maj7": "maj7-Klänge schweben, ohne irgendwo anzukommen.",
    "long": "Die Akkorde bleiben lange liegen.",
-   "after": "Gehaltene Akkorde kommen öfter, die Drums spielen leise und ohne 16tel-Hats, das Tempo ist ruhig."
+   "after": "Gehaltene Akkorde kommen öfter, die Drums spielen leise und ohne 16tel-Hats, das Tempo ist ruhig.",
+   "afterHiphop": "Gehaltene Akkorde kommen öfter, die Hi-Hats spielen leiser und rollen seltener, das Tempo ist ruhig."
   }
  },
  {
@@ -205,7 +210,8 @@
    "base": "düster und bedrohlich.",
    "bII": "Der Halbton-Schritt nach oben (♭II) klingt bedrohlich.",
    "minor": "Fast nur Moll-Akkorde.",
-   "after": "Alles liegt tiefer, das helle Tamburin fällt weg und der Shaker wird leiser."
+   "after": "Alles liegt tiefer, das helle Tamburin fällt weg und der Shaker wird leiser.",
+   "afterHiphop": "Alles liegt tiefer, und helle Dur-Farben treten zurück."
   }
  }
 ]

@@ -767,5 +767,47 @@
     "vel": 98
    }
   ]
+ },
+ {
+  "id": "trap-pad",
+  "name": "Fläche gehalten",
+  "lane": "chords",
+  "tags": [
+   "pad",
+   "sustain",
+   "trap"
+  ],
+  "bars": 1,
+  "perChord": true,
+  "hits": [
+   {
+    "step": 0,
+    "len": -1,
+    "vel": 76
+   }
+  ]
+ },
+ {
+  "id": "trap-keys",
+  "name": "Akkord auf 1 und 2+",
+  "lane": "chords",
+  "tags": [
+   "piano",
+   "trap",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 6,
+    "vel": 88
+   },
+   {
+    "step": 6,
+    "len": 10,
+    "vel": 74
+   }
+  ]
  }
 ]

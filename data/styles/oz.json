@@ -1,0 +1,455 @@
+{
+ "id": "oz",
+ "artist": "OZ",
+ "genre": "hiphop",
+ "blurb": "Schweizer Loop-Produzent für Travis Scott und Drake: schlichte, gläserne Melodie-Loops, ein seltsamer Klang darüber, viele Hi-Hats",
+ "harmonyNote": "OZ bleibt in schlichtem Moll mit einer Moll-v statt der Dominante: kurze Loops wie i–v oder VI–VII–i. Seine eigenen Worte: simpel, aber schwer zu kopieren.",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords"
+   ],
+   "filter": 900
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Strophe",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "drums"
+   ],
+   "stopLastBar": true
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Outro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "chords",
+    "pluck"
+   ],
+   "filter": 2500
+  }
+ ],
+ "variants": [
+  {
+   "id": "travis",
+   "name": "Travis Scott (dunkel)",
+   "blurb": "150–156 BPM im Half-Time, i–v oder VI–iv–i–v in Moll, eine Gitarren-Figur als Loop, darüber ein schwebender Sinus, 16tel-Hats mit Rolls",
+   "references": [
+    "HIGHEST IN THE ROOM",
+    "SICKO MODE (Teil 2)",
+    "ESCAPE PLAN"
+   ],
+   "tempo": [
+    150,
+    156
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "trap-oz",
+     "weight": 3
+    },
+    {
+     "id": "trap-oz-8",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.9,
+     "major": 0.1
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "v"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 3,
+      "like": "„HIGHEST IN THE ROOM“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "v"
+      ],
+      "weight": 2,
+      "like": "„HIGHEST IN THE ROOM“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "iv",
+       "i",
+       "v"
+      ],
+      "weight": 2,
+      "like": "das Outro von „HIGHEST IN THE ROOM“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "v",
+       "v"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.55,
+     "seventh": 0.35,
+     "add9": 0.1
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0.05,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.25,
+    "liftMap": {
+     "v": [
+      "VII"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "dark-pad"
+     ],
+     "rhythms": [
+      {
+       "id": "trap-pad",
+       "weight": 3
+      },
+      {
+       "id": "hold-half",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 48,
+      "high": 72,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.3,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.3,
+     "octave": 0.15
+    },
+    "lead": {
+     "sound": [
+      "trap-guitar"
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-guitar",
+       "weight": 3
+      },
+      {
+       "id": "loop-glass",
+       "weight": 2
+      },
+      {
+       "id": "loop-8ths",
+       "weight": 1
+      }
+     ],
+     "range": [
+      57,
+      76
+     ],
+     "tensions": false,
+     "scale": "natural"
+    },
+    "pluck": {
+     "sound": [
+      "theremin"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-glide",
+       "weight": 3
+      },
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      89
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.42,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Die Melodie ist eine schlichte Gitarren- oder Synth-Figur als Loop, gern etwas lo-fi (bei „HIGHEST IN THE ROOM“ eine Handy-Aufnahme)",
+    "Darüber ein „seltsamer“ Klang: ein schwebender Sinus oder Theremin mit Portamento und viel Hall",
+    "808 im Mono-Modus mit Porta (FL Studio: Kanal-Einstellungen), auf die Tonart gestimmt und leicht verzerrt",
+    "Hi-Hats in 16teln mit 32tel- und Triolen-Rolls vor der Snare, Clap auf der Drei"
+   ]
+  },
+  {
+   "id": "drake",
+   "name": "Drake (gläsern, Bounce)",
+   "blurb": "158–168 BPM im Half-Time, VI–v–VII–i oder i–iv–v, gläserne Glocken als Loop, Triolen-Hats und eine hüpfende 808",
+   "references": [
+    "Toosie Slide",
+    "Girls Want Girls",
+    "Life Is Good (Drakes Teil)",
+    "No Friends in the Industry"
+   ],
+   "tempo": [
+    158,
+    168
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "trap-memphis",
+     "weight": 2
+    },
+    {
+     "id": "trap-oz",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.8,
+     "major": 0.2
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "VImaj7",
+       "v7",
+       "VII",
+       "i7"
+      ],
+      "weight": 3,
+      "like": "„Toosie Slide“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "VI",
+       "VII",
+       "i",
+       "i"
+      ],
+      "weight": 2,
+      "like": "den Refrain von „Toosie Slide“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "v",
+       "v"
+      ],
+      "weight": 2,
+      "like": "„Girls Want Girls“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "v",
+       "i"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.5,
+     "seventh": 0.4,
+     "add9": 0.1
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0.05,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.2,
+    "liftMap": {
+     "v": [
+      "VII"
+     ],
+     "i": [
+      "VI"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "rhodes"
+     ],
+     "rhythms": [
+      {
+       "id": "trap-keys",
+       "weight": 2
+      },
+      {
+       "id": "trap-pad",
+       "weight": 2
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 74,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.6,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.2,
+     "octave": 0.25
+    },
+    "lead": {
+     "sound": [
+      "bells"
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-bounce",
+       "weight": 2
+      },
+      {
+       "id": "loop-8ths",
+       "weight": 2
+      },
+      {
+       "id": "loop-glass",
+       "weight": 1
+      }
+     ],
+     "range": [
+      64,
+      84
+     ],
+     "tensions": false,
+     "scale": "natural"
+    },
+    "pluck": {
+     "sound": [
+      "piano-high"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "bell-answer",
+       "weight": 2
+      },
+      {
+       "id": "counter-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      72,
+      91
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.38,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Gläsern und luftig: Glocken oder E-Piano mit Hall, nur wenige Elemente („airy, barely there“)",
+    "Hi-Hats in Triolen (Memphis-Gefühl) oder 16teln, die Kicks antworten auf die Melodie",
+    "Die 808 hüpft mit der Kick, ab und zu ein Oktavsprung",
+    "Septakkorde (maj7 auf der VI) leise im Hintergrund"
+   ]
+  }
+ ]
+}

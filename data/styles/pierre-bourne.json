@@ -1,0 +1,430 @@
+{
+ "id": "pierre-bourne",
+ "artist": "Pi'erre Bourne",
+ "genre": "hiphop",
+ "blurb": "Hell und verspielt: Videospiel-Melodien aus Synths, doppelte Kicks und eine hüpfende 808",
+ "harmonyNote": "Pi'erre Bourne nimmt zwei bis vier Akkorde aus der Tonleiter, in Moll mit einer Moll-v wie in „Magnolia“ (i–iv–v) oder hell in Dur (IV–vi). Den Stil trägt die Melodie, nicht die Harmonik.",
+ "arrangement": [
+  {
+   "name": "Intro",
+   "bars": 4,
+   "lanes": [
+    "lead",
+    "pluck"
+   ],
+   "filter": 1500
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  },
+  {
+   "name": "Strophe",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "drums"
+   ],
+   "stopLastBar": true
+  },
+  {
+   "name": "Hook",
+   "bars": 8,
+   "lanes": [
+    "chords",
+    "bass",
+    "lead",
+    "pluck",
+    "drums"
+   ]
+  }
+ ],
+ "variants": [
+  {
+   "id": "magnolia",
+   "name": "Die Lit (Magnolia)",
+   "blurb": "158–164 BPM im Half-Time, i–iv–v ganz in Moll, ein hohes Synth-Motiv wie aus einem Videospiel, Glocken als Antwort, doppelte Kicks",
+   "references": [
+    "Magnolia (Playboi Carti)",
+    "Old Money",
+    "Choppa Won't Miss",
+    "Fell in Luv"
+   ],
+   "tempo": [
+    158,
+    164
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "trap-bounce",
+     "weight": 3
+    },
+    {
+     "id": "trap-bounce-16",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "minor": 0.75,
+     "major": 0.25
+    },
+    "progressions": [
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv",
+       "v",
+       "v"
+      ],
+      "weight": 3,
+      "like": "„Magnolia“"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "VI",
+       "VImaj7",
+       "iv"
+      ],
+      "weight": 2,
+      "like": "„Magnolia“ (andere Lesart)"
+     },
+     {
+      "mode": "minor",
+      "degrees": [
+       "i",
+       "iv"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.6,
+     "seventh": 0.25,
+     "add9": 0.15
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.2,
+    "liftMap": {
+     "v": [
+      "VII"
+     ]
+    },
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      "warm-pad"
+     ],
+     "rhythms": [
+      {
+       "id": "trap-pad",
+       "weight": 3
+      },
+      {
+       "id": "trap-keys",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 74,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.4,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.2,
+     "octave": 0.3
+    },
+    "lead": {
+     "sound": [
+      "synth-lead"
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-game",
+       "weight": 3
+      },
+      {
+       "id": "loop-bounce",
+       "weight": 2
+      }
+     ],
+     "range": [
+      69,
+      88
+     ],
+     "tensions": false,
+     "scale": "natural"
+    },
+    "pluck": {
+     "sound": [
+      "bells"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "bell-answer",
+       "weight": 2
+      },
+      {
+       "id": "bell-sparse",
+       "weight": 1
+      }
+     ],
+     "range": [
+      76,
+      96
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.36,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Ein hohes, kurzes Synth-Motiv wie aus einem Videospiel (Square- oder FM-Sounds, oft fast unveränderte Presets)",
+    "Doppelte Kicks (zwei 16tel hintereinander) sind sein Erkennungszeichen",
+    "Glocken antworten in den Pausen der Melodie",
+    "Die 808 hüpft mit der Kick, statt lange Grundtöne zu halten"
+   ]
+  },
+  {
+   "id": "bright",
+   "name": "Life of Pi'erre (hell)",
+   "blurb": "148–156 BPM im Half-Time, zwei Dur-Akkorde wie IV–vi, ein Glocken-Motiv mit einer Flöte als Antwort, luftige Drums",
+   "references": [
+    "wokeuplikethis*",
+    "Poke It Out",
+    "Sossboy"
+   ],
+   "tempo": [
+    148,
+    156
+   ],
+   "swing": 0.5,
+   "drumSwing": 0.5,
+   "drums": [
+    {
+     "id": "trap-bounce",
+     "weight": 2
+    },
+    {
+     "id": "trap-bounce-16",
+     "weight": 2
+    }
+   ],
+   "harmony": {
+    "modes": {
+     "major": 0.75,
+     "minor": 0.25
+    },
+    "progressions": [
+     {
+      "mode": "major",
+      "degrees": [
+       "IV",
+       "vi"
+      ],
+      "durations": [
+       2,
+       2
+      ],
+      "weight": 3,
+      "like": "„wokeuplikethis*“"
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "IV",
+       "vi"
+      ],
+      "weight": 2,
+      "like": "„wokeuplikethis*“"
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "I",
+       "IV",
+       "vi",
+       "IV"
+      ],
+      "weight": 1
+     },
+     {
+      "mode": "major",
+      "degrees": [
+       "vi",
+       "IV",
+       "I",
+       "I"
+      ],
+      "weight": 1
+     }
+    ],
+    "colors": {
+     "triad": 0.5,
+     "seventh": 0.3,
+     "add9": 0.2
+    },
+    "colorConsistency": 0.5,
+    "inversions": 0,
+    "substitution": 0,
+    "lift": 0.15,
+    "stretch": 0.25,
+    "noDominant7": true
+   },
+   "lanes": {
+    "chords": {
+     "sound": [
+      {
+       "id": "warm-pad",
+       "weight": 2
+      },
+      {
+       "id": "rhodes",
+       "weight": 1
+      }
+     ],
+     "rhythms": [
+      {
+       "id": "trap-pad",
+       "weight": 3
+      },
+      {
+       "id": "trap-keys",
+       "weight": 1
+      }
+     ],
+     "voicing": {
+      "low": 50,
+      "high": 74,
+      "voices": [
+       3,
+       4
+      ],
+      "spread": "close",
+      "colorTop": 0.5,
+      "rootBottom": 1.0
+     }
+    },
+    "bass": {
+     "sound": [
+      "808"
+     ],
+     "rhythms": [
+      "808-kick"
+     ],
+     "range": [
+      26,
+      41
+     ],
+     "mode": "808",
+     "glide": 0.15,
+     "octave": 0.25
+    },
+    "lead": {
+     "sound": [
+      "bells"
+     ],
+     "mode": "loop",
+     "rhythms": [
+      {
+       "id": "loop-game",
+       "weight": 2
+      },
+      {
+       "id": "loop-8ths",
+       "weight": 2
+      },
+      {
+       "id": "loop-bounce",
+       "weight": 1
+      }
+     ],
+     "range": [
+      69,
+      88
+     ],
+     "tensions": false,
+     "scale": "natural"
+    },
+    "pluck": {
+     "sound": [
+      "flute"
+     ],
+     "mode": "counter",
+     "rhythms": [
+      {
+       "id": "counter-sparse",
+       "weight": 2
+      },
+      {
+       "id": "bell-answer",
+       "weight": 1
+      }
+     ],
+     "range": [
+      67,
+      86
+     ]
+    }
+   },
+   "mix": {
+    "sidechain": 0,
+    "reverb": 0.38,
+    "drumKit": "trap",
+    "noise": 0
+   },
+   "soundHints": [
+    "Zwei Dur-Akkorde, die hin und her schaukeln (IV–vi), darunter eine warme Fläche",
+    "Melodie hell und hoch: Glocken, dazu eine Flöte als Gegenstimme",
+    "Luftig arrangieren: Teile weglassen statt neue Akkorde dazuzunehmen",
+    "Am Anfang Platz für den eigenen Producer-Tag lassen (nie fremde Tags kopieren)"
+   ]
+  }
+ ]
+}

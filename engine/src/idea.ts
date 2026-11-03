@@ -12,7 +12,7 @@ import { complementLead, pluckLane } from "./lanes/pluck";
 import { drumsLane } from "./lanes/drums";
 import { checkLanes } from "./check";
 import { explainIdea } from "./explain";
-import { applyMood, getMood, moodArrangement, moodDrums, moodDynamics, moodTempo } from "./mood";
+import { applyMood, getMood, moodArrangement, moodDrums, moodDynamics, moodRolls, moodTempo } from "./mood";
 import { Key, mod12 } from "./theory";
 import { ArpOrder, Idea, IdeaParams, StyleVariant } from "./types";
 
@@ -51,7 +51,8 @@ export function generateIdea(params: IdeaParams): Idea {
   // A mood reshapes the variant (loops, colours, ranges, rhythms); without one nothing changes.
   const mood = params.mood ? getMood(params.mood) : null;
   const own = getVariant(params.styleId, params.variantId);
-  const variant = mood ? applyMood(own, mood) : own;
+  const genre = style.genre ?? "house";
+  const variant = mood ? applyMood(own, mood, genre) : own;
   const base = createRng(params.seed);
   const seeds = { ...defaultLaneSeeds(params.seed), ...(params.laneSeeds ?? {}) };
   const key = params.key ?? autoKey(variant, base.fork("key"));
@@ -76,9 +77,9 @@ export function generateIdea(params: IdeaParams): Idea {
   // Drums (accompaniment); they come first because a trap 808 follows the kick.
   const dr = createRng(seeds.drums);
   const drumId = pickRef(variant.drums, dr.fork("pattern"));
-  const drumPattern = getDrumPattern(drumId);
+  const drumPattern = mood ? moodRolls(getDrumPattern(drumId), mood) : getDrumPattern(drumId);
   const drumsPlayed = drumsLane(drumPattern, bars, dr.fork("hits"));
-  const drumHits = mood ? moodDrums(drumsPlayed, mood, bars, bpm, dr.fork("mood")) : drumsPlayed;
+  const drumHits = mood ? moodDrums(drumsPlayed, mood, bars, bpm, dr.fork("mood"), genre) : drumsPlayed;
 
   // Bass
   const br = createRng(seeds.bass);

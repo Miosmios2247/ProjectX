@@ -1651,5 +1651,457 @@
     "vel": 96
    }
   ]
+ },
+ {
+  "id": "loop-8ths",
+  "name": "Loop in Achteln",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "melodic"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 2,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 3,
+    "vel": 96
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 90
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "loop-glass",
+  "name": "Gläserner Loop (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "sparse"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 3,
+    "vel": 98
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 4,
+    "len": 4,
+    "vel": 92
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 12,
+    "len": 4,
+    "vel": 90
+   },
+   {
+    "step": 16,
+    "len": 3,
+    "vel": 96
+   },
+   {
+    "step": 19,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 20,
+    "len": 4,
+    "vel": 90
+   },
+   {
+    "step": 26,
+    "len": 2,
+    "vel": 82
+   },
+   {
+    "step": 28,
+    "len": 4,
+    "vel": 88
+   }
+  ]
+ },
+ {
+  "id": "loop-guitar",
+  "name": "Gitarren-Figur (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "phrase"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 98
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 3,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 78
+   },
+   {
+    "step": 11,
+    "len": 3,
+    "vel": 86
+   },
+   {
+    "step": 16,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 18,
+    "len": 1,
+    "vel": 80
+   },
+   {
+    "step": 19,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 22,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 24,
+    "len": 4,
+    "vel": 92
+   },
+   {
+    "step": 28,
+    "len": 4,
+    "vel": 84
+   }
+  ]
+ },
+ {
+  "id": "loop-flute",
+  "name": "Flöten-Phrase (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "phrase",
+   "sparse"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 6,
+    "vel": 100
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 4,
+    "vel": 92
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 16,
+    "len": 8,
+    "vel": 96
+   },
+   {
+    "step": 24,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 26,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 28,
+    "len": 4,
+    "vel": 90
+   }
+  ]
+ },
+ {
+  "id": "loop-game",
+  "name": "Videospiel-Motiv",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "hook"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 2,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 6,
+    "len": 2,
+    "vel": 84
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 10,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 11,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 12,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 86
+   }
+  ]
+ },
+ {
+  "id": "loop-bounce",
+  "name": "Hüpfender Loop",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "syncopated"
+  ],
+  "bars": 1,
+  "hits": [
+   {
+    "step": 0,
+    "len": 2,
+    "vel": 100
+   },
+   {
+    "step": 3,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 7,
+    "len": 1,
+    "vel": 82
+   },
+   {
+    "step": 8,
+    "len": 2,
+    "vel": 96
+   },
+   {
+    "step": 10,
+    "len": 2,
+    "vel": 86
+   },
+   {
+    "step": 12,
+    "len": 1,
+    "vel": 84
+   },
+   {
+    "step": 14,
+    "len": 2,
+    "vel": 88
+   }
+  ]
+ },
+ {
+  "id": "loop-triplets",
+  "name": "Glocken in Triolen (2 Takte)",
+  "lane": "lead",
+  "tags": [
+   "loop",
+   "trap",
+   "triplet"
+  ],
+  "bars": 2,
+  "hits": [
+   {
+    "step": 0,
+    "len": 1.33,
+    "vel": 100
+   },
+   {
+    "step": 1.333,
+    "len": 1.33,
+    "vel": 82
+   },
+   {
+    "step": 2.667,
+    "len": 1.33,
+    "vel": 86
+   },
+   {
+    "step": 4,
+    "len": 2,
+    "vel": 94
+   },
+   {
+    "step": 8,
+    "len": 1.33,
+    "vel": 96
+   },
+   {
+    "step": 9.333,
+    "len": 1.33,
+    "vel": 82
+   },
+   {
+    "step": 10.667,
+    "len": 1.33,
+    "vel": 84
+   },
+   {
+    "step": 12,
+    "len": 4,
+    "vel": 90
+   },
+   {
+    "step": 16,
+    "len": 1.33,
+    "vel": 98
+   },
+   {
+    "step": 17.333,
+    "len": 1.33,
+    "vel": 82
+   },
+   {
+    "step": 18.667,
+    "len": 1.33,
+    "vel": 86
+   },
+   {
+    "step": 20,
+    "len": 2,
+    "vel": 92
+   },
+   {
+    "step": 24,
+    "len": 4,
+    "vel": 94
+   },
+   {
+    "step": 28,
+    "len": 4,
+    "vel": 86
+   }
+  ]
  }
 ]
