@@ -44,14 +44,20 @@ Produzenten (zum Beispiel Cubeatz, Nick Mira oder Wheezy) kann ich gern dazunehm
   rollen, „Verträumt“ und „Melancholie“ seltener, „Episch“ bringt Toms. House-Rhythmen kommen nicht
   dazu.
 - **MIDI für FL Studio:** Ein Slide im 808 steht im MIDI als kurze Überlappung von zwei Noten.
-  Damit das 808 in FL Studio wirklich rutscht, stell im Kanal (zum Beispiel im Sampler oder in
-  3x Osc) „Mono“ und „Porta“ an.
+  Damit das 808 wirklich rutscht, braucht der Klang „Mono“ und „Glide“. Im FL-eigenen Sampler
+  oder in 3x Osc schaltest du in den Kanal-Einstellungen „Mono“ und „Porta“ an. Bei einem
+  VST-Synth geht das laut FL-Handbuch nicht über den Kanal: Dort schaltest du im Synth selbst
+  Mono oder Legato und Glide (Portamento) an.
 
 ### Ehrlich gesagt
 
 - Die Recherche lief über Suchergebnisse. Viele Seiten (Interviews, Musikdatenbanken) waren von
-  hier aus gesperrt. Tempo und Tonart einzelner Songs sind darum oft nur aus einer Quelle. Die
-  Notizen mit allen Quellen liegen in
+  hier aus gesperrt. Tempo und Tonart einzelner Songs stammen aus automatischen Datenbanken und
+  Laien-Transkriptionen, oft nur aus einer Quelle. Keine Quelle schreibt ein Drum- oder 808-Muster
+  der drei Produzenten aus. Die Muster hier sind deshalb gut begründete Startwerte, keine
+  Messungen. Der ganze Bericht mit Quellen:
+  [reports/Stilanalyse OZ Metro Boomin Pierre Bourne.md](../reports/Stilanalyse%20OZ%20Metro%20Boomin%20Pierre%20Bourne.md),
+  die Notizen in
   [research_notes/Stilanalyse OZ Metro Boomin Pierre Bourne/](../research_notes/Stilanalyse%20OZ%20Metro%20Boomin%20Pierre%20Bourne/).
 - Die Producer-Tags (die kurzen Sprach-Erkennungsmarken am Anfang der Beats) sind bewusst nicht
   nachgebaut. Ich beschreibe sie nur.
